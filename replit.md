@@ -119,6 +119,15 @@ Keywords in user messages trigger auto-photo generation:
 - `dreamPassed`: Array of passed girl IDs
 - `affectionLevels`: Object with affection per girl
 - `profilePhotos`: Object with photo arrays per girl
+- `chat_[girlId]`: Full chat history per girl (persistent)
+- `receivedPhotos`: Object with photo URLs received in chats
+
+### UI Animations
+- Page transitions: fade in with slide
+- Message appear: slide up + fade in
+- Button tap feedback: scale animation
+- Typing delay: 1.5-3.5 seconds (realistic)
+- Smooth scroll in chat
 
 ## Environment Variables
 

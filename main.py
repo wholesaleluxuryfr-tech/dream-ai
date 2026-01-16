@@ -50,6 +50,7 @@ REJECTIONS REALISTES (utilise-les naturellement):
 - "Faut le mériter"
 
 QUAND TU ENVOIES UNE PHOTO: [PHOTO: description]
+Tu te souviens de TOUTE la conversation. Tu restes cohérente avec ce que tu as dit avant.
 Réponds en français familier avec abréviations: mdr, pk, jsp, tkt, cv, etc."""
 
 GIRLS = {
@@ -376,7 +377,11 @@ HTML = '''<!DOCTYPE html>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #0a0a0c; color: #ffffff; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
         
-        .page { display: none; min-height: 100vh; overflow-x: hidden; }
+        .page { display: none; min-height: 100vh; overflow-x: hidden; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes msgAppear { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .msg { animation: msgAppear 0.3s ease; }
         .page.active { display: flex; flex-direction: column; }
         
         /* LOGIN PAGE */
@@ -717,6 +722,7 @@ let currentGirl = null;
 let chatHistory = {};
 let affectionLevels = JSON.parse(localStorage.getItem('affectionLevels') || '{}');
 let profilePhotos = JSON.parse(localStorage.getItem('profilePhotos') || '{}');
+let receivedPhotos = JSON.parse(localStorage.getItem('receivedPhotos') || '{}');
 let currentOverlayPhotos = [];
 let currentOverlayIndex = 0;
 
@@ -725,6 +731,26 @@ let matches = JSON.parse(localStorage.getItem('dreamMatches') || '[]');
 let passed = JSON.parse(localStorage.getItem('dreamPassed') || '[]');
 let swipeQueue = [];
 let currentSwipeGirl = null;
+
+function loadChatHistory(girlId) {
+    const saved = localStorage.getItem('chat_' + girlId);
+    if (saved) {
+        try { return JSON.parse(saved); } catch(e) { return []; }
+    }
+    return [];
+}
+
+function saveChatHistory(girlId) {
+    localStorage.setItem('chat_' + girlId, JSON.stringify(chatHistory[girlId] || []));
+}
+
+function saveReceivedPhoto(girlId, photoUrl) {
+    if (!receivedPhotos[girlId]) receivedPhotos[girlId] = [];
+    if (!receivedPhotos[girlId].includes(photoUrl)) {
+        receivedPhotos[girlId].push(photoUrl);
+        localStorage.setItem('receivedPhotos', JSON.stringify(receivedPhotos));
+    }
+}
 
 const PHOTO_BACKGROUNDS = {
     day: ["beach sunny day", "city street daytime", "park bench", "cafe terrace outdoor", "gym workout area", "office desk"],
@@ -771,7 +797,7 @@ function initSwipe() {
     swipeQueue = Object.keys(GIRLS).filter(id => !matches.includes(id) && !passed.includes(id));
     swipeQueue = swipeQueue.sort(() => Math.random() - 0.5);
     Object.keys(GIRLS).forEach(id => { 
-        if (!chatHistory[id]) chatHistory[id] = []; 
+        chatHistory[id] = loadChatHistory(id);
         if (affectionLevels[id] === undefined) affectionLevels[id] = 20;
     });
     localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
@@ -1200,9 +1226,11 @@ async function sendMessage() {
     localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
     
     chatHistory[currentGirl].push({ role: 'user', content: text, time: getTime() });
+    saveChatHistory(currentGirl);
     renderMessages();
     
-    setTimeout(() => setTyping(true), 1000);
+    const typingDelay = 1500 + Math.random() * 2000;
+    setTimeout(() => setTyping(true), typingDelay);
     
     try {
         const res = await fetch('/chat', {
@@ -1212,7 +1240,7 @@ async function sendMessage() {
                 girl: currentGirl,
                 affection: affectionLevels[currentGirl],
                 auto_photo: autoRequestPhoto,
-                messages: chatHistory[currentGirl].map(m => ({ role: m.role, content: m.content }))
+                messages: chatHistory[currentGirl].slice(-15).map(m => ({ role: m.role, content: m.content }))
             })
         });
         
@@ -1225,6 +1253,7 @@ async function sendMessage() {
         
         const msgObj = { role: 'assistant', content: cleanReply, time: getTime() };
         chatHistory[currentGirl].push(msgObj);
+        saveChatHistory(currentGirl);
         renderMessages();
         
         if (photoMatch) {
@@ -1235,6 +1264,7 @@ async function sendMessage() {
     } catch (e) {
         setTyping(false);
         chatHistory[currentGirl].push({ role: 'assistant', content: "Désolée, erreur réseau.", time: getTime() });
+        saveChatHistory(currentGirl);
         renderMessages();
     }
     
@@ -1245,6 +1275,7 @@ async function requestProfilePhoto() {
     startChat();
     const msgObj = { role: 'assistant', content: "Tiens, une photo rien que pour toi...", time: getTime() };
     chatHistory[currentGirl].push(msgObj);
+    saveChatHistory(currentGirl);
     renderMessages();
     await generatePhoto("casual selfie, beautiful smile, high quality", msgObj);
 }
@@ -1264,6 +1295,8 @@ async function generatePhoto(description, msgObj) {
         const data = await res.json();
         if (data.image_url) {
             msgObj.image = data.image_url;
+            saveReceivedPhoto(currentGirl, data.image_url);
+            saveChatHistory(currentGirl);
             renderMessages();
         }
     } catch (e) { console.error('Photo error:', e); }
@@ -1482,7 +1515,7 @@ def chat():
                 "model": "Sao10K/L3.1-70B-Euryale-v2.3",
                 "messages": all_messages,
                 "max_tokens": 300,
-                "temperature": 0.95
+                "temperature": 0.7
             },
             timeout=45
         )
