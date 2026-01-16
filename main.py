@@ -38,7 +38,7 @@ def index():
                     const data = await response.json();
                     if (data.url || (data.data && data.data[0] && data.data[0].url)) {
                         const url = data.url || data.data[0].url;
-                        resDiv.innerHTML = '<p>Success!</p><img src="' + url + '">';
+                        resDiv.innerHTML = '<p>Success!</p><img src="' + url + '" alt="Generated Image">';
                     } else {
                         resDiv.innerHTML = '<p>Error: ' + JSON.stringify(data) + '</p>';
                     }
