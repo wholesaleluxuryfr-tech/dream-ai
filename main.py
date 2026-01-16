@@ -659,8 +659,22 @@ HTML = '''<!DOCTYPE html>
     <title>Dream AI</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #0a0a0c; color: #ffffff; min-height: 100vh; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; }
+        html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #0a0a0c; color: #ffffff; min-height: 100vh; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; overscroll-behavior: contain; }
+        
+        ::-webkit-scrollbar { width: 0; height: 0; background: transparent; }
+        * { scrollbar-width: none; -ms-overflow-style: none; }
+        
+        .gpu-accelerate { transform: translateZ(0); backface-visibility: hidden; perspective: 1000px; }
+        
+        img { content-visibility: auto; }
+        img.lazy-load { opacity: 0; filter: blur(10px); transition: opacity 0.4s ease, filter 0.4s ease; }
+        img.lazy-load.loaded { opacity: 1; filter: blur(0); }
+        
+        .skeleton { background: linear-gradient(90deg, #12121a 25%, #1a1a2e 50%, #12121a 75%); background-size: 200% 100%; animation: shimmer 1.2s ease-in-out infinite; border-radius: 8px; }
+        .skeleton-circle { border-radius: 50%; }
+        .skeleton-text { height: 14px; margin: 6px 0; }
+        .skeleton-card { height: 240px; border-radius: 20px; }
         
         .page { display: none; min-height: 100vh; overflow-x: hidden; animation: fadeIn 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: opacity, transform; }
         @keyframes fadeIn { from { opacity: 0; transform: translate3d(0, 8px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
@@ -700,7 +714,7 @@ HTML = '''<!DOCTYPE html>
         
         /* SWIPE PAGE */
         .swipe-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1rem; position: relative; }
-        .swipe-card { width: 100%; max-width: 350px; height: 500px; background: #12121a; border-radius: 25px; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .swipe-card { width: 100%; max-width: 350px; height: 500px; background: #12121a; border-radius: 25px; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); will-change: transform; transform: translateZ(0); }
         .swipe-card-img { height: 70%; background: #1a1a2e; display: flex; align-items: center; justify-content: center; font-size: 6rem; font-weight: 800; color: rgba(233,30,99,0.2); }
         .swipe-card-info { padding: 1.5rem; }
         .swipe-card-name { font-size: 1.5rem; font-weight: 700; }
@@ -725,6 +739,15 @@ HTML = '''<!DOCTYPE html>
         .hearts { position: absolute; width: 100%; height: 100%; pointer-events: none; overflow: hidden; }
         .heart { position: absolute; font-size: 2rem; animation: float 3s ease-in infinite; opacity: 0; }
         @keyframes float { 0% { opacity: 1; transform: translateY(100vh) scale(0); } 50% { opacity: 1; } 100% { opacity: 0; transform: translateY(-100vh) scale(1); } }
+        
+        @keyframes heartBurst { 0% { transform: scale(0); opacity: 1; } 50% { transform: scale(1.3); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+        .heart-burst { position: fixed; font-size: 4rem; pointer-events: none; z-index: 9999; animation: heartBurst 0.6s ease-out forwards; }
+        
+        @keyframes tapFlash { 0% { opacity: 0; } 50% { opacity: 0.3; } 100% { opacity: 0; } }
+        .tap-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; pointer-events: none; z-index: 9999; animation: tapFlash 0.15s ease-out; }
+        
+        .pull-refresh { position: absolute; top: -50px; left: 50%; transform: translateX(-50%); color: #888; font-size: 0.8rem; transition: top 0.2s ease; }
+        .pull-refresh.visible { top: 10px; }
         
         /* NO MATCH MESSAGE */
         .no-match-msg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1a1a2e; padding: 2rem 3rem; border-radius: 20px; text-align: center; z-index: 1500; display: none; border: 1px solid #444; }
@@ -777,7 +800,9 @@ HTML = '''<!DOCTYPE html>
         .msg { max-width: 80%; display: flex; flex-direction: column; }
         .msg.user { align-self: flex-end; }
         .msg.her { align-self: flex-start; }
-        .msg-bubble { padding: 0.9rem 1.1rem; border-radius: 20px; font-size: 0.95rem; line-height: 1.5; position: relative; }
+        .msg-bubble { padding: 0.9rem 1.1rem; border-radius: 20px; font-size: 0.95rem; line-height: 1.5; position: relative; animation: msgAppear 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .msg-bubble.sending { opacity: 0.7; }
+        .msg-bubble.sent { opacity: 1; transition: opacity 0.2s ease; }
         .msg.her .msg-bubble { background: #12121a; border-bottom-left-radius: 4px; color: #ffffff; }
         .msg.user .msg-bubble { background: #e91e63; border-bottom-right-radius: 4px; color: #ffffff; }
         .msg-meta { font-size: 0.65rem; color: #555555; margin-top: 0.3rem; display: flex; align-items: center; gap: 4px; }
@@ -906,10 +931,14 @@ HTML = '''<!DOCTYPE html>
         .loading-shimmer { background: linear-gradient(90deg, #12121a 25%, #1a1a2e 50%, #12121a 75%); background-size: 200% 100%; animation: shimmer 1.2s ease-in-out infinite; }
         
         @keyframes typing { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
-        .typing-indicator { display: flex; gap: 4px; padding: 0.5rem 1rem; }
-        .typing-dot { width: 8px; height: 8px; background: #e91e63; border-radius: 50%; animation: typing 1.2s ease-in-out infinite; }
+        .typing-indicator { display: flex; gap: 4px; padding: 0.5rem 1rem; align-items: center; }
+        .typing-dots { display: inline-flex; gap: 3px; align-items: center; }
+        .typing-dot { width: 6px; height: 6px; background: #e91e63; border-radius: 50%; animation: typing 1.2s ease-in-out infinite; }
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        .photo-spinner { width: 40px; height: 40px; border: 3px solid rgba(233,30,99,0.2); border-top-color: #e91e63; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 1rem auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
         
         .swipe-card { animation: scaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
         .match-overlay-content { animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
@@ -1058,7 +1087,7 @@ HTML = '''<!DOCTYPE html>
     </div>
     
     <div class="swipe-container">
-        <div class="swipe-card" id="swipeCard">
+        <div class="swipe-card" id="swipeCard" onclick="handleDoubleTap(event, doubleTapLike)">
             <div class="swipe-card-img" id="swipeCardImg"></div>
             <div class="swipe-card-info">
                 <div class="swipe-card-name" id="swipeCardName"></div>
@@ -1457,6 +1486,56 @@ function applyTheme() {
     }
     const toggle = document.getElementById('themeToggle');
     if (toggle) toggle.classList.toggle('active', darkMode);
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => { clearTimeout(timeout); func(...args); };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+const lazyImageObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset.src) {
+                img.src = img.dataset.src;
+                img.onload = () => img.classList.add('loaded');
+                img.onerror = () => img.classList.add('loaded');
+                lazyImageObserver.unobserve(img);
+            }
+        }
+    });
+}, { rootMargin: '100px' });
+
+function lazyLoadImage(img) {
+    if (img.dataset.src) {
+        img.classList.add('lazy-load');
+        lazyImageObserver.observe(img);
+    }
+}
+
+function preloadImages(urls) {
+    urls.forEach(url => {
+        if (url) {
+            const img = new Image();
+            img.src = url;
+        }
+    });
 }
 
 function toggleTheme() {
@@ -1882,13 +1961,22 @@ function showNextCard() {
     }
     currentSwipeGirl = swipeQueue[0];
     const g = GIRLS[currentSwipeGirl];
-    document.getElementById('swipeCardImg').textContent = INITIALS[currentSwipeGirl];
-    document.getElementById('swipeCardName').textContent = g.name + ', ' + g.age;
-    document.getElementById('swipeCardLocation').textContent = g.location;
-    document.getElementById('swipeCardBio').textContent = g.bio;
-    document.getElementById('swipeCard').style.display = 'block';
-    document.getElementById('swipeButtons').style.display = 'flex';
-    document.getElementById('noMoreCards').style.display = 'none';
+    
+    requestAnimationFrame(() => {
+        document.getElementById('swipeCardImg').textContent = INITIALS[currentSwipeGirl];
+        document.getElementById('swipeCardName').textContent = g.name + ', ' + g.age;
+        document.getElementById('swipeCardLocation').textContent = g.location;
+        document.getElementById('swipeCardBio').textContent = g.bio;
+        document.getElementById('swipeCard').style.display = 'block';
+        document.getElementById('swipeButtons').style.display = 'flex';
+        document.getElementById('noMoreCards').style.display = 'none';
+    });
+    
+    const nextProfiles = swipeQueue.slice(1, 4);
+    nextProfiles.forEach(id => {
+        const photos = profilePhotos[id] || [];
+        preloadImages(photos.slice(0, 2));
+    });
 }
 
 function swipeLeft() {
@@ -1901,6 +1989,9 @@ function swipeLeft() {
 
 function swipeRight() {
     if (!currentSwipeGirl) return;
+    showTapFlash();
+    showHeartBurst(window.innerWidth / 2, window.innerHeight / 2);
+    
     const g = GIRLS[currentSwipeGirl];
     const matchChance = g.match_chance || 0.7;
     
@@ -1950,6 +2041,38 @@ function closeMatch() {
     document.getElementById('matchOverlay').style.display = 'none';
     renderMatches();
     showNextCard();
+}
+
+function showHeartBurst(x, y) {
+    const heart = document.createElement('div');
+    heart.className = 'heart-burst';
+    heart.textContent = '❤️';
+    heart.style.left = x + 'px';
+    heart.style.top = y + 'px';
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 600);
+}
+
+function showTapFlash() {
+    const flash = document.createElement('div');
+    flash.className = 'tap-flash';
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 150);
+}
+
+let lastTapTime = 0;
+function handleDoubleTap(e, callback) {
+    const currentTime = Date.now();
+    const tapLength = currentTime - lastTapTime;
+    if (tapLength < 300 && tapLength > 0) {
+        callback(e);
+    }
+    lastTapTime = currentTime;
+}
+
+function doubleTapLike(e) {
+    showHeartBurst(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
+    swipeRight();
 }
 
 function goToMatchChat() {
@@ -2246,7 +2369,7 @@ function renderMessages() {
     container.innerHTML = msgs.map(m => {
         const cls = m.role === 'user' ? 'user' : 'her';
         const text = (m.content || '').replace(/\\[PHOTO:[^\\]]+\\]/g, '').trim();
-        const imgHtml = m.image ? `<div class="msg-img" onclick="fullscreenImg('${m.image}')"><img src="${m.image}" alt="Photo"></div>` : '';
+        const imgHtml = m.image ? `<div class="msg-img" onclick="fullscreenImg('${m.image}')"><img class="lazy-load" data-src="${m.image}" src="${m.image}" alt="Photo" onload="this.classList.add('loaded')"></div>` : '';
         const receipt = m.role === 'user' ? '<span class="read-receipt">✓✓</span>' : '';
         
         return `<div class="msg ${cls}">
@@ -2270,8 +2393,10 @@ function fullscreenImg(url) {
 function setTyping(isTyping) {
     const el = document.getElementById('typing-indicator');
     if (isTyping) {
-        el.innerText = GIRLS[currentGirl].name + ' écrit...';
-        el.style.display = 'block';
+        el.innerHTML = GIRLS[currentGirl].name + ' <span class="typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>';
+        el.style.display = 'flex';
+        el.style.alignItems = 'center';
+        el.style.gap = '8px';
     } else {
         el.style.display = 'none';
     }

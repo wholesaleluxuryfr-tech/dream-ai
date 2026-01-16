@@ -144,6 +144,20 @@ The app features a fixed bottom navigation bar with 5 tabs:
 - Light theme with white backgrounds
 - Dark theme (default)
 
+### Performance Optimizations
+- GPU-accelerated transforms with translateZ(0) and will-change
+- Lazy loading images with IntersectionObserver
+- Blur-to-sharp photo loading effect
+- Skeleton placeholders for loading states
+- Hidden scrollbars with smooth scrolling
+- iOS momentum scrolling (-webkit-overflow-scrolling: touch)
+- Debounce and throttle utilities for inputs
+- requestAnimationFrame for swipe rendering
+- Preload next 3 profiles in swipe deck
+- Animated typing indicator with bouncing dots
+- Heart burst animation on double-tap
+- Tap flash for haptic feedback simulation
+
 ### Login/Signup System
 - Name and age input
 - Age verification (18+)
