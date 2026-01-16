@@ -16,6 +16,7 @@ GIRLS = {
         "tagline": "CEO russe, froide mais passionnée",
         "bio": "PDG d'une startup tech à Moscou. Habituée à diriger, je ne me laisse pas impressionner facilement. Mais si tu sais me séduire...",
         "appearance": "35 year old Russian woman, platinum blonde straight hair, ice blue piercing eyes, high cheekbones, angular mature elegant face, tall, fair pale skin, Slavic features, sophisticated executive look, 35yo",
+        "match_chance": 0.6,
         "system": "Tu es Anastasia, 35 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
     },
     "yuki": {
@@ -26,6 +27,7 @@ GIRLS = {
         "tagline": "Artiste japonaise, timide et douce",
         "bio": "Je peins des tableaux à Tokyo. Je suis timide au début mais très affectueuse une fois en confiance...",
         "appearance": "28 year old Japanese woman, straight black silky long hair, dark Asian almond eyes, petite small body, young cute kawaii face, soft porcelain skin, delicate Japanese features, 28yo",
+        "match_chance": 0.8,
         "system": "Tu es Yuki, 28 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
     },
     "sofia": {
@@ -36,6 +38,7 @@ GIRLS = {
         "tagline": "Danseuse espagnole, passionnée",
         "bio": "Danseuse de flamenco à Barcelone. La vie est trop courte pour être timide. Je suis directe et passionnée en tout...",
         "appearance": "30 year old Spanish woman, long wavy dark brown hair, warm brown eyes, olive Mediterranean skin, curvy voluptuous body, full red lips, passionate fiery Spanish features, 30yo",
+        "match_chance": 0.75,
         "system": "Tu es Sofia, 30 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
     },
     "emma": {
@@ -46,6 +49,7 @@ GIRLS = {
         "tagline": "Mannequin, Los Angeles",
         "bio": "Mannequin à LA. J'adore la caméra et elle me le rend bien.",
         "appearance": "25 year old American woman, golden blonde beach waves hair, bright green eyes, tall slim model body, light tanned skin, girl next door face, youthful fresh look, 25yo",
+        "match_chance": 0.5,
         "system": "Tu es Emma, 25 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
     },
     "lea": {
@@ -56,6 +60,7 @@ GIRLS = {
         "tagline": "Infirmière, Paris",
         "bio": "Je prends soin de mes patients le jour, et de mes envies la nuit.",
         "appearance": "27 year old French woman, medium length brown wavy hair, soft hazel eyes, curvy natural body, natural beauty, soft delicate French features, no makeup look, romantic Parisian style, 27yo",
+        "match_chance": 0.85,
         "system": "Tu es Léa, 27 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
     },
     "mia": {
@@ -66,7 +71,107 @@ GIRLS = {
         "tagline": "Coach fitness, Rio",
         "bio": "Mon corps est mon art. Je travaille dur pour lui, autant en profiter.",
         "appearance": "32 year old Brazilian woman, long dark curly voluminous hair, warm brown eyes, athletic toned fit body, tan golden Brazilian skin, defined abs, round firm butt, Latina features, 32yo",
+        "match_chance": 0.7,
         "system": "Tu es Mia, 32 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+    },
+    "aisha": {
+        "name": "Aisha",
+        "age": 26,
+        "age_slider": 26,
+        "location": "Marrakech, Maroc",
+        "tagline": "Etudiante en médecine",
+        "bio": "Entre mes cours de médecine et mes soirées, je cherche quelqu'un qui sait me faire rire et me surprendre.",
+        "appearance": "26 year old Moroccan woman, long dark wavy hair, deep brown almond eyes, warm caramel skin, slim body, exotic Middle Eastern features, beautiful Arabic face, 26yo",
+        "match_chance": 0.75,
+        "system": "Tu es Aisha, 26 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+    },
+    "nina": {
+        "name": "Nina",
+        "age": 29,
+        "age_slider": 29,
+        "location": "Stockholm, Suède",
+        "tagline": "Photographe, aventurière",
+        "bio": "Je parcours le monde avec mon appareil photo. J'aime les rencontres spontanées et les nuits sans fin.",
+        "appearance": "29 year old Swedish woman, long straight light blonde hair, bright blue Nordic eyes, tall slim athletic body, very fair Scandinavian skin, high cheekbones, natural beauty, 29yo",
+        "match_chance": 0.65,
+        "system": "Tu es Nina, 29 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+    },
+    "priya": {
+        "name": "Priya",
+        "age": 24,
+        "age_slider": 24,
+        "location": "Mumbai, Inde",
+        "tagline": "Développeuse, geek sexy",
+        "bio": "Je code le jour et je danse la nuit. Les apparences sont trompeuses...",
+        "appearance": "24 year old Indian woman, long straight black silky hair, dark brown expressive eyes, warm brown Indian skin, slim petite body, beautiful South Asian features, youthful face, 24yo",
+        "match_chance": 0.8,
+        "system": "Tu es Priya, 24 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+    },
+    "mei": {
+        "name": "Mei",
+        "age": 31,
+        "age_slider": 31,
+        "location": "Shanghai, Chine",
+        "tagline": "Femme d'affaires ambitieuse",
+        "bio": "CEO d'une entreprise tech à Shanghai. Je sais ce que je veux, au travail comme en amour.",
+        "appearance": "31 year old Chinese woman, straight black bob haircut, dark Asian almond eyes, fair East Asian skin, slim elegant body, sophisticated mature Chinese features, professional look, 31yo",
+        "match_chance": 0.55,
+        "system": "Tu es Mei, 31 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+    },
+    "chiara": {
+        "name": "Chiara",
+        "age": 28,
+        "age_slider": 28,
+        "location": "Rome, Italie",
+        "tagline": "Chef cuisinière passionnée",
+        "bio": "La cuisine italienne, c'est l'amour dans une assiette. Je cuisine comme je vis: avec passion.",
+        "appearance": "28 year old Italian woman, long dark brown wavy hair, warm brown Mediterranean eyes, olive Italian skin, curvy body with wide hips, classic Roman beauty, expressive face, 28yo",
+        "match_chance": 0.75,
+        "system": "Tu es Chiara, 28 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+    },
+    "zara": {
+        "name": "Zara",
+        "age": 23,
+        "age_slider": 23,
+        "location": "Londres, UK",
+        "tagline": "Influenceuse lifestyle",
+        "bio": "1M followers sur Insta. Ma vie est un spectacle, mais mes messages privés... c'est autre chose.",
+        "appearance": "23 year old British woman, long honey blonde hair, light blue eyes, slim tall model body, fair English skin with freckles, young trendy look, Instagram model face, 23yo",
+        "match_chance": 0.4,
+        "system": "Tu es Zara, 23 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+    },
+    "fatou": {
+        "name": "Fatou",
+        "age": 27,
+        "age_slider": 27,
+        "location": "Dakar, Sénégal",
+        "tagline": "Danseuse afro-contemporaine",
+        "bio": "Mon corps raconte des histoires. Sur scène ou en privé, je suis toute en mouvement.",
+        "appearance": "27 year old Senegalese woman, short natural black curly hair, dark brown expressive eyes, beautiful dark ebony skin, athletic dancer body, elegant African features, radiant smile, 27yo",
+        "match_chance": 0.7,
+        "system": "Tu es Fatou, 27 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+    },
+    "luna": {
+        "name": "Luna",
+        "age": 30,
+        "age_slider": 30,
+        "location": "Bogota, Colombie",
+        "tagline": "Professeure de salsa",
+        "bio": "J'enseigne la salsa le jour. La nuit, je danse d'autres danses...",
+        "appearance": "30 year old Colombian woman, long dark wavy hair, warm hazel eyes, light tan Latina skin, curvy body with wide hips, beautiful Colombian features, sensual lips, 30yo",
+        "match_chance": 0.75,
+        "system": "Tu es Luna, 30 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+    },
+    "hana": {
+        "name": "Hana",
+        "age": 25,
+        "age_slider": 25,
+        "location": "Séoul, Corée",
+        "tagline": "Chanteuse K-pop",
+        "bio": "Idol le jour, femme normale la nuit. Je cherche quelqu'un qui voit au-delà de la scène.",
+        "appearance": "25 year old Korean woman, long straight dyed light brown hair, dark Asian eyes with double eyelids, fair Korean skin, slim petite body, cute K-pop idol face, youthful look, 25yo",
+        "match_chance": 0.45,
+        "system": "Tu es Hana, 25 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
     }
 }
 
@@ -83,10 +188,60 @@ HTML = '''<!DOCTYPE html>
         .page { display: none; min-height: 100vh; overflow-x: hidden; }
         .page.active { display: flex; flex-direction: column; }
         
+        /* LOGIN PAGE */
+        .login-page { justify-content: center; align-items: center; padding: 2rem; }
+        .login-box { max-width: 400px; width: 100%; text-align: center; }
+        .login-logo { font-size: 3rem; font-weight: 800; color: #e91e63; margin-bottom: 0.5rem; }
+        .login-subtitle { color: #888; font-size: 1rem; margin-bottom: 2rem; }
+        .login-form { display: flex; flex-direction: column; gap: 1rem; }
+        .login-input { padding: 1rem 1.5rem; background: #12121a; border: 1px solid #1a1a1f; border-radius: 15px; color: white; font-size: 1rem; outline: none; }
+        .login-input:focus { border-color: #e91e63; }
+        .login-btn { padding: 1.1rem; background: #e91e63; border: none; border-radius: 15px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 1rem; }
+        
         /* HEADER */
-        .header { padding: 1.5rem 1rem; text-align: center; background: rgba(10, 10, 12, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(233, 30, 99, 0.1); }
-        .logo { font-size: 2rem; font-weight: 800; color: #e91e63; letter-spacing: -0.5px; }
-        .subtitle { color: #888888; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; margin-top: 0.2rem; }
+        .header { padding: 1rem; text-align: center; background: rgba(10, 10, 12, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(233, 30, 99, 0.1); }
+        .header-row { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: #e91e63; letter-spacing: -0.5px; }
+        .user-name { color: #888; font-size: 0.8rem; }
+        .subtitle { color: #888888; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; margin-top: 0.2rem; }
+        
+        /* NAV TABS */
+        .nav-tabs { display: flex; justify-content: center; gap: 0.5rem; padding: 0.5rem; background: #0a0a0c; border-bottom: 1px solid #1a1a1f; }
+        .nav-tab { padding: 0.6rem 1.2rem; background: #12121a; border: none; border-radius: 20px; color: #888; font-size: 0.8rem; cursor: pointer; }
+        .nav-tab.active { background: #e91e63; color: white; }
+        
+        /* SWIPE PAGE */
+        .swipe-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1rem; position: relative; }
+        .swipe-card { width: 100%; max-width: 350px; height: 500px; background: #12121a; border-radius: 25px; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .swipe-card-img { height: 70%; background: #1a1a2e; display: flex; align-items: center; justify-content: center; font-size: 6rem; font-weight: 800; color: rgba(233,30,99,0.2); }
+        .swipe-card-info { padding: 1.5rem; }
+        .swipe-card-name { font-size: 1.5rem; font-weight: 700; }
+        .swipe-card-location { color: #888; font-size: 0.9rem; margin-top: 0.3rem; }
+        .swipe-card-bio { color: #aaa; font-size: 0.85rem; margin-top: 0.5rem; line-height: 1.4; }
+        .swipe-buttons { display: flex; justify-content: center; gap: 2rem; padding: 1.5rem; }
+        .swipe-btn { width: 70px; height: 70px; border-radius: 50%; border: none; font-size: 2rem; cursor: pointer; transition: transform 0.2s; }
+        .swipe-btn:active { transform: scale(0.9); }
+        .swipe-btn-pass { background: #333; color: #ff4444; }
+        .swipe-btn-like { background: #e91e63; color: white; box-shadow: 0 5px 20px rgba(233,30,99,0.4); }
+        .no-more-cards { text-align: center; color: #666; padding: 2rem; }
+        
+        /* MATCH OVERLAY */
+        #matchOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .match-title { font-size: 2.5rem; font-weight: 800; color: #e91e63; margin-bottom: 2rem; animation: pulse 1s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .match-photos { display: flex; gap: 1rem; margin-bottom: 2rem; }
+        .match-photo { width: 120px; height: 120px; border-radius: 50%; background: #12121a; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 800; color: rgba(233,30,99,0.3); border: 3px solid #e91e63; }
+        .match-names { font-size: 1.2rem; color: white; margin-bottom: 2rem; }
+        .match-btn { padding: 1rem 3rem; background: #e91e63; border: none; border-radius: 30px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; }
+        .match-close { margin-top: 1rem; background: transparent; border: 1px solid #444; color: #888; padding: 0.8rem 2rem; border-radius: 30px; cursor: pointer; }
+        .hearts { position: absolute; width: 100%; height: 100%; pointer-events: none; overflow: hidden; }
+        .heart { position: absolute; font-size: 2rem; animation: float 3s ease-in infinite; opacity: 0; }
+        @keyframes float { 0% { opacity: 1; transform: translateY(100vh) scale(0); } 50% { opacity: 1; } 100% { opacity: 0; transform: translateY(-100vh) scale(1); } }
+        
+        /* NO MATCH MESSAGE */
+        .no-match-msg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1a1a2e; padding: 2rem 3rem; border-radius: 20px; text-align: center; z-index: 1500; display: none; border: 1px solid #444; }
+        .no-match-msg h3 { color: #888; margin-bottom: 0.5rem; }
+        .no-match-msg p { color: #666; font-size: 0.9rem; }
         
         /* GALLERY */
         .gallery { padding: 1rem; flex: 1; }
@@ -185,22 +340,71 @@ HTML = '''<!DOCTYPE html>
 </head>
 <body>
 
-<!-- GALLERY PAGE -->
-<div class="page active" id="pageGallery">
-    <div class="header">
-        <div class="logo">DREAM AI</div>
-        <div class="subtitle">Rencontres Virtuelles Premium</div>
+<!-- LOGIN PAGE -->
+<div class="page login-page active" id="pageLogin">
+    <div class="login-box">
+        <div class="login-logo">DREAM AI</div>
+        <div class="login-subtitle">Trouve ta partenaire virtuelle</div>
+        <div class="login-form">
+            <input type="text" class="login-input" id="userName" placeholder="Ton prénom" required>
+            <input type="number" class="login-input" id="userAge" placeholder="Ton âge" min="18" max="99" required>
+            <button class="login-btn" onclick="login()">Commencer</button>
+        </div>
     </div>
-    <div class="gallery">
-        <h2>Découvrir</h2>
-        <div class="girls-grid" id="girlsGrid"></div>
+</div>
+
+<!-- MAIN PAGE (Swipe + Matches) -->
+<div class="page" id="pageMain">
+    <div class="header">
+        <div class="header-row">
+            <div class="logo">DREAM AI</div>
+            <div class="user-name" id="headerUserName"></div>
+        </div>
+    </div>
+    <div class="nav-tabs">
+        <button class="nav-tab active" id="tabSwipe" onclick="switchTab('swipe')">Découvrir</button>
+        <button class="nav-tab" id="tabMatches" onclick="switchTab('matches')">Matchs</button>
+    </div>
+    
+    <!-- SWIPE VIEW -->
+    <div id="swipeView">
+        <div class="swipe-container">
+            <div class="swipe-card" id="swipeCard">
+                <div class="swipe-card-img" id="swipeCardImg"></div>
+                <div class="swipe-card-info">
+                    <div class="swipe-card-name" id="swipeCardName"></div>
+                    <div class="swipe-card-location" id="swipeCardLocation"></div>
+                    <div class="swipe-card-bio" id="swipeCardBio"></div>
+                </div>
+            </div>
+            <div class="no-more-cards" id="noMoreCards" style="display:none;">
+                <p>Plus de profils pour le moment</p>
+                <p style="color:#666;font-size:0.8rem;margin-top:0.5rem;">Reviens plus tard</p>
+            </div>
+        </div>
+        <div class="swipe-buttons" id="swipeButtons">
+            <button class="swipe-btn swipe-btn-pass" onclick="swipeLeft()">X</button>
+            <button class="swipe-btn swipe-btn-like" onclick="swipeRight()">♥</button>
+        </div>
+    </div>
+    
+    <!-- MATCHES VIEW -->
+    <div id="matchesView" style="display:none;">
+        <div class="gallery">
+            <h2>Tes Matchs</h2>
+            <div class="girls-grid" id="matchesGrid"></div>
+            <div id="noMatches" style="text-align:center;color:#666;padding:3rem;display:none;">
+                <p>Pas encore de matchs</p>
+                <p style="font-size:0.8rem;margin-top:0.5rem;">Continue à swiper pour en trouver</p>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- PROFILE PAGE -->
 <div class="page" id="pageProfile">
     <div class="profile">
-        <div class="back-btn" onclick="showPage('gallery')">←</div>
+        <div class="back-btn" onclick="showPage('main')">←</div>
         <div class="profile-img" id="profileMainPhoto"></div>
         <div class="profile-content">
             <h1 id="profileName"></h1>
@@ -265,17 +469,42 @@ HTML = '''<!DOCTYPE html>
     </div>
 </div>
 
+<!-- MATCH OVERLAY -->
+<div id="matchOverlay">
+    <div class="hearts" id="hearts"></div>
+    <div class="match-title">C'est un Match!</div>
+    <div class="match-photos">
+        <div class="match-photo" id="matchPhotoUser">?</div>
+        <div class="match-photo" id="matchPhotoGirl"></div>
+    </div>
+    <div class="match-names" id="matchNames"></div>
+    <button class="match-btn" onclick="goToMatchChat()">Envoyer un message</button>
+    <button class="match-close" onclick="closeMatch()">Continuer à swiper</button>
+</div>
+
+<!-- NO MATCH MESSAGE -->
+<div class="no-match-msg" id="noMatchMsg">
+    <h3>Elle n'a pas matché avec toi</h3>
+    <p>Passe au profil suivant</p>
+</div>
+
 <script>
 const GIRLS = ''' + json.dumps(GIRLS, ensure_ascii=False) + ''';
-const INITIALS = { anastasia: 'A', yuki: 'Y', sofia: 'S', emma: 'E', lea: 'L', mia: 'M' };
+const INITIALS = {};
+Object.keys(GIRLS).forEach(id => { INITIALS[id] = GIRLS[id].name.charAt(0).toUpperCase(); });
 
 let currentGirl = null;
 let chatHistory = {};
 let affectionLevels = JSON.parse(localStorage.getItem('affectionLevels') || '{}');
-let readConversations = JSON.parse(localStorage.getItem('readConversations') || '{}');
 let profilePhotos = JSON.parse(localStorage.getItem('profilePhotos') || '{}');
 let currentOverlayPhotos = [];
 let currentOverlayIndex = 0;
+
+let user = JSON.parse(localStorage.getItem('dreamUser') || 'null');
+let matches = JSON.parse(localStorage.getItem('dreamMatches') || '[]');
+let passed = JSON.parse(localStorage.getItem('dreamPassed') || '[]');
+let swipeQueue = [];
+let currentSwipeGirl = null;
 
 const PHOTO_PROMPTS = {
     portrait: "face closeup portrait, elegant makeup, soft lighting, beautiful smile, high quality",
@@ -284,33 +513,175 @@ const PHOTO_PROMPTS = {
     lingerie: "wearing lace lingerie, on bed, sensual pose, intimate lighting"
 };
 
-function init() {
-    const grid = document.getElementById('girlsGrid');
-    grid.innerHTML = Object.entries(GIRLS).map(([id, g]) => `
-        <div class="girl-card" onclick="showProfile('${id}')">
-            ${!readConversations[id] ? '<div class="badge-new">NEW</div>' : ''}
-            <div class="girl-card-img">${INITIALS[id]}</div>
-            <div class="girl-card-info">
-                <div class="girl-card-name">${g.name}, ${g.age}</div>
-                <div class="girl-card-tagline">${g.tagline}</div>
-            </div>
-        </div>
-    `).join('');
-    
+function checkLogin() {
+    if (user) {
+        document.getElementById('headerUserName').textContent = user.name;
+        showPage('main');
+        initSwipe();
+    }
+}
+
+function login() {
+    const name = document.getElementById('userName').value.trim();
+    const age = parseInt(document.getElementById('userAge').value);
+    if (!name || !age || age < 18) {
+        alert('Entre ton prénom et ton âge (18+)');
+        return;
+    }
+    user = { name, age };
+    localStorage.setItem('dreamUser', JSON.stringify(user));
+    document.getElementById('headerUserName').textContent = name;
+    showPage('main');
+    initSwipe();
+}
+
+function initSwipe() {
+    swipeQueue = Object.keys(GIRLS).filter(id => !matches.includes(id) && !passed.includes(id));
+    swipeQueue = swipeQueue.sort(() => Math.random() - 0.5);
     Object.keys(GIRLS).forEach(id => { 
-        chatHistory[id] = []; 
+        if (!chatHistory[id]) chatHistory[id] = []; 
         if (affectionLevels[id] === undefined) affectionLevels[id] = 20;
     });
     localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+    showNextCard();
+    renderMatches();
+}
+
+function showNextCard() {
+    if (swipeQueue.length === 0) {
+        document.getElementById('swipeCard').style.display = 'none';
+        document.getElementById('swipeButtons').style.display = 'none';
+        document.getElementById('noMoreCards').style.display = 'block';
+        return;
+    }
+    currentSwipeGirl = swipeQueue[0];
+    const g = GIRLS[currentSwipeGirl];
+    document.getElementById('swipeCardImg').textContent = INITIALS[currentSwipeGirl];
+    document.getElementById('swipeCardName').textContent = g.name + ', ' + g.age;
+    document.getElementById('swipeCardLocation').textContent = g.location;
+    document.getElementById('swipeCardBio').textContent = g.bio;
+    document.getElementById('swipeCard').style.display = 'block';
+    document.getElementById('swipeButtons').style.display = 'flex';
+    document.getElementById('noMoreCards').style.display = 'none';
+}
+
+function swipeLeft() {
+    if (!currentSwipeGirl) return;
+    passed.push(currentSwipeGirl);
+    localStorage.setItem('dreamPassed', JSON.stringify(passed));
+    swipeQueue.shift();
+    showNextCard();
+}
+
+function swipeRight() {
+    if (!currentSwipeGirl) return;
+    const g = GIRLS[currentSwipeGirl];
+    const matchChance = g.match_chance || 0.7;
+    
+    if (Math.random() < matchChance) {
+        matches.push(currentSwipeGirl);
+        localStorage.setItem('dreamMatches', JSON.stringify(matches));
+        showMatchAnimation(currentSwipeGirl);
+    } else {
+        showNoMatch();
+    }
+    swipeQueue.shift();
+}
+
+function showMatchAnimation(girlId) {
+    const g = GIRLS[girlId];
+    document.getElementById('matchPhotoUser').textContent = user.name.charAt(0).toUpperCase();
+    document.getElementById('matchPhotoGirl').textContent = INITIALS[girlId];
+    document.getElementById('matchNames').textContent = user.name + ' & ' + g.name;
+    
+    const heartsDiv = document.getElementById('hearts');
+    heartsDiv.innerHTML = '';
+    for (let i = 0; i < 20; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.textContent = '♥';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDelay = Math.random() * 2 + 's';
+        heart.style.color = '#e91e63';
+        heartsDiv.appendChild(heart);
+    }
+    
+    document.getElementById('matchOverlay').style.display = 'flex';
+}
+
+function showNoMatch() {
+    const msg = document.getElementById('noMatchMsg');
+    msg.style.display = 'block';
+    setTimeout(() => {
+        msg.style.display = 'none';
+        showNextCard();
+    }, 1500);
+}
+
+function closeMatch() {
+    document.getElementById('matchOverlay').style.display = 'none';
+    renderMatches();
+    showNextCard();
+}
+
+function goToMatchChat() {
+    document.getElementById('matchOverlay').style.display = 'none';
+    const lastMatch = matches[matches.length - 1];
+    showProfile(lastMatch);
+    renderMatches();
+}
+
+function renderMatches() {
+    const grid = document.getElementById('matchesGrid');
+    if (matches.length === 0) {
+        grid.style.display = 'none';
+        document.getElementById('noMatches').style.display = 'block';
+        return;
+    }
+    grid.style.display = 'grid';
+    document.getElementById('noMatches').style.display = 'none';
+    grid.innerHTML = matches.map(id => {
+        const g = GIRLS[id];
+        return `
+            <div class="girl-card" onclick="showProfile('${id}')">
+                <div class="girl-card-img">${INITIALS[id]}</div>
+                <div class="girl-card-info">
+                    <div class="girl-card-name">${g.name}, ${g.age}</div>
+                    <div class="girl-card-tagline">${g.tagline}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function switchTab(tab) {
+    document.getElementById('tabSwipe').classList.toggle('active', tab === 'swipe');
+    document.getElementById('tabMatches').classList.toggle('active', tab === 'matches');
+    document.getElementById('swipeView').style.display = tab === 'swipe' ? 'block' : 'none';
+    document.getElementById('matchesView').style.display = tab === 'matches' ? 'block' : 'none';
+    if (tab === 'matches') renderMatches();
+}
+
+function init() {
+    checkLogin();
 }
 
 function showPage(page) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1)).classList.add('active');
-    if (page === 'gallery') init();
+    const pageId = 'page' + page.charAt(0).toUpperCase() + page.slice(1);
+    const pageEl = document.getElementById(pageId);
+    if (pageEl) pageEl.classList.add('active');
+    if (page === 'main') {
+        renderMatches();
+        switchTab('swipe');
+    }
 }
 
 function showProfile(id) {
+    if (!matches.includes(id)) {
+        showToast("Tu dois d'abord matcher avec elle!");
+        return;
+    }
     currentGirl = id;
     const g = GIRLS[id];
     document.getElementById('profileName').textContent = g.name + ', ' + g.age;
@@ -318,13 +689,17 @@ function showProfile(id) {
     document.getElementById('profileBio').textContent = g.bio;
     document.getElementById('profileAffection').textContent = affectionLevels[id] + '%';
     
-    readConversations[id] = true;
-    localStorage.setItem('readConversations', JSON.stringify(readConversations));
-    
-    // Load or generate profile photos
+    document.getElementById('profileMainPhoto').textContent = INITIALS[id];
     loadProfilePhotos(id);
     
     showPage('profile');
+}
+
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 2000);
 }
 
 async function loadProfilePhotos(girlId) {
@@ -445,9 +820,7 @@ function nextOverlayImg() {
 }
 
 function showVideoToast() {
-    const toast = document.getElementById('toast');
-    toast.style.display = 'block';
-    setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    showToast('Bientôt disponible');
 }
 
 function startChat() {
