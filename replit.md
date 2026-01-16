@@ -94,9 +94,18 @@ Dream AI is a Flask-based adult dating application featuring 27 diverse AI-power
 - `main.py`: Complete Flask app with embedded HTML/CSS/JavaScript
 
 ### External APIs
-- **DeepInfra**: meta-llama/Meta-Llama-3.1-8B-Instruct for chat
+- **DeepInfra**: Sao10K/L3.1-70B-Euryale-v2.3 for uncensored chat
 - **Pollinations**: Fallback chat API
 - **Promptchan**: Photo generation via PROMPTCHAN_KEY secret
+
+### Smart Photo Detection
+Keywords in user messages trigger auto-photo generation:
+- culotte/panties → showing panties
+- seins/poitrine → topless
+- nue/naked → fully nude
+- fesses/cul → showing butt
+- douche/bain → wet/shower scenes
+- And many more French/English keywords
 
 ### Data Storage (localStorage)
 - `dreamUser`: User profile (name, age)
