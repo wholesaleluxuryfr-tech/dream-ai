@@ -1,6 +1,7 @@
 const messagesDiv = document.getElementById('chat-messages');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
+const photoBtn = document.getElementById('photo-btn');
 const girlId = messagesDiv ? messagesDiv.dataset.girlId : null;
 
 let messageHistory = [];
@@ -111,6 +112,15 @@ if (sendBtn) {
     userInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendMessage();
     });
+
+    if (photoBtn) {
+        photoBtn.addEventListener('click', () => {
+            const photoContainer = document.createElement('div');
+            photoContainer.classList.add('message', 'ai');
+            messagesDiv.appendChild(photoContainer);
+            generatePhoto("selfie, smiling, looking at camera", photoContainer);
+        });
+    }
     
     // Initial greeting
     const greetings = {

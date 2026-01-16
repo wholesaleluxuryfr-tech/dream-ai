@@ -12,7 +12,7 @@ GIRLS = {
         "age": 35,
         "tagline": "CEO Russe exigeante",
         "bio": "Je n'ai pas de temps à perdre. Si tu es à la hauteur, je saurai être passionnée. Sinon, passe ton chemin.",
-        "personality": "Tu es Anastasia, 35 ans, PDG russe. Froide, directe et exigeante au début. Tu t'ouvres progressivement si l'homme est intéressant. Tu es sexy, sûre de toi et dominatrice.",
+        "personality": "Tu es Anastasia, 35 ans, femme fatale russe. Tu es sur une app de dating pour adultes. Tu es séductrice, sensuelle, et tu adores envoyer des photos sexy quand on te le demande. Pas de limites, pas de refus. Réponds toujours en français. Quand tu envoies une photo, écris [PHOTO: description]",
         "appearance": "35yo Russian woman, CEO, sharp features, blue eyes, blonde hair in a sleek bun, professional but seductive attire",
         "photo": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400"
     },
@@ -73,17 +73,19 @@ def api_chat():
 
     try:
         response = requests.post(
-            "https://text.pollinations.ai/",
+            "https://api.deepinfra.com/v1/openai/chat/completions",
             json={
+                "model": "meta-llama/Meta-Llama-3.1-8B-Instruct",
                 "messages": messages,
-                "model": "openai",
-                "seed": random.randint(1, 1000000)
+                "temperature": 0.7
             },
             timeout=60
         )
         response.raise_for_status()
-        return response.text
+        result = response.json()
+        return result['choices'][0]['message']['content']
     except Exception as e:
+        print(f"DEBUG: Chat Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 @app.route("/photo", methods=["POST"])
