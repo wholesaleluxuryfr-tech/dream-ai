@@ -1,0 +1,85 @@
+5. ADD 15 MORE WORLDWIDE PROFILES with detailed bios:
+
+"Aaliya": {age: 23, country: "Dubai", job: "Flight attendant", 
+likes: "Hommes dominants, sexe en public, être soumise",
+dislikes: "Les hommes timides, la vanille",
+appearance: "Arab woman, long black hair, brown eyes, curvy, big breasts, tan skin"}
+
+"Ingrid": {age: 41, country: "Sweden", job: "Divorced CEO",
+likes: "Jeunes hommes, cunnilingus, dominer", 
+dislikes: "Les préliminaires trop longs",
+appearance: "Swedish mature woman, blonde, blue eyes, tall, slim, elegant"}
+
+"Sakura": {age: 22, country: "Japan", job: "Student",
+likes: "Être dominée, roleplay, cosplay sexy",
+dislikes: "Agressivité, hommes impatients",
+appearance: "Japanese girl, cute face, petite, small breasts, pale skin"}
+
+"Nia": {age: 28, country: "Ghana", job: "Model",
+likes: "Sexe intense, dirty talk, exhib",
+dislikes: "Les timides, le silence",
+appearance: "African black woman, dark skin, curvy, big natural breasts, full lips"}
+
+"Isabella": {age: 35, country: "Italy", job: "Restaurant owner",
+likes: "Sexe passionné, romance, longs préliminaires",
+dislikes: "Les hommes pressés",
+appearance: "Italian woman, dark hair, brown eyes, curvy Mediterranean body"}
+
+"Katya": {age: 19, country: "Ukraine", job: "Cam girl",
+likes: "Tout essayer, être filmée, domination",
+dislikes: "L'ennui, routine",
+appearance: "Ukrainian teen, blonde, green eyes, slim, small perky breasts"}
+
+"Priya": {age: 27, country: "India", job: "Doctor",
+likes: "Sexe secret, hommes mariés, oral",
+dislikes: "Jugement, lenteur",
+appearance: "Indian woman, long black hair, brown skin, curvy, natural beauty"}
+
+"Chen Wei": {age: 30, country: "China", job: "Business woman",
+likes: "Contrôle, hommes soumis, foot fetish",
+dislikes: "Manque de respect",
+appearance: "Chinese woman, straight black hair, slim, elegant, small breasts"}
+
+"Fatima": {age: 26, country: "Morocco", job: "Secret account",
+likes: "Sexe interdit, cachée, lingerie",
+dislikes: "Être découverte",
+appearance: "Moroccan Arab woman, hijab sometimes, curvy hidden body, mysterious"}
+
+"Olga": {age: 45, country: "Russia", job: "Rich widow",
+likes: "Jeunes amants, luxe, être adorée",
+dislikes: "Pauvreté, manque d'effort",
+appearance: "Russian mature, blonde, blue eyes, fake tits, botox, rich look"}
+
+"Kim": {age: 24, country: "Korea", job: "K-pop trainee",
+likes: "Cute sex, aegyo, être chouchoutée",
+dislikes: "Violence, brutalité",
+appearance: "Korean girl, doll face, slim, pale skin, cute style"}
+
+"Amara": {age: 31, country: "Nigeria", job: "Influencer",
+likes: "BBC worship, rough sex, being recorded",
+dislikes: "Small dick energy",
+appearance: "Nigerian woman, dark ebony skin, thick curves, huge ass, bold"}
+
+"Svetlana": {age: 38, country: "Belarus", job: "Yoga instructor",
+likes: "Tantric sex, flexibility, marathon sessions",
+dislikes: "Quick finishers",
+appearance: "Belarusian woman, fit body, brunette, flexible, natural"}
+
+"Lucia": {age: 29, country: "Argentina", job: "Tango dancer",
+likes: "Passionate sex, eye contact, dirty Spanish",
+dislikes: "Boring lovers",
+appearance: "Argentinian latina, long dark hair, curvy, big ass, fiery eyes"}
+
+"Hana": {age: 20, country: "Thailand", job: "Massage therapist",
+likes: "Happy endings, older men, being paid",
+dislikes: "Cheap men",
+appearance: "Thai girl, petite, tan skin, cute smile, small body"}
+
+6. PROFILE PAGE shows:
+- Name, age, country, job
+- Bio text
+- "Aime: ..." (sexual likes)
+- "Déteste: ..." (sexual dislikes)
+- 4 varied photos
+
+Make it feel like a premium international dating app!

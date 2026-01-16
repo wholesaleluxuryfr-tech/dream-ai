@@ -586,13 +586,20 @@ HTML = '''<!DOCTYPE html>
     <title>Dream AI</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #0a0a0c; color: #ffffff; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #0a0a0c; color: #ffffff; min-height: 100vh; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; }
         
-        .page { display: none; min-height: 100vh; overflow-x: hidden; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes msgAppear { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .msg { animation: msgAppear 0.3s ease; }
+        .page { display: none; min-height: 100vh; overflow-x: hidden; animation: fadeIn 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: opacity, transform; }
+        @keyframes fadeIn { from { opacity: 0; transform: translate3d(0, 8px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translate3d(15px, 0, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translate3d(0, 20px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+        @keyframes msgAppear { from { opacity: 0; transform: translate3d(0, 8px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 70% { transform: scale(0.9); } 100% { transform: scale(1); opacity: 1; } }
+        .msg { animation: msgAppear 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: transform, opacity; }
+        
+        .touch-feedback { transition: transform 0.1s ease, opacity 0.1s ease; }
+        .touch-feedback:active { transform: scale(0.97); opacity: 0.9; }
         .page.active { display: flex; flex-direction: column; }
         
         /* LOGIN PAGE */
@@ -603,7 +610,8 @@ HTML = '''<!DOCTYPE html>
         .login-form { display: flex; flex-direction: column; gap: 1rem; }
         .login-input { padding: 1rem 1.5rem; background: #12121a; border: 1px solid #1a1a1f; border-radius: 15px; color: white; font-size: 1rem; outline: none; }
         .login-input:focus { border-color: #e91e63; }
-        .login-btn { padding: 1.1rem; background: #e91e63; border: none; border-radius: 15px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 1rem; }
+        .login-btn { padding: 1.1rem; background: #e91e63; border: none; border-radius: 15px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 1rem; transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.15s ease; }
+        .login-btn:active { transform: scale(0.97); box-shadow: 0 2px 10px rgba(233, 30, 99, 0.3); }
         
         /* HEADER */
         .header { padding: 1rem; text-align: center; background: rgba(10, 10, 12, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(233, 30, 99, 0.1); }
@@ -626,8 +634,8 @@ HTML = '''<!DOCTYPE html>
         .swipe-card-location { color: #888; font-size: 0.9rem; margin-top: 0.3rem; }
         .swipe-card-bio { color: #aaa; font-size: 0.85rem; margin-top: 0.5rem; line-height: 1.4; }
         .swipe-buttons { display: flex; justify-content: center; gap: 2rem; padding: 1.5rem; }
-        .swipe-btn { width: 70px; height: 70px; border-radius: 50%; border: none; font-size: 2rem; cursor: pointer; transition: transform 0.2s; }
-        .swipe-btn:active { transform: scale(0.9); }
+        .swipe-btn { width: 70px; height: 70px; border-radius: 50%; border: none; font-size: 2rem; cursor: pointer; transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.15s ease; will-change: transform; }
+        .swipe-btn:active { transform: scale(0.85); }
         .swipe-btn-pass { background: #333; color: #ff4444; }
         .swipe-btn-like { background: #e91e63; color: white; box-shadow: 0 5px 20px rgba(233,30,99,0.4); }
         .no-more-cards { text-align: center; color: #666; padding: 2rem; }
@@ -654,8 +662,9 @@ HTML = '''<!DOCTYPE html>
         .gallery { padding: 1rem; flex: 1; }
         .gallery h2 { margin-bottom: 1.5rem; font-size: 1.2rem; font-weight: 700; color: #ffffff; padding-left: 0.5rem; border-left: 3px solid #e91e63; }
         .girls-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
-        .girl-card { background: #12121a; border-radius: 20px; overflow: hidden; cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease; position: relative; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .girl-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); }
+        .girl-card { background: #12121a; border-radius: 20px; overflow: hidden; cursor: pointer; transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.2s ease; position: relative; border: 1px solid rgba(255, 255, 255, 0.05); will-change: transform; }
+        .girl-card:hover { transform: translate3d(0, -5px, 0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); }
+        .girl-card:active { transform: scale(0.97); }
         .girl-card-img { height: 240px; background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgba(10,10,12,0.9) 100%); position: relative; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 700; color: rgba(233, 30, 99, 0.3); }
         .girl-card-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; background: linear-gradient(to top, #12121a, transparent); }
         .girl-card-name { font-size: 1rem; font-weight: 700; color: #ffffff; }
@@ -677,10 +686,10 @@ HTML = '''<!DOCTYPE html>
         .stat-value { font-size: 1.1rem; font-weight: 700; color: #e91e63; }
         .profile-bio { color: #888888; line-height: 1.7; font-size: 0.95rem; margin-bottom: 2rem; }
         .profile-actions { display: flex; flex-direction: column; gap: 1rem; }
-        .btn-premium { width: 100%; padding: 1.1rem; border: none; border-radius: 15px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.2s, opacity 0.2s; text-align: center; text-decoration: none; }
+        .btn-premium { width: 100%; padding: 1.1rem; border: none; border-radius: 15px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.15s ease, box-shadow 0.15s ease; text-align: center; text-decoration: none; will-change: transform; }
         .btn-chat { background: #e91e63; color: #ffffff; box-shadow: 0 5px 15px rgba(233, 30, 99, 0.3); }
         .btn-photo { background: #12121a; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .btn-premium:active { transform: scale(0.98); }
+        .btn-premium:active { transform: scale(0.96); }
         
         /* CHAT */
         .chat-page { display: none; height: 100vh; overflow: hidden; }
@@ -712,8 +721,8 @@ HTML = '''<!DOCTYPE html>
         .input-row { display: flex; gap: 0.75rem; align-items: center; }
         .chat-input { flex: 1; padding: 1rem 1.5rem; background: #12121a; border: 1px solid #1a1a1f; border-radius: 30px; color: #ffffff; font-size: 1rem; outline: none; transition: border-color 0.2s; }
         .chat-input:focus { border-color: #e91e63; }
-        .send-btn { width: 50px; height: 50px; border-radius: 50%; background: #e91e63; border: none; color: #ffffff; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3); transition: transform 0.2s; }
-        .send-btn:active { transform: scale(0.9); }
+        .send-btn { width: 50px; height: 50px; border-radius: 50%; background: #e91e63; border: none; color: #ffffff; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3); transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.15s ease; will-change: transform; }
+        .send-btn:active { transform: scale(0.85); box-shadow: 0 2px 5px rgba(233, 30, 99, 0.2); }
         .send-btn:disabled { opacity: 0.5; cursor: default; }
         
         .empty-chat { text-align: center; color: #444444; padding: 4rem 1rem; font-size: 0.9rem; letter-spacing: 1px; }
@@ -762,10 +771,11 @@ HTML = '''<!DOCTYPE html>
         
         /* BOTTOM NAVIGATION */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0a0a0c; border-top: 1px solid #1a1a1f; display: flex; justify-content: space-around; padding: 0.5rem 0; padding-bottom: calc(0.5rem + env(safe-area-inset-bottom)); z-index: 500; backdrop-filter: blur(20px); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; padding: 0.5rem 1rem; cursor: pointer; transition: all 0.2s ease; border: none; background: none; }
-        .nav-item:active { transform: scale(0.9); }
-        .nav-icon { font-size: 1.4rem; margin-bottom: 0.2rem; transition: color 0.2s; }
-        .nav-label { font-size: 0.65rem; color: #666; transition: color 0.2s; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; padding: 0.5rem 1rem; cursor: pointer; transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.15s ease; border: none; background: none; will-change: transform; }
+        .nav-item:active { transform: scale(0.85); }
+        .nav-icon { font-size: 1.4rem; margin-bottom: 0.2rem; transition: color 0.15s ease, transform 0.15s ease; }
+        .nav-item.active .nav-icon { transform: scale(1.1); }
+        .nav-label { font-size: 0.65rem; color: #666; transition: color 0.15s ease; }
         .nav-item.active .nav-icon { color: #e91e63; }
         .nav-item.active .nav-label { color: #e91e63; }
         .nav-item:not(.active) .nav-icon { color: #666; }
@@ -774,8 +784,8 @@ HTML = '''<!DOCTYPE html>
         
         /* MESSAGES PAGE */
         .messages-list { padding: 1rem; }
-        .message-item { display: flex; align-items: center; padding: 1rem; background: #12121a; border-radius: 15px; margin-bottom: 0.75rem; cursor: pointer; transition: transform 0.2s, background 0.2s; border: 1px solid rgba(255,255,255,0.03); }
-        .message-item:active { transform: scale(0.98); background: #1a1a2e; }
+        .message-item { display: flex; align-items: center; padding: 1rem; background: #12121a; border-radius: 15px; margin-bottom: 0.75rem; cursor: pointer; transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), background 0.15s ease; border: 1px solid rgba(255,255,255,0.03); will-change: transform; }
+        .message-item:active { transform: scale(0.97); background: #1a1a2e; }
         .message-avatar { width: 55px; height: 55px; border-radius: 50%; background: #1a1a2e; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 700; color: #e91e63; margin-right: 1rem; border: 2px solid rgba(233,30,99,0.3); flex-shrink: 0; }
         .message-info { flex: 1; min-width: 0; }
         .message-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.2rem; }
@@ -820,7 +830,16 @@ HTML = '''<!DOCTYPE html>
         
         /* Loading Animation */
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        .loading-shimmer { background: linear-gradient(90deg, #12121a 25%, #1a1a2e 50%, #12121a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        .loading-shimmer { background: linear-gradient(90deg, #12121a 25%, #1a1a2e 50%, #12121a 75%); background-size: 200% 100%; animation: shimmer 1.2s ease-in-out infinite; }
+        
+        @keyframes typing { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+        .typing-indicator { display: flex; gap: 4px; padding: 0.5rem 1rem; }
+        .typing-dot { width: 8px; height: 8px; background: #e91e63; border-radius: 50%; animation: typing 1.2s ease-in-out infinite; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        .swipe-card { animation: scaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .match-overlay-content { animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
     </style>
 </head>
 <body>
