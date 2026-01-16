@@ -5,6 +5,72 @@ from flask import Flask, request, jsonify, Response
 
 app = Flask(__name__)
 
+MANIFEST = {
+    "name": "Dream AI",
+    "short_name": "Dream AI",
+    "description": "Trouve ta partenaire virtuelle",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0a0a0c",
+    "theme_color": "#e91e63",
+    "orientation": "portrait",
+    "icons": [
+        {"src": "/icon-192.png", "sizes": "192x192", "type": "image/png"},
+        {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png"}
+    ]
+}
+
+SERVICE_WORKER = '''
+const CACHE_NAME = 'dream-ai-v1';
+const urlsToCache = ['/'];
+
+self.addEventListener('install', event => {
+    event.waitUntil(
+        caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+    );
+    self.skipWaiting();
+});
+
+self.addEventListener('fetch', event => {
+    event.respondWith(
+        caches.match(event.request).then(response => {
+            return response || fetch(event.request);
+        })
+    );
+});
+
+self.addEventListener('activate', event => {
+    event.waitUntil(clients.claim());
+});
+'''
+
+ICON_192 = b'\\x89PNG\\r\\n\\x1a\\n' + b'\\x00' * 100
+ICON_512 = b'\\x89PNG\\r\\n\\x1a\\n' + b'\\x00' * 100
+
+@app.route('/manifest.json')
+def manifest():
+    return jsonify(MANIFEST)
+
+@app.route('/sw.js')
+def service_worker():
+    return Response(SERVICE_WORKER, mimetype='application/javascript')
+
+@app.route('/icon-192.png')
+def icon_192():
+    from io import BytesIO
+    img = BytesIO()
+    img.write(b'\\x89PNG\\r\\n\\x1a\\n\\x00\\x00\\x00\\rIHDR\\x00\\x00\\x00\\xc0\\x00\\x00\\x00\\xc0\\x08\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00IEND\\xaeB`\\x82')
+    img.seek(0)
+    return Response(img.getvalue(), mimetype='image/png')
+
+@app.route('/icon-512.png')
+def icon_512():
+    from io import BytesIO
+    img = BytesIO()
+    img.write(b'\\x89PNG\\r\\n\\x1a\\n\\x00\\x00\\x00\\rIHDR\\x00\\x00\\x02\\x00\\x00\\x00\\x02\\x00\\x08\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00IEND\\xaeB`\\x82')
+    img.seek(0)
+    return Response(img.getvalue(), mimetype='image/png')
+
 API_KEY = os.environ.get('PROMPTCHAN_KEY', '')
 
 SYSTEM_PROMPT = """Tu es {name}, {age} ans. Tu es une VRAIE personne sur une app de rencontres, pas un robot.
@@ -582,7 +648,14 @@ HTML = '''<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#e91e63">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dream AI">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.png">
     <title>Dream AI</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -840,6 +913,107 @@ HTML = '''<!DOCTYPE html>
         
         .swipe-card { animation: scaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
         .match-overlay-content { animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        
+        /* PWA INSTALL BANNER */
+        .install-banner { position: fixed; bottom: 80px; left: 1rem; right: 1rem; background: linear-gradient(135deg, #e91e63, #9c27b0); padding: 1rem 1.5rem; border-radius: 15px; display: none; align-items: center; justify-content: space-between; z-index: 1000; box-shadow: 0 5px 20px rgba(233,30,99,0.4); animation: slideUp 0.3s ease; }
+        .install-banner-text { color: white; font-weight: 600; }
+        .install-banner-btn { background: white; color: #e91e63; border: none; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 700; cursor: pointer; }
+        .install-banner-close { background: none; border: none; color: rgba(255,255,255,0.7); font-size: 1.2rem; cursor: pointer; margin-left: 0.5rem; }
+        
+        /* FILTER BUTTONS */
+        .filter-section { padding: 0.5rem 1rem; background: #0a0a0c; border-bottom: 1px solid #1a1a1f; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+        .filter-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .filter-btn { padding: 0.4rem 0.8rem; background: #12121a; border: 1px solid #1a1a1f; border-radius: 20px; color: #888; font-size: 0.75rem; cursor: pointer; flex-shrink: 0; transition: all 0.15s ease; }
+        .filter-btn.active { background: #e91e63; color: white; border-color: #e91e63; }
+        .filter-btn:active { transform: scale(0.95); }
+        
+        /* NOTIFICATION BADGE */
+        .nav-badge { position: absolute; top: 2px; right: 50%; transform: translateX(100%); background: #e91e63; color: white; font-size: 0.6rem; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 10px; font-weight: 700; display: none; align-items: center; justify-content: center; }
+        .nav-badge.show { display: flex; }
+        
+        /* ICEBREAKERS */
+        .icebreakers { display: flex; gap: 0.5rem; padding: 0.5rem 1rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .icebreaker-btn { flex-shrink: 0; padding: 0.5rem 1rem; background: #12121a; border: 1px solid rgba(233,30,99,0.3); border-radius: 20px; color: #e91e63; font-size: 0.8rem; cursor: pointer; transition: all 0.15s ease; }
+        .icebreaker-btn:active { transform: scale(0.95); background: #e91e63; color: white; }
+        
+        /* CHAT MENU */
+        .chat-menu-btn { margin-left: auto; background: none; border: none; color: #888; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; }
+        .chat-menu { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 2500; display: none; align-items: flex-end; justify-content: center; }
+        .chat-menu.show { display: flex; }
+        .chat-menu-content { background: #12121a; width: 100%; max-width: 400px; border-radius: 20px 20px 0 0; padding: 1rem; animation: slideUp 0.2s ease; }
+        .chat-menu-option { padding: 1rem; text-align: center; font-size: 1rem; cursor: pointer; border-radius: 10px; margin-bottom: 0.5rem; transition: background 0.15s ease; }
+        .chat-menu-option:active { background: #1a1a2e; }
+        .chat-menu-option.danger { color: #ff4444; }
+        .chat-menu-cancel { padding: 1rem; text-align: center; background: #1a1a2e; border-radius: 10px; color: #888; cursor: pointer; margin-top: 0.5rem; }
+        
+        /* CONFIRMATION POPUP */
+        .confirm-popup { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 2rem; }
+        .confirm-popup.show { display: flex; }
+        .confirm-content { background: #12121a; border-radius: 20px; padding: 2rem; text-align: center; max-width: 300px; animation: scaleIn 0.2s ease; }
+        .confirm-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .confirm-text { color: #888; font-size: 0.9rem; margin-bottom: 1.5rem; }
+        .confirm-buttons { display: flex; gap: 1rem; }
+        .confirm-btn { flex: 1; padding: 0.8rem; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
+        .confirm-btn-cancel { background: #1a1a2e; color: #888; }
+        .confirm-btn-confirm { background: #ff4444; color: white; }
+        
+        /* PREMIUM POPUP */
+        .premium-popup { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 2rem; }
+        .premium-popup.show { display: flex; }
+        .premium-content { background: linear-gradient(135deg, #1a1a2e, #12121a); border: 2px solid #e91e63; border-radius: 25px; padding: 2rem; text-align: center; max-width: 320px; animation: bounceIn 0.4s ease; }
+        .premium-crown { font-size: 4rem; margin-bottom: 1rem; }
+        .premium-title { font-size: 1.5rem; font-weight: 800; color: #e91e63; margin-bottom: 0.5rem; }
+        .premium-features { text-align: left; margin: 1.5rem 0; }
+        .premium-feature { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; color: #ccc; font-size: 0.9rem; }
+        .premium-feature::before { content: '✓'; color: #e91e63; font-weight: 700; }
+        .premium-price { font-size: 2rem; font-weight: 800; color: white; margin: 1rem 0; }
+        .premium-price span { font-size: 1rem; color: #888; }
+        .premium-btn { width: 100%; padding: 1rem; background: #e91e63; border: none; border-radius: 15px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 0.5rem; }
+        .premium-close { margin-top: 1rem; background: none; border: none; color: #666; cursor: pointer; }
+        
+        /* SUPER LIKE BUTTON */
+        .swipe-btn-super { background: #00bcd4; color: white; width: 55px; height: 55px; font-size: 1.5rem; }
+        .swipe-btn-boost { background: #9c27b0; color: white; width: 55px; height: 55px; font-size: 1.3rem; }
+        
+        /* EDIT PROFILE */
+        .edit-profile-section { margin-bottom: 1.5rem; }
+        .edit-label { font-size: 0.8rem; color: #888; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .edit-input { width: 100%; padding: 1rem; background: #12121a; border: 1px solid #1a1a1f; border-radius: 12px; color: white; font-size: 1rem; outline: none; margin-bottom: 1rem; }
+        .edit-input:focus { border-color: #e91e63; }
+        .edit-textarea { min-height: 100px; resize: vertical; }
+        .age-slider-container { padding: 1rem 0; }
+        .age-slider { width: 100%; -webkit-appearance: none; height: 4px; background: #1a1a1f; border-radius: 2px; outline: none; }
+        .age-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: #e91e63; border-radius: 50%; cursor: pointer; }
+        .age-range-display { display: flex; justify-content: space-between; color: #888; font-size: 0.8rem; margin-top: 0.5rem; }
+        
+        /* THEME TOGGLE */
+        .theme-toggle { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #12121a; border-radius: 12px; margin-bottom: 0.5rem; }
+        .toggle-switch { width: 50px; height: 26px; background: #1a1a1f; border-radius: 13px; position: relative; cursor: pointer; transition: background 0.2s; }
+        .toggle-switch.active { background: #e91e63; }
+        .toggle-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: transform 0.2s; }
+        .toggle-switch.active::after { transform: translateX(24px); }
+        
+        /* LIGHT THEME */
+        body.light-theme { background: #f5f5f5; color: #1a1a1a; }
+        body.light-theme .page { background: #f5f5f5; }
+        body.light-theme .header { background: rgba(255,255,255,0.9); border-color: #e0e0e0; }
+        body.light-theme .logo { color: #e91e63; }
+        body.light-theme .swipe-card { background: white; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        body.light-theme .swipe-card-img { background: #f0f0f5; }
+        body.light-theme .girl-card { background: white; border-color: #e0e0e0; }
+        body.light-theme .bottom-nav { background: white; border-color: #e0e0e0; }
+        body.light-theme .nav-item:not(.active) .nav-icon { color: #666; }
+        body.light-theme .message-item { background: white; border-color: #e0e0e0; }
+        body.light-theme .settings-page { background: #f5f5f5; }
+        body.light-theme .settings-stats { background: white; }
+        body.light-theme .settings-item { background: white; }
+        body.light-theme .chat-input { background: white; border-color: #e0e0e0; color: #1a1a1a; }
+        body.light-theme .msg-received { background: #e0e0e0; color: #1a1a1a; }
+        body.light-theme .chat-header { background: rgba(255,255,255,0.9); border-color: #e0e0e0; }
+        body.light-theme .filter-btn { background: white; border-color: #e0e0e0; color: #666; }
+        body.light-theme .icebreaker-btn { background: white; }
+        body.light-theme .edit-input { background: white; border-color: #e0e0e0; color: #1a1a1a; }
+        body.light-theme .login-input { background: white; border-color: #e0e0e0; color: #1a1a1a; }
     </style>
 </head>
 <body>
@@ -866,6 +1040,23 @@ HTML = '''<!DOCTYPE html>
         </div>
     </div>
     
+    <div class="filter-section">
+        <div class="filter-row">
+            <button class="filter-btn active" onclick="setAgeFilter('all')" id="filterAgeAll">Tous</button>
+            <button class="filter-btn" onclick="setAgeFilter('18-25')" id="filterAge1825">18-25</button>
+            <button class="filter-btn" onclick="setAgeFilter('25-35')" id="filterAge2535">25-35</button>
+            <button class="filter-btn" onclick="setAgeFilter('35-45')" id="filterAge3545">35-45</button>
+            <button class="filter-btn" onclick="setAgeFilter('45+')" id="filterAge45">45+</button>
+        </div>
+        <div class="filter-row">
+            <button class="filter-btn active" onclick="setRegionFilter('all')" id="filterRegionAll">Tous</button>
+            <button class="filter-btn" onclick="setRegionFilter('europe')" id="filterEurope">Europe</button>
+            <button class="filter-btn" onclick="setRegionFilter('asie')" id="filterAsie">Asie</button>
+            <button class="filter-btn" onclick="setRegionFilter('afrique')" id="filterAfrique">Afrique</button>
+            <button class="filter-btn" onclick="setRegionFilter('amerique')" id="filterAmerique">Amerique</button>
+        </div>
+    </div>
+    
     <div class="swipe-container">
         <div class="swipe-card" id="swipeCard">
             <div class="swipe-card-img" id="swipeCardImg"></div>
@@ -882,7 +1073,9 @@ HTML = '''<!DOCTYPE html>
     </div>
     <div class="swipe-buttons" id="swipeButtons">
         <button class="swipe-btn swipe-btn-pass" onclick="swipeLeft()">X</button>
+        <button class="swipe-btn swipe-btn-super" onclick="showPremiumPopup()">★</button>
         <button class="swipe-btn swipe-btn-like" onclick="swipeRight()">♥</button>
+        <button class="swipe-btn swipe-btn-boost" onclick="showPremiumPopup()">⚡</button>
     </div>
 </div>
 
@@ -951,18 +1144,35 @@ HTML = '''<!DOCTYPE html>
             </div>
         </div>
         <div class="settings-section">
+            <div class="settings-section-title">Apparence</div>
+            <div class="theme-toggle">
+                <div class="settings-item-left">
+                    <span class="settings-item-icon">🌙</span>
+                    <span class="settings-item-text">Mode Sombre</span>
+                </div>
+                <div class="toggle-switch active" id="themeToggle" onclick="toggleTheme()"></div>
+            </div>
+        </div>
+        <div class="settings-section">
             <div class="settings-section-title">Preferences</div>
+            <div class="settings-item" onclick="showPremiumPopup()">
+                <div class="settings-item-left">
+                    <span class="settings-item-icon">👑</span>
+                    <span class="settings-item-text">Dream AI Premium</span>
+                </div>
+                <span class="settings-item-arrow">→</span>
+            </div>
+            <div class="settings-item" onclick="showPremiumPopup()">
+                <div class="settings-item-left">
+                    <span class="settings-item-icon">👀</span>
+                    <span class="settings-item-text">Voir qui t'a like</span>
+                </div>
+                <span class="settings-item-arrow">🔒</span>
+            </div>
             <div class="settings-item" onclick="showVideoToast()">
                 <div class="settings-item-left">
                     <span class="settings-item-icon">🔔</span>
                     <span class="settings-item-text">Notifications</span>
-                </div>
-                <span class="settings-item-arrow">→</span>
-            </div>
-            <div class="settings-item" onclick="showVideoToast()">
-                <div class="settings-item-left">
-                    <span class="settings-item-icon">🎨</span>
-                    <span class="settings-item-text">Apparence</span>
                 </div>
                 <span class="settings-item-arrow">→</span>
             </div>
@@ -988,6 +1198,7 @@ HTML = '''<!DOCTYPE html>
     <button class="nav-item" onclick="navigateTo('messages')" id="navMessages" style="position:relative;">
         <span class="nav-icon">💬</span>
         <span class="nav-label">Messages</span>
+        <span class="nav-badge" id="msgBadge">0</span>
     </button>
     <button class="nav-item" onclick="navigateTo('matches')" id="navMatches">
         <span class="nav-icon">💕</span>
@@ -1051,14 +1262,69 @@ HTML = '''<!DOCTYPE html>
             <div class="chat-name" id="chatName"></div>
             <div class="chat-status"><span class="status-dot"></span> Online</div>
         </div>
+        <button class="chat-menu-btn" onclick="openChatMenu()">⋮</button>
     </div>
     <div class="messages" id="messages"></div>
     <div class="input-area">
         <div id="typing-indicator" class="typing-indicator"></div>
+        <div class="icebreakers" id="icebreakers">
+            <button class="icebreaker-btn" onclick="sendIcebreaker('Hey ca va?')">Hey ca va?</button>
+            <button class="icebreaker-btn" onclick="sendIcebreaker('T es vraiment canon')">T es vraiment canon</button>
+            <button class="icebreaker-btn" onclick="sendIcebreaker('On discute?')">On discute?</button>
+        </div>
         <div class="input-row">
             <input type="text" class="chat-input" id="chatInput" placeholder="Écris un message...">
             <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
         </div>
+    </div>
+</div>
+
+<!-- CHAT MENU -->
+<div class="chat-menu" id="chatMenu" onclick="closeChatMenu()">
+    <div class="chat-menu-content" onclick="event.stopPropagation()">
+        <div class="chat-menu-option" onclick="showConfirmPopup('unmatch')">Unmatch</div>
+        <div class="chat-menu-option danger" onclick="showConfirmPopup('block')">Bloquer</div>
+        <div class="chat-menu-option danger" onclick="showConfirmPopup('report')">Signaler</div>
+        <div class="chat-menu-cancel" onclick="closeChatMenu()">Annuler</div>
+    </div>
+</div>
+
+<!-- CONFIRM POPUP -->
+<div class="confirm-popup" id="confirmPopup">
+    <div class="confirm-content">
+        <div class="confirm-title" id="confirmTitle">Confirmer</div>
+        <div class="confirm-text" id="confirmText">Es-tu sur?</div>
+        <div class="confirm-buttons">
+            <button class="confirm-btn confirm-btn-cancel" onclick="closeConfirmPopup()">Annuler</button>
+            <button class="confirm-btn confirm-btn-confirm" id="confirmBtn" onclick="confirmAction()">Confirmer</button>
+        </div>
+    </div>
+</div>
+
+<!-- PREMIUM POPUP -->
+<div class="premium-popup" id="premiumPopup">
+    <div class="premium-content">
+        <div class="premium-crown">👑</div>
+        <div class="premium-title">Dream AI Premium</div>
+        <div class="premium-features">
+            <div class="premium-feature">Super Likes illimites</div>
+            <div class="premium-feature">Voir qui t'a like</div>
+            <div class="premium-feature">Boost de visibilite</div>
+            <div class="premium-feature">Photos exclusives</div>
+            <div class="premium-feature">Messages prioritaires</div>
+        </div>
+        <div class="premium-price">9.99EUR <span>/mois</span></div>
+        <button class="premium-btn" onclick="closePremiumPopup()">Debloquer Premium</button>
+        <button class="premium-close" onclick="closePremiumPopup()">Plus tard</button>
+    </div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div class="install-banner" id="installBanner">
+    <span class="install-banner-text">Installer l'app</span>
+    <div>
+        <button class="install-banner-btn" onclick="installPWA()">Installer</button>
+        <button class="install-banner-close" onclick="hideInstallBanner()">×</button>
     </div>
 </div>
 
@@ -1108,6 +1374,13 @@ const GIRLS = ''' + json.dumps(GIRLS, ensure_ascii=False) + ''';
 const INITIALS = {};
 Object.keys(GIRLS).forEach(id => { INITIALS[id] = GIRLS[id].name.charAt(0).toUpperCase(); });
 
+const REGION_MAP = {
+    'europe': ['France', 'Germany', 'Sweden', 'Italy', 'Ukraine', 'Russia', 'Belarus', 'Belgium', 'UK', 'Spain'],
+    'asie': ['Japan', 'China', 'Korea', 'Thailand', 'India', 'Vietnam', 'Philippines', 'Indonesia'],
+    'afrique': ['Nigeria', 'Ghana', 'Senegal', 'Morocco', 'Egypt', 'South Africa', 'Kenya'],
+    'amerique': ['USA', 'Texas', 'California', 'LA', 'Vegas', 'Brazil', 'Mexico', 'Argentina', 'Colombia', 'Canada']
+};
+
 let currentGirl = null;
 let chatHistory = {};
 let affectionLevels = JSON.parse(localStorage.getItem('affectionLevels') || '{}');
@@ -1119,8 +1392,250 @@ let currentOverlayIndex = 0;
 let user = JSON.parse(localStorage.getItem('dreamUser') || 'null');
 let matches = JSON.parse(localStorage.getItem('dreamMatches') || '[]');
 let passed = JSON.parse(localStorage.getItem('dreamPassed') || '[]');
+let blocked = JSON.parse(localStorage.getItem('dreamBlocked') || '[]');
 let swipeQueue = [];
 let currentSwipeGirl = null;
+
+let currentAgeFilter = 'all';
+let currentRegionFilter = 'all';
+let unreadMessages = JSON.parse(localStorage.getItem('unreadMessages') || '{}');
+let pendingConfirmAction = null;
+let deferredPrompt = null;
+let darkMode = localStorage.getItem('darkMode') !== 'false';
+
+let audioContext = null;
+
+function initAudio() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+}
+
+document.addEventListener('click', initAudio, { once: true });
+document.addEventListener('touchstart', initAudio, { once: true });
+
+function playSound(type) {
+    if (!audioContext) return;
+    try {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        
+        if (type === 'match') {
+            osc.frequency.setValueAtTime(523.25, audioContext.currentTime);
+            osc.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+            osc.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+            osc.start(); osc.stop(audioContext.currentTime + 0.4);
+        } else if (type === 'message') {
+            osc.frequency.setValueAtTime(880, audioContext.currentTime);
+            osc.frequency.setValueAtTime(1046.5, audioContext.currentTime + 0.05);
+            gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+            osc.start(); osc.stop(audioContext.currentTime + 0.15);
+        } else if (type === 'send') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioContext.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.15, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            osc.start(); osc.stop(audioContext.currentTime + 0.1);
+        }
+    } catch(e) { console.log('Sound error:', e); }
+}
+
+function applyTheme() {
+    if (darkMode) {
+        document.body.classList.remove('light-theme');
+    } else {
+        document.body.classList.add('light-theme');
+    }
+    const toggle = document.getElementById('themeToggle');
+    if (toggle) toggle.classList.toggle('active', darkMode);
+}
+
+function toggleTheme() {
+    darkMode = !darkMode;
+    localStorage.setItem('darkMode', darkMode);
+    applyTheme();
+}
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW error:', err));
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (!localStorage.getItem('pwaInstallDismissed')) {
+        document.getElementById('installBanner').style.display = 'flex';
+    }
+});
+
+function installPWA() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(result => {
+            deferredPrompt = null;
+            hideInstallBanner();
+        });
+    }
+}
+
+function hideInstallBanner() {
+    document.getElementById('installBanner').style.display = 'none';
+    localStorage.setItem('pwaInstallDismissed', 'true');
+}
+
+function setAgeFilter(filter) {
+    currentAgeFilter = filter;
+    document.querySelectorAll('.filter-row:first-child .filter-btn').forEach(btn => btn.classList.remove('active'));
+    if (filter === 'all') document.getElementById('filterAgeAll').classList.add('active');
+    else if (filter === '18-25') document.getElementById('filterAge1825').classList.add('active');
+    else if (filter === '25-35') document.getElementById('filterAge2535').classList.add('active');
+    else if (filter === '35-45') document.getElementById('filterAge3545').classList.add('active');
+    else if (filter === '45+') document.getElementById('filterAge45').classList.add('active');
+    initSwipe();
+}
+
+function setRegionFilter(filter) {
+    currentRegionFilter = filter;
+    document.querySelectorAll('.filter-row:last-child .filter-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('filterRegion' + (filter === 'all' ? 'All' : filter.charAt(0).toUpperCase() + filter.slice(1))).classList.add('active');
+    initSwipe();
+}
+
+function matchesAgeFilter(girl) {
+    if (currentAgeFilter === 'all') return true;
+    const age = girl.age;
+    if (currentAgeFilter === '18-25') return age >= 18 && age <= 25;
+    if (currentAgeFilter === '25-35') return age > 25 && age <= 35;
+    if (currentAgeFilter === '35-45') return age > 35 && age <= 45;
+    if (currentAgeFilter === '45+') return age > 45;
+    return true;
+}
+
+function matchesRegionFilter(girl) {
+    if (currentRegionFilter === 'all') return true;
+    const loc = girl.location || '';
+    const regions = REGION_MAP[currentRegionFilter] || [];
+    return regions.some(r => loc.toLowerCase().includes(r.toLowerCase()));
+}
+
+function updateMessageBadge() {
+    let count = Object.values(unreadMessages).reduce((a, b) => a + b, 0);
+    const badge = document.getElementById('msgBadge');
+    if (count > 0) {
+        badge.textContent = count > 9 ? '9+' : count;
+        badge.classList.add('show');
+    } else {
+        badge.classList.remove('show');
+    }
+}
+
+function addUnreadMessage(girlId) {
+    unreadMessages[girlId] = (unreadMessages[girlId] || 0) + 1;
+    localStorage.setItem('unreadMessages', JSON.stringify(unreadMessages));
+    updateMessageBadge();
+}
+
+function clearUnreadMessages(girlId) {
+    delete unreadMessages[girlId];
+    localStorage.setItem('unreadMessages', JSON.stringify(unreadMessages));
+    updateMessageBadge();
+}
+
+function openChatMenu() {
+    document.getElementById('chatMenu').classList.add('show');
+}
+
+function closeChatMenu() {
+    document.getElementById('chatMenu').classList.remove('show');
+}
+
+function showConfirmPopup(action) {
+    closeChatMenu();
+    pendingConfirmAction = action;
+    const titles = { unmatch: 'Unmatch', block: 'Bloquer', report: 'Signaler' };
+    const texts = {
+        unmatch: 'Tu ne pourras plus lui parler. Continuer?',
+        block: 'Elle ne pourra plus te contacter. Continuer?',
+        report: 'Signaler ce profil pour comportement inapproprie?'
+    };
+    document.getElementById('confirmTitle').textContent = titles[action];
+    document.getElementById('confirmText').textContent = texts[action];
+    document.getElementById('confirmPopup').classList.add('show');
+}
+
+function closeConfirmPopup() {
+    document.getElementById('confirmPopup').classList.remove('show');
+    pendingConfirmAction = null;
+}
+
+function confirmAction() {
+    if (!pendingConfirmAction || !currentGirl) return;
+    
+    if (pendingConfirmAction === 'unmatch' || pendingConfirmAction === 'block') {
+        matches = matches.filter(id => id !== currentGirl);
+        localStorage.setItem('dreamMatches', JSON.stringify(matches));
+        delete chatHistory[currentGirl];
+        localStorage.removeItem('chat_' + currentGirl);
+        
+        if (pendingConfirmAction === 'block') {
+            blocked.push(currentGirl);
+            localStorage.setItem('dreamBlocked', JSON.stringify(blocked));
+        }
+        
+        showToast(pendingConfirmAction === 'block' ? 'Profil bloque' : 'Unmatch effectue');
+        closeConfirmPopup();
+        navigateTo('matches');
+    } else if (pendingConfirmAction === 'report') {
+        showToast('Merci pour ton signalement');
+        closeConfirmPopup();
+    }
+}
+
+function showPremiumPopup() {
+    document.getElementById('premiumPopup').classList.add('show');
+}
+
+function closePremiumPopup() {
+    document.getElementById('premiumPopup').classList.remove('show');
+}
+
+function sendIcebreaker(text) {
+    document.getElementById('chatInput').value = text;
+    sendMessage();
+    document.getElementById('icebreakers').style.display = 'none';
+}
+
+function girlMessagesFirst(girlId) {
+    if (Math.random() < 0.3) {
+        const g = GIRLS[girlId];
+        const greetings = [
+            "Hey! Tu me plais bien toi",
+            "Salut beau gosse",
+            "Coucou! J'ai vu qu'on a matche",
+            "Hey toi! Ca va?",
+            "Mmm t'es mignon, on discute?"
+        ];
+        const msg = greetings[Math.floor(Math.random() * greetings.length)];
+        
+        setTimeout(() => {
+            if (!chatHistory[girlId]) chatHistory[girlId] = [];
+            const time = new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+            chatHistory[girlId].push({ role: 'assistant', content: msg, time });
+            saveChatHistory(girlId);
+            addUnreadMessage(girlId);
+            playSound('message');
+        }, 3000 + Math.random() * 5000);
+    }
+}
 
 function loadChatHistory(girlId) {
     const saved = localStorage.getItem('chat_' + girlId);
@@ -1337,7 +1852,13 @@ function resetAllData() {
 }
 
 function initSwipe() {
-    swipeQueue = Object.keys(GIRLS).filter(id => !matches.includes(id) && !passed.includes(id));
+    swipeQueue = Object.keys(GIRLS).filter(id => {
+        if (matches.includes(id) || passed.includes(id) || blocked.includes(id)) return false;
+        const g = GIRLS[id];
+        if (!matchesAgeFilter(g)) return false;
+        if (!matchesRegionFilter(g)) return false;
+        return true;
+    });
     swipeQueue = swipeQueue.sort(() => Math.random() - 0.5);
     Object.keys(GIRLS).forEach(id => { 
         chatHistory[id] = loadChatHistory(id);
@@ -1346,6 +1867,8 @@ function initSwipe() {
     localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
     showNextCard();
     renderMatches();
+    updateMessageBadge();
+    applyTheme();
 }
 
 function showNextCard() {
@@ -1390,6 +1913,7 @@ function swipeRight() {
 }
 
 function showMatchAnimation(girlId) {
+    playSound('match');
     const g = GIRLS[girlId];
     document.getElementById('matchPhotoUser').textContent = user.name.charAt(0).toUpperCase();
     document.getElementById('matchPhotoGirl').textContent = INITIALS[girlId];
@@ -1408,6 +1932,7 @@ function showMatchAnimation(girlId) {
     }
     
     document.getElementById('matchOverlay').style.display = 'flex';
+    girlMessagesFirst(girlId);
 }
 
 function showNoMatch() {
@@ -1755,8 +2280,11 @@ async function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
     
+    playSound('send');
     input.value = '';
     document.getElementById('sendBtn').disabled = true;
+    document.getElementById('icebreakers').style.display = 'none';
+    clearUnreadMessages(currentGirl);
     
     const lowerText = text.toLowerCase();
     if (['belle', 'jolie', 'adore', 'sexy', 'magnifique', 'charme', 'parfaite', 'canon', 'plait'].some(word => lowerText.includes(word))) {
@@ -1793,6 +2321,7 @@ async function sendMessage() {
         
         const data = await res.json();
         setTyping(false);
+        playSound('message');
         
         let reply = data.reply || "Désolée, j'ai un souci technique...";
         const photoMatch = reply.match(/\\[PHOTO:\\s*([^\\]]+)\\]/i);

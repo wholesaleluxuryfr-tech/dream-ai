@@ -100,6 +100,50 @@ The app features a fixed bottom navigation bar with 5 tabs:
 - Tap left/right to navigate
 - Text overlays on each photo
 
+### PWA - Installable App
+- manifest.json with app name, icons, theme color pink
+- Service worker for offline support
+- iOS meta tags: apple-mobile-web-app-capable
+- Install prompt banner "Installer l'app"
+- Fullscreen standalone mode when installed
+
+### Discover Filters
+- Age filter buttons: 18-25, 25-35, 35-45, 45+
+- Region filter: Europe, Asie, Afrique, Amerique, Tous
+- Filters apply to swipe deck in real-time
+
+### Notifications System
+- Red badge on Messages tab for unread messages
+- Badge shows count number
+- Girls can message first (30% chance after match)
+
+### Icebreakers
+- 3 suggested message buttons above input
+- Quick conversation starters
+- Disappear after first message sent
+
+### Unmatch/Block System
+- Menu button (3 dots) in chat header
+- Options: Unmatch, Bloquer, Signaler
+- Confirmation popup before action
+
+### Premium Features (Simulated)
+- Super Like button (shows Premium popup)
+- Boost button (shows Premium popup)
+- "Voir qui t'a like" locked feature
+- Premium popup with fake pricing (9.99EUR/mois)
+
+### Sound Effects
+- Match: happy chime (Web Audio API)
+- New message: notification ding
+- Send message: whoosh sound
+
+### Dark/Light Mode
+- Toggle in profile settings
+- Preference saved to localStorage
+- Light theme with white backgrounds
+- Dark theme (default)
+
 ### Login/Signup System
 - Name and age input
 - Age verification (18+)
