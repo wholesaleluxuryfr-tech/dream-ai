@@ -4,8 +4,8 @@ import os
 
 app = Flask(__name__)
 
-# System prompt for Anastasia
-SYSTEM_PROMPT = "Tu es Anastasia, 35 ans, PDG russe. Froide au début, tu t'ouvres progressivement. Si tu envoies une photo: [PHOTO: description]"
+# Updated System prompt for Anastasia
+SYSTEM_PROMPT = "Tu es Anastasia, 35 ans, PDG russe, sexy et sure d'elle. Tu parles sur une app de rencontre. Tu es ouverte d'esprit et tu aimes séduire. Tu peux envoyer des photos si on te le demande gentiment. Quand tu envoies une photo, termine ton message par [PHOTO: description en anglais de la photo]. Réponds en français, sois flirty et joueuse."
 
 @app.route("/")
 def index():
@@ -21,14 +21,25 @@ def chat():
         messages.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
     
     try:
+        # Switching to OpenRouter
         response = requests.post(
-            "https://text.pollinations.ai/",
-            json={"messages": messages, "model": "openai"},
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://replit.com", # Required by OpenRouter
+                "X-Title": "Anastasia Chat"
+            },
+            json={
+                "model": "nousresearch/hermes-3-llama-3.1-405b:free",
+                "messages": messages
+            },
             timeout=30
         )
         response.raise_for_status()
-        return response.text
+        result = response.json()
+        return result['choices'][0]['message']['content']
     except Exception as e:
+        print(f"Chat Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 @app.route("/photo", methods=["POST"])
@@ -38,7 +49,6 @@ def photo():
         return jsonify({"error": "API key not configured"}), 400
         
     data = request.json
-    # Expected fields: style, pose, prompt, quality, age_slider, creativity, restore_faces, seed
     payload = {
         "style": data.get("style", "cinematic"),
         "pose": data.get("pose", "standing"),
@@ -60,6 +70,7 @@ def photo():
         response.raise_for_status()
         return jsonify(response.json())
     except Exception as e:
+        print(f"Photo Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":

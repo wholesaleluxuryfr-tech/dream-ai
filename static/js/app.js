@@ -13,10 +13,14 @@ function addMessage(role, content) {
     
     // Check for photo tag
     if (content.includes('[PHOTO:')) {
-        const parts = content.split(/\[PHOTO:.*?\]/);
-        div.innerText = parts.join(' ').trim();
+        const photoMatch = content.match(/\[PHOTO:(.*?)\]/);
+        const photoDesc = photoMatch[1];
         
-        const photoDesc = content.match(/\[PHOTO:(.*?)\]/)[1];
+        // Remove the tag from visible text
+        const visibleText = content.replace(/\[PHOTO:.*?\]/, '').trim();
+        div.innerText = visibleText;
+        
+        // Call photo endpoint
         generatePhoto(photoDesc, div);
     } else {
         div.innerText = content;
@@ -40,6 +44,8 @@ async function sendMessage() {
             body: JSON.stringify({ messages: messageHistory })
         });
         
+        if (!response.ok) throw new Error('Network response was not ok');
+        
         const aiText = await response.text();
         addMessage('assistant', aiText);
     } catch (e) {
@@ -53,6 +59,7 @@ async function generatePhoto(description, targetDiv) {
     loading.innerText = "...en train de prendre une photo...";
     loading.style.fontSize = '0.8rem';
     loading.style.fontStyle = 'italic';
+    loading.style.marginTop = '10px';
     targetDiv.appendChild(loading);
 
     try {
@@ -60,18 +67,22 @@ async function generatePhoto(description, targetDiv) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                prompt: `a beautiful 35yo Russian woman, CEO, ${description}, cinematic lighting, high quality`,
+                prompt: `a beautiful sexy 35yo Russian woman, CEO, ${description}, seductive look, cinematic lighting, high quality`,
                 style: "cinematic",
                 pose: "standing"
             })
         });
         
         const data = await response.json();
-        if (data.url || (data.data && data.data[0] && data.data[0].url)) {
-            const url = data.url || data.data[0].url;
+        const url = data.url || (data.data && data.data[0] && data.data[0].url);
+        
+        if (url) {
             const img = document.createElement('img');
             img.src = url;
             img.classList.add('photo-msg');
+            img.onload = () => {
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            };
             targetDiv.appendChild(img);
         }
     } catch (e) {
@@ -87,4 +98,4 @@ userInput.addEventListener('keypress', (e) => {
 });
 
 // Initial message
-addMessage('assistant', "Bonjour. Je suis Anastasia. Que voulez-vous ?");
+addMessage('assistant', "Salut... J'espère que tu as une bonne raison de me déranger.");
