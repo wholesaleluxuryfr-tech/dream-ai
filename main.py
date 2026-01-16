@@ -473,7 +473,10 @@ def photo():
             result = response.json()
             # The API might return image_url or a base64 string in 'image' field
             if 'image_url' in result and result['image_url']:
-                return jsonify({"image_url": result['image_url']})
+                image_url = result['image_url']
+                if not image_url.startswith('http'):
+                    image_url = 'https://cdn.promptchan.ai/' + image_url
+                return jsonify({"image_url": image_url})
             elif 'image' in result and result['image']:
                 # Ensure we handle the base64 prefix
                 image_data = result['image']
