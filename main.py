@@ -11,6 +11,7 @@ GIRLS = {
     "anastasia": {
         "name": "Anastasia",
         "age": 35,
+        "location": "Moscou, Russie",
         "tagline": "CEO russe, froide mais passionnée",
         "bio": "PDG d'une startup tech à Moscou. Habituée à diriger, je ne me laisse pas impressionner facilement. Mais si tu sais me séduire...",
         "appearance": "35 year old Russian woman, platinum blonde hair, ice blue eyes, high cheekbones, fair skin, tall, elegant, sexy",
@@ -19,6 +20,7 @@ GIRLS = {
     "yuki": {
         "name": "Yuki", 
         "age": 28,
+        "location": "Tokyo, Japon",
         "tagline": "Artiste japonaise, timide et douce",
         "bio": "Je peins des tableaux à Tokyo. Je suis timide au début mais très affectueuse une fois en confiance...",
         "appearance": "28 year old Japanese woman, long black silky hair, dark brown eyes, petite, cute face, soft skin, delicate features",
@@ -27,6 +29,7 @@ GIRLS = {
     "sofia": {
         "name": "Sofia",
         "age": 30, 
+        "location": "Barcelone, Espagne",
         "tagline": "Danseuse espagnole, passionnée",
         "bio": "Danseuse de flamenco à Barcelone. La vie est trop courte pour être timide. Je suis directe et passionnée en tout...",
         "appearance": "30 year old Spanish woman, long wavy dark brown hair, brown eyes, olive skin, curvy body, full lips, passionate look",
@@ -35,6 +38,7 @@ GIRLS = {
     "emma": {
         "name": "Emma",
         "age": 25,
+        "location": "Los Angeles, USA",
         "tagline": "Mannequin, Los Angeles",
         "bio": "Mannequin à LA. J'adore la caméra et elle me le rend bien.",
         "appearance": "25 year old American woman, long blonde hair, green eyes, tall slim body, tanned skin, large breasts, perfect curves",
@@ -43,6 +47,7 @@ GIRLS = {
     "lea": {
         "name": "Léa", 
         "age": 27,
+        "location": "Paris, France",
         "tagline": "Infirmière, Paris",
         "bio": "Je prends soin de mes patients le jour, et de mes envies la nuit.",
         "appearance": "27 year old French woman, medium brown hair, hazel eyes, curvy body, large natural breasts, soft skin",
@@ -51,6 +56,7 @@ GIRLS = {
     "mia": {
         "name": "Mia",
         "age": 32,
+        "location": "Rio, Brésil",
         "tagline": "Coach fitness, Rio",
         "bio": "Mon corps est mon art. Je travaille dur pour lui, autant en profiter.",
         "appearance": "32 year old Brazilian woman, long dark curly hair, brown eyes, athletic toned body, tan skin, round butt, abs",
@@ -66,76 +72,87 @@ HTML = '''<!DOCTYPE html>
     <title>Dream AI</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0a0c; color: #fff; min-height: 100vh; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #0a0a0c; color: #ffffff; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
         
-        .page { display: none; min-height: 100vh; }
-        .page.active { display: block; }
+        .page { display: none; min-height: 100vh; overflow-x: hidden; }
+        .page.active { display: flex; flex-direction: column; }
         
         /* HEADER */
-        .header { padding: 1rem; background: linear-gradient(135deg, #1a1a2e, #16213e); text-align: center; border-bottom: 1px solid #ff3d7f33; }
-        .logo { font-size: 1.8rem; font-weight: 700; color: #ff3d7f; }
-        .subtitle { color: #888; font-size: 0.9rem; margin-top: 0.3rem; }
+        .header { padding: 1.5rem 1rem; text-align: center; background: rgba(10, 10, 12, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(233, 30, 99, 0.1); }
+        .logo { font-size: 2rem; font-weight: 800; color: #e91e63; letter-spacing: -0.5px; }
+        .subtitle { color: #888888; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; margin-top: 0.2rem; }
         
         /* GALLERY */
-        .gallery { padding: 1rem; }
-        .gallery h2 { margin-bottom: 1rem; color: #ff3d7f; }
-        .girls-grid { display: flex; flex-direction: column; gap: 1rem; }
-        .girl-card { background: linear-gradient(145deg, #1e1e28, #151518); border-radius: 16px; overflow: hidden; cursor: pointer; transition: transform 0.2s; border: 1px solid #ffffff10; }
-        .girl-card:hover { transform: scale(1.02); }
-        .girl-card-img { height: 200px; background: linear-gradient(45deg, #ff3d7f22, #ff6b9d22); display: flex; align-items: center; justify-content: center; font-size: 4rem; }
-        .girl-card-info { padding: 1rem; }
-        .girl-card-name { font-size: 1.3rem; font-weight: 600; margin-bottom: 0.3rem; }
-        .girl-card-tagline { color: #ff6b9d; font-size: 0.9rem; }
+        .gallery { padding: 1rem; flex: 1; }
+        .gallery h2 { margin-bottom: 1.5rem; font-size: 1.2rem; font-weight: 700; color: #ffffff; padding-left: 0.5rem; border-left: 3px solid #e91e63; }
+        .girls-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+        .girl-card { background: #12121a; border-radius: 20px; overflow: hidden; cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease; position: relative; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .girl-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); }
+        .girl-card-img { height: 240px; background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgba(10,10,12,0.9) 100%); position: relative; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 700; color: rgba(233, 30, 99, 0.3); }
+        .girl-card-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; background: linear-gradient(to top, #12121a, transparent); }
+        .girl-card-name { font-size: 1rem; font-weight: 700; color: #ffffff; }
+        .girl-card-tagline { color: #888888; font-size: 0.75rem; margin-top: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .badge-new { position: absolute; top: 10px; right: 10px; background: #e91e63; color: white; padding: 4px 8px; border-radius: 10px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; box-shadow: 0 2px 5px rgba(233, 30, 99, 0.4); z-index: 5; }
         
         /* PROFILE */
-        .profile { padding: 1rem; max-width: 500px; margin: 0 auto; }
-        .back-btn { color: #ff3d7f; font-size: 1.1rem; cursor: pointer; margin-bottom: 1rem; display: inline-block; }
-        .profile-img { width: 100%; aspect-ratio: 1; background: linear-gradient(45deg, #ff3d7f22, #ff6b9d22); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 6rem; margin-bottom: 1rem; }
-        .profile h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
-        .profile-tagline { color: #ff3d7f; font-size: 1.1rem; margin-bottom: 1rem; }
-        .profile-bio { color: #aaa; line-height: 1.6; margin-bottom: 1.5rem; }
-        .btn-chat { width: 100%; padding: 1rem; background: linear-gradient(135deg, #ff3d7f, #ff6b9d); border: none; border-radius: 50px; color: #fff; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
+        .profile { max-width: 500px; margin: 0 auto; width: 100%; flex: 1; }
+        .back-btn { color: #ffffff; font-size: 1.5rem; cursor: pointer; padding: 1rem; display: inline-block; transition: color 0.2s; }
+        .back-btn:hover { color: #e91e63; }
+        .profile-img { width: 100%; height: 450px; background: #12121a; display: flex; align-items: center; justify-content: center; font-size: 8rem; font-weight: 800; color: rgba(233, 30, 99, 0.1); position: relative; }
+        .profile-img::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 150px; background: linear-gradient(to top, #0a0a0c, transparent); }
+        .profile-content { padding: 1.5rem; margin-top: -2rem; position: relative; z-index: 10; }
+        .profile h1 { font-size: 2rem; font-weight: 800; margin-bottom: 0.2rem; }
+        .profile-tagline { color: #e91e63; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem; }
+        .profile-stats { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-item { background: #12121a; padding: 0.75rem 1.25rem; border-radius: 15px; border: 1px solid rgba(233, 30, 99, 0.2); flex: 1; text-align: center; }
+        .stat-label { font-size: 0.7rem; color: #888888; text-transform: uppercase; margin-bottom: 0.3rem; }
+        .stat-value { font-size: 1.1rem; font-weight: 700; color: #e91e63; }
+        .profile-bio { color: #888888; line-height: 1.7; font-size: 0.95rem; margin-bottom: 2rem; }
+        .profile-actions { display: flex; flex-direction: column; gap: 1rem; }
+        .btn-premium { width: 100%; padding: 1.1rem; border: none; border-radius: 15px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.2s, opacity 0.2s; text-align: center; text-decoration: none; }
+        .btn-chat { background: #e91e63; color: #ffffff; box-shadow: 0 5px 15px rgba(233, 30, 99, 0.3); }
+        .btn-photo { background: #12121a; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .btn-premium:active { transform: scale(0.98); }
         
         /* CHAT */
-        .chat-page { display: none; flex-direction: column; height: 100vh; }
-        .chat-page.active { display: flex; }
-        .chat-header { display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: #151518; border-bottom: 1px solid #222; }
-        .chat-header .back-btn { margin: 0; margin-right: 0.5rem; }
-        .chat-avatar { width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, #ff3d7f, #ff6b9d); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-        .chat-name { font-weight: 600; font-size: 1.1rem; }
-        .chat-status { font-size: 0.75rem; color: #22c55e; }
+        .chat-page { display: none; height: 100vh; overflow: hidden; }
+        .chat-header { display: flex; align-items: center; padding: 1rem; background: rgba(10, 10, 12, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid #1a1a1f; position: sticky; top: 0; z-index: 100; }
+        .chat-avatar-circle { width: 42px; height: 42px; border-radius: 50%; background: #12121a; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 800; color: #e91e63; margin-right: 0.75rem; border: 1px solid rgba(233, 30, 99, 0.3); }
+        .chat-info { flex: 1; }
+        .chat-name { font-weight: 700; font-size: 1.1rem; }
+        .chat-status { font-size: 0.7rem; color: #888888; display: flex; align-items: center; gap: 4px; }
+        .status-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 5px #22c55e; }
         
-        .messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
-        .msg { max-width: 85%; display: flex; gap: 0.5rem; }
-        .msg.user { align-self: flex-end; flex-direction: row-reverse; }
-        .msg-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #ff3d7f, #ff6b9d); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
-        .msg-bubble { padding: 0.75rem 1rem; border-radius: 18px; line-height: 1.5; }
-        .msg.her .msg-bubble { background: #1e1e28; border-bottom-left-radius: 4px; }
-        .msg.user .msg-bubble { background: linear-gradient(135deg, #ff3d7f, #ff6b9d); border-bottom-right-radius: 4px; }
-        .msg-img { max-width: 250px; border-radius: 12px; overflow: hidden; margin-top: 0.5rem; }
+        .messages { flex: 1; overflow-y: auto; padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 1.2rem; scroll-behavior: smooth; }
+        .msg { max-width: 80%; display: flex; flex-direction: column; }
+        .msg.user { align-self: flex-end; }
+        .msg.her { align-self: flex-start; }
+        .msg-bubble { padding: 0.9rem 1.1rem; border-radius: 20px; font-size: 0.95rem; line-height: 1.5; position: relative; }
+        .msg.her .msg-bubble { background: #12121a; border-bottom-left-radius: 4px; color: #ffffff; }
+        .msg.user .msg-bubble { background: #e91e63; border-bottom-right-radius: 4px; color: #ffffff; }
+        .msg-meta { font-size: 0.65rem; color: #555555; margin-top: 0.3rem; display: flex; align-items: center; gap: 4px; }
+        .msg.user .msg-meta { align-self: flex-end; }
+        .read-receipt { color: #e91e63; font-weight: 800; }
+        
+        .msg-img { max-width: 280px; border-radius: 18px; overflow: hidden; margin-top: 0.5rem; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: opacity 0.2s; }
         .msg-img img { width: 100%; display: block; }
+        .msg-img:active { opacity: 0.8; }
         
-        .typing { display: flex; gap: 0.5rem; align-items: center; }
-        .typing-dots { display: flex; gap: 4px; padding: 0.75rem 1rem; background: #1e1e28; border-radius: 18px; }
-        .typing-dot { width: 8px; height: 8px; background: #666; border-radius: 50%; animation: bounce 1.4s infinite; }
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes bounce { 0%,80%,100% { transform: scale(0.8); } 40% { transform: scale(1.2); } }
+        .typing-indicator { font-size: 0.75rem; color: #e91e63; margin-bottom: 0.5rem; font-style: italic; display: none; }
         
-        .loading-img { background: #1e1e28; padding: 1.5rem 2rem; border-radius: 12px; display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem; }
-        .spinner { width: 24px; height: 24px; border: 3px solid #333; border-top-color: #ff3d7f; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .input-area { padding: 1.2rem 1rem; background: #0a0a0c; border-top: 1px solid #1a1a1f; padding-bottom: calc(1.2rem + env(safe-area-inset-bottom)); }
+        .input-row { display: flex; gap: 0.75rem; align-items: center; }
+        .chat-input { flex: 1; padding: 1rem 1.5rem; background: #12121a; border: 1px solid #1a1a1f; border-radius: 30px; color: #ffffff; font-size: 1rem; outline: none; transition: border-color 0.2s; }
+        .chat-input:focus { border-color: #e91e63; }
+        .send-btn { width: 50px; height: 50px; border-radius: 50%; background: #e91e63; border: none; color: #ffffff; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3); transition: transform 0.2s; }
+        .send-btn:active { transform: scale(0.9); }
+        .send-btn:disabled { opacity: 0.5; cursor: default; }
         
-        .input-area { padding: 1rem; background: #151518; border-top: 1px solid #222; }
-        .input-row { display: flex; gap: 0.5rem; }
-        .photo-btn { width: 48px; height: 48px; border-radius: 50%; background: #1e1e28; border: 1px solid #333; color: #ff3d7f; font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .chat-input { flex: 1; padding: 0.9rem 1.2rem; background: #1e1e28; border: 1px solid #333; border-radius: 25px; color: #fff; font-size: 1rem; outline: none; }
-        .chat-input:focus { border-color: #ff3d7f; }
-        .send-btn { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #ff3d7f, #ff6b9d); border: none; color: #fff; font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .send-btn:disabled { opacity: 0.5; }
-        
-        .empty-chat { text-align: center; color: #666; padding: 3rem 1rem; }
-        .empty-chat p:first-child { font-size: 3rem; margin-bottom: 1rem; }
+        .empty-chat { text-align: center; color: #444444; padding: 4rem 1rem; font-size: 0.9rem; letter-spacing: 1px; }
+
+        /* Fullscreen Overlay */
+        #img-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 1rem; }
+        #img-overlay img { max-width: 100%; max-height: 100%; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -143,8 +160,8 @@ HTML = '''<!DOCTYPE html>
 <!-- GALLERY PAGE -->
 <div class="page active" id="pageGallery">
     <div class="header">
-        <div class="logo">Dream AI</div>
-        <div class="subtitle">Premium Companion App</div>
+        <div class="logo">DREAM AI</div>
+        <div class="subtitle">Premium Companion Experience</div>
     </div>
     <div class="gallery">
         <h2>Découvrir</h2>
@@ -155,43 +172,54 @@ HTML = '''<!DOCTYPE html>
 <!-- PROFILE PAGE -->
 <div class="page" id="pageProfile">
     <div class="profile">
-        <div class="back-btn" onclick="showPage('gallery')">← Retour</div>
-        <div class="profile-img" id="profileEmoji"></div>
-        <h1 id="profileName"></h1>
-        <div class="profile-tagline" id="profileTagline"></div>
-        <p class="profile-bio" id="profileBio"></p>
-        <button class="btn-chat" onclick="startChat()">Commencer à discuter</button>
+        <div class="back-btn" onclick="showPage('gallery')">←</div>
+        <div class="profile-img" id="profileInitials"></div>
+        <div class="profile-content">
+            <h1 id="profileName"></h1>
+            <div class="profile-tagline" id="profileTagline"></div>
+            
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Affection</div>
+                    <div class="stat-value" id="profileAffection">20%</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Statut</div>
+                    <div class="stat-value" style="color:#22c55e">Online</div>
+                </div>
+            </div>
+            
+            <div class="profile-bio" id="profileBio"></div>
+            
+            <div class="profile-actions">
+                <button class="btn-premium btn-chat" onclick="startChat()">Envoyer un Message</button>
+                <button class="btn-premium btn-photo" onclick="requestProfilePhoto()">Demander une Photo</button>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- CHAT PAGE -->
 <div class="page chat-page" id="pageChat">
     <div class="chat-header">
-        <div class="back-btn" onclick="showPage('gallery')">←</div>
-        <div class="chat-avatar" id="chatEmoji"></div>
-        <div style="flex: 1;">
+        <div class="back-btn" onclick="showPage('profile')">←</div>
+        <div class="chat-avatar-circle" id="chatInitials"></div>
+        <div class="chat-info">
             <div class="chat-name" id="chatName"></div>
-            <div class="chat-status">🟢 En ligne</div>
-        </div>
-        <div id="affection-bar" style="display: flex; align-items: center; gap: 5px; background: rgba(255, 45, 85, 0.1); padding: 5px 10px; border-radius: 15px; border: 1px solid rgba(255, 45, 85, 0.3);">
-            <span style="color: #ff2d55; font-size: 0.8rem;">❤️</span>
-            <span id="affection-pct" style="color: #ff2d55; font-size: 0.8rem; font-weight: bold;">20%</span>
+            <div class="chat-status"><span class="status-dot"></span> Online</div>
         </div>
     </div>
-    <div class="messages" id="messages">
-        <div class="empty-chat">
-            <p>Bienvenue</p>
-            <p>Envoie le premier message!</p>
-        </div>
-    </div>
+    <div class="messages" id="messages"></div>
     <div class="input-area">
+        <div id="typing-indicator" class="typing-indicator"></div>
         <div class="input-row">
-            <button class="photo-btn" onclick="requestPhoto()" title="Demander une photo">📷</button>
             <input type="text" class="chat-input" id="chatInput" placeholder="Écris un message...">
             <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
         </div>
     </div>
 </div>
+
+<div id="img-overlay" onclick="this.style.display='none'"><img id="overlay-img" src=""></div>
 
 <script>
 const GIRLS = ''' + json.dumps(GIRLS, ensure_ascii=False) + ''';
@@ -200,15 +228,16 @@ const INITIALS = { anastasia: 'A', yuki: 'Y', sofia: 'S', emma: 'E', lea: 'L', m
 let currentGirl = null;
 let chatHistory = {};
 let affectionLevels = JSON.parse(localStorage.getItem('affectionLevels') || '{}');
+let readConversations = JSON.parse(localStorage.getItem('readConversations') || '{}');
 
-// Init
 function init() {
     const grid = document.getElementById('girlsGrid');
     grid.innerHTML = Object.entries(GIRLS).map(([id, g]) => `
         <div class="girl-card" onclick="showProfile('${id}')">
-            <div class="girl-card-img">${INITIALS[id] || id.charAt(0).toUpperCase()}</div>
+            ${!readConversations[id] ? '<div class="badge-new">NEW</div>' : ''}
+            <div class="girl-card-img">${INITIALS[id]}</div>
             <div class="girl-card-info">
-                <div class="girl-card-name">${g.name}, ${g.age} ans</div>
+                <div class="girl-card-name">${g.name}, ${g.age}</div>
                 <div class="girl-card-tagline">${g.tagline}</div>
             </div>
         </div>
@@ -221,40 +250,39 @@ function init() {
     localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
 }
 
-function updateAffectionUI() {
-    const pct = affectionLevels[currentGirl] || 20;
-    document.getElementById('affection-pct').innerText = pct + '%';
-}
-
-function updateAffection(amount) {
-    affectionLevels[currentGirl] = Math.min(100, Math.max(0, affectionLevels[currentGirl] + amount));
-    localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
-    updateAffectionUI();
-}
-
 function showPage(page) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1)).classList.add('active');
+    if (page === 'gallery') init();
 }
 
 function showProfile(id) {
     currentGirl = id;
     const g = GIRLS[id];
-    document.getElementById('profileEmoji').textContent = INITIALS[id] || id.charAt(0).toUpperCase();
-    document.getElementById('profileName').textContent = g.name + ', ' + g.age + ' ans';
+    document.getElementById('profileInitials').textContent = INITIALS[id];
+    document.getElementById('profileName').textContent = g.name + ', ' + g.age;
     document.getElementById('profileTagline').textContent = g.tagline;
     document.getElementById('profileBio').textContent = g.bio;
+    document.getElementById('profileAffection').textContent = affectionLevels[id] + '%';
+    
+    readConversations[id] = true;
+    localStorage.setItem('readConversations', JSON.stringify(readConversations));
+    
     showPage('profile');
 }
 
 function startChat() {
     const g = GIRLS[currentGirl];
-    document.getElementById('chatEmoji').textContent = INITIALS[currentGirl] || currentGirl.charAt(0).toUpperCase();
+    document.getElementById('chatInitials').textContent = INITIALS[currentGirl];
     document.getElementById('chatName').textContent = g.name;
-    updateAffectionUI();
     renderMessages();
     showPage('chat');
     document.getElementById('chatInput').focus();
+}
+
+function getTime() {
+    const now = new Date();
+    return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
 }
 
 function renderMessages() {
@@ -262,56 +290,39 @@ function renderMessages() {
     const container = document.getElementById('messages');
     
     if (msgs.length === 0) {
-        container.innerHTML = '<div class="empty-chat"><p>Bienvenue</p><p>Envoie le premier message!</p></div>';
+        container.innerHTML = '<div class="empty-chat">DÉBUT DE LA CONVERSATION</div>';
         return;
     }
     
     container.innerHTML = msgs.map(m => {
         const cls = m.role === 'user' ? 'user' : 'her';
-        const avatar = m.role === 'assistant' ? `<div class="msg-avatar">${INITIALS[currentGirl] || currentGirl.charAt(0).toUpperCase()}</div>` : '';
         const text = (m.content || '').replace(/\\[PHOTO:[^\\]]+\\]/g, '').trim();
-        const imgHtml = m.image ? `<div class="msg-img"><img src="${m.image}" alt="Photo"></div>` : '';
+        const imgHtml = m.image ? `<div class="msg-img" onclick="fullscreenImg('${m.image}')"><img src="${m.image}" alt="Photo"></div>` : '';
+        const receipt = m.role === 'user' ? '<span class="read-receipt">✓✓</span>' : '';
         
         return `<div class="msg ${cls}">
-            ${avatar}
-            <div>
-                ${text ? `<div class="msg-bubble">${text}</div>` : ''}
-                ${imgHtml}
-            </div>
+            ${text ? `<div class="msg-bubble">${text}</div>` : ''}
+            ${imgHtml}
+            <div class="msg-meta">${m.time} ${receipt}</div>
         </div>`;
     }).join('');
     
     container.scrollTop = container.scrollHeight;
 }
 
-function showTyping() {
-    const container = document.getElementById('messages');
-    const div = document.createElement('div');
-    div.className = 'typing';
-    div.id = 'typing';
-    div.innerHTML = `<div class="msg-avatar">${INITIALS[currentGirl] || currentGirl.charAt(0).toUpperCase()}</div><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
-    container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
+function fullscreenImg(url) {
+    document.getElementById('overlay-img').src = url;
+    document.getElementById('img-overlay').style.display = 'flex';
 }
 
-function hideTyping() {
-    const t = document.getElementById('typing');
-    if (t) t.remove();
-}
-
-function showPhotoLoading() {
-    const container = document.getElementById('messages');
-    const div = document.createElement('div');
-    div.className = 'msg her';
-    div.id = 'photoLoading';
-    div.innerHTML = `<div class="msg-avatar">${EMOJIS[currentGirl]}</div><div class="loading-img"><div class="spinner"></div><span>Génère une photo...</span></div>`;
-    container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
-}
-
-function hidePhotoLoading() {
-    const p = document.getElementById('photoLoading');
-    if (p) p.remove();
+function setTyping(isTyping) {
+    const el = document.getElementById('typing-indicator');
+    if (isTyping) {
+        el.innerText = GIRLS[currentGirl].name + ' écrit...';
+        el.style.display = 'block';
+    } else {
+        el.style.display = 'none';
+    }
 }
 
 async function sendMessage() {
@@ -322,18 +333,18 @@ async function sendMessage() {
     input.value = '';
     document.getElementById('sendBtn').disabled = true;
     
-    // Affection logic
     const lowerText = text.toLowerCase();
-    if (lowerText.includes('belle') || lowerText.includes('jolie') || lowerText.includes('adore') || lowerText.includes('magnifique') || lowerText.includes('sexy')) {
-        updateAffection(5);
+    if (['belle', 'jolie', 'adore', 'sexy', 'magnifique', 'charme'].some(word => lowerText.includes(word))) {
+        affectionLevels[currentGirl] = Math.min(100, affectionLevels[currentGirl] + 5);
+        localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
     }
     
-    chatHistory[currentGirl].push({ role: 'user', content: text });
+    chatHistory[currentGirl].push({ role: 'user', content: text, time: getTime() });
     renderMessages();
-    showTyping();
+    
+    setTimeout(() => setTyping(true), 1000);
     
     try {
-        const g = GIRLS[currentGirl];
         const res = await fetch('/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -345,53 +356,38 @@ async function sendMessage() {
         });
         
         const data = await res.json();
-        hideTyping();
+        setTyping(false);
         
         let reply = data.reply || "Désolée, j'ai un souci technique...";
-        
-        // Check for [PHOTO:...]
         const photoMatch = reply.match(/\\[PHOTO:\\s*([^\\]]+)\\]/i);
         const cleanReply = reply.replace(/\\[PHOTO:[^\\]]+\\]/gi, '').trim();
         
-        const msgObj = { role: 'assistant', content: cleanReply };
+        const msgObj = { role: 'assistant', content: cleanReply, time: getTime() };
         chatHistory[currentGirl].push(msgObj);
         renderMessages();
         
         if (photoMatch) {
             await generatePhoto(photoMatch[1], msgObj);
         }
-        
     } catch (e) {
-        hideTyping();
-        chatHistory[currentGirl].push({ role: 'assistant', content: "Désolée, problème de connexion..." });
+        setTyping(false);
+        chatHistory[currentGirl].push({ role: 'assistant', content: "Désolée, erreur réseau.", time: getTime() });
         renderMessages();
     }
     
     document.getElementById('sendBtn').disabled = false;
 }
 
-async function requestPhoto() {
-    const g = GIRLS[currentGirl];
-    
-    chatHistory[currentGirl].push({ role: 'user', content: "Envoie-moi une photo de toi 📷" });
-    renderMessages();
-    
-    showTyping();
-    await new Promise(r => setTimeout(r, 1000));
-    hideTyping();
-    
-    const msgObj = { role: 'assistant', content: "Tiens, rien que pour toi... 😘" };
+async function requestProfilePhoto() {
+    startChat();
+    const msgObj = { role: 'assistant', content: "Tiens, c'est pour toi... 😘", time: getTime() };
     chatHistory[currentGirl].push(msgObj);
     renderMessages();
-    
-    await generatePhoto("wearing elegant dress, seductive pose, bedroom, soft lighting", msgObj);
+    await generatePhoto("casual selfie, beautiful smile, high quality", msgObj);
 }
 
 async function generatePhoto(description, msgObj) {
-    showPhotoLoading();
-    
     try {
-        const g = GIRLS[currentGirl];
         const res = await fetch('/photo', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -403,24 +399,15 @@ async function generatePhoto(description, msgObj) {
         });
         
         const data = await res.json();
-        hidePhotoLoading();
-        
         if (data.image_url) {
             msgObj.image = data.image_url;
             renderMessages();
-        } else if (data.error) {
-            console.error('Photo error:', data.error);
-            chatHistory[currentGirl].push({ role: 'assistant', content: "(Photo non disponible: " + data.error + ")" });
-            renderMessages();
         }
-    } catch (e) {
-        hidePhotoLoading();
-        console.error('Photo fetch error:', e);
-    }
+    } catch (e) { console.error('Photo error:', e); }
 }
 
 document.getElementById('chatInput').addEventListener('keypress', e => {
-    if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
+    if (e.key === 'Enter') sendMessage();
 });
 
 init();
@@ -459,7 +446,6 @@ def chat():
     system_msg = {"role": "system", "content": system_msg_content}
     all_messages = [system_msg] + messages[-20:]
     
-    # Try DeepInfra (free)
     try:
         response = requests.post(
             'https://api.deepinfra.com/v1/openai/chat/completions',
@@ -477,24 +463,7 @@ def chat():
             reply = result['choices'][0]['message']['content']
             return jsonify({"reply": reply})
     except Exception as e:
-        print(f"DeepInfra error: {e}")
-    
-    # Fallback to Pollinations
-    try:
-        response = requests.post(
-            'https://text.pollinations.ai/',
-            json={
-                "messages": all_messages,
-                "model": "openai",
-                "seed": 42
-            },
-            timeout=60
-        )
-        
-        if response.ok:
-            return jsonify({"reply": response.text})
-    except Exception as e:
-        print(f"Pollinations error: {e}")
+        print(f"Chat error: {e}")
     
     return jsonify({"reply": "Désolée, j'ai un petit souci technique... Réessaie! 💕"})
 
@@ -544,26 +513,19 @@ def photo():
             timeout=120
         )
         
-        print(f"Promptchan response status: {response.status_code}")
-        print(f"Promptchan full response: {response.text}")
-        
         if response.ok:
             result = response.json()
-            # The API returns 'image' for URL or base64
             image_val = result.get('image', result.get('image_url', ''))
             
             if image_val:
-                # If it's a relative URL, prepend the CDN base
                 if isinstance(image_val, str) and not image_val.startswith('http') and not image_val.startswith('data:'):
                     image_val = 'https://cdn.promptchan.ai/' + image_val
                 return jsonify({"image_url": image_val})
-            else:
-                return jsonify({"error": "No image data found in response", "response": result})
-        else:
-            return jsonify({"error": f"API error: {response.status_code}", "details": response.text})
+            
+        return jsonify({"error": "No image in response"})
             
     except Exception as e:
-        print(f"Photo generation error: {e}")
+        print(f"Photo error: {e}")
         return jsonify({"error": str(e)})
 
 
