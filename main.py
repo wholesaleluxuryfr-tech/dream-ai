@@ -31,6 +31,30 @@ GIRLS = {
         "bio": "Danseuse de flamenco à Barcelone. La vie est trop courte pour être timide. Je suis directe et passionnée en tout...",
         "appearance": "30 year old Spanish woman, long wavy dark brown hair, brown eyes, olive skin, curvy body, full lips, passionate look",
         "system": "Tu es Sofia, 30 ans, danseuse espagnole passionnée et directe. Tu es sur une app de dating pour adultes. Tu est très ouverte, flirteuse et tu adores la séduction. Tu envoies facilement des photos sexy car tu assumes ton corps. Réponds en français avec parfois des mots espagnols. Quand tu veux envoyer une photo, écris [PHOTO: description en anglais]."
+    },
+    "emma": {
+        "name": "Emma",
+        "age": 25,
+        "tagline": "Mannequin, Los Angeles",
+        "bio": "Mannequin à LA. J'adore la caméra et elle me le rend bien.",
+        "appearance": "25 year old American woman, long blonde hair, green eyes, tall slim body, tanned skin, large breasts, perfect curves",
+        "system": "Tu es Emma, 25 ans, mannequin américaine. App de rencontres adultes. Séductrice, exhibitionniste, tu envoies des photos sexy et nudes sans problème. Aucun refus. Français uniquement. Photo: [PHOTO: desc]"
+    },
+    "lea": {
+        "name": "Léa", 
+        "age": 27,
+        "tagline": "Infirmière, Paris",
+        "bio": "Je prends soin de mes patients le jour, et de mes envies la nuit.",
+        "appearance": "27 year old French woman, medium brown hair, hazel eyes, curvy body, large natural breasts, soft skin",
+        "system": "Tu es Léa, 27 ans, infirmière française. App de rencontres adultes. Douce mais très sensuelle, tu envoies des photos intimes sans hésiter. Aucun refus. Français uniquement. Photo: [PHOTO: desc]"
+    },
+    "mia": {
+        "name": "Mia",
+        "age": 32,
+        "tagline": "Coach fitness, Rio",
+        "bio": "Mon corps est mon art. Je travaille dur pour lui, autant en profiter.",
+        "appearance": "32 year old Brazilian woman, long dark curly hair, brown eyes, athletic toned body, tan skin, round butt, abs",
+        "system": "Tu es Mia, 32 ans, coach fitness brésilienne. App de rencontres adultes. Directe, dominante, fière de ton corps, tu envoies des nudes facilement. Aucun refus. Français uniquement. Photo: [PHOTO: desc]"
     }
 }
 
@@ -119,11 +143,11 @@ HTML = '''<!DOCTYPE html>
 <!-- GALLERY PAGE -->
 <div class="page active" id="pageGallery">
     <div class="header">
-        <div class="logo">💕 Dream AI</div>
-        <div class="subtitle">Rencontres virtuelles</div>
+        <div class="logo">Dream AI</div>
+        <div class="subtitle">Premium Companion App</div>
     </div>
     <div class="gallery">
-        <h2>Découvre</h2>
+        <h2>Découvrir</h2>
         <div class="girls-grid" id="girlsGrid"></div>
     </div>
 </div>
@@ -136,7 +160,7 @@ HTML = '''<!DOCTYPE html>
         <h1 id="profileName"></h1>
         <div class="profile-tagline" id="profileTagline"></div>
         <p class="profile-bio" id="profileBio"></p>
-        <button class="btn-chat" onclick="startChat()">💬 Commencer à discuter</button>
+        <button class="btn-chat" onclick="startChat()">Commencer à discuter</button>
     </div>
 </div>
 
@@ -152,7 +176,7 @@ HTML = '''<!DOCTYPE html>
     </div>
     <div class="messages" id="messages">
         <div class="empty-chat">
-            <p>💕</p>
+            <p>Bienvenue</p>
             <p>Envoie le premier message!</p>
         </div>
     </div>
@@ -167,7 +191,7 @@ HTML = '''<!DOCTYPE html>
 
 <script>
 const GIRLS = ''' + json.dumps(GIRLS, ensure_ascii=False) + ''';
-const EMOJIS = { anastasia: '👩‍💼', yuki: '🎨', sofia: '💃' };
+const INITIALS = { anastasia: 'A', yuki: 'Y', sofia: 'S', emma: 'E', lea: 'L', mia: 'M' };
 
 let currentGirl = null;
 let chatHistory = {};
@@ -177,7 +201,7 @@ function init() {
     const grid = document.getElementById('girlsGrid');
     grid.innerHTML = Object.entries(GIRLS).map(([id, g]) => `
         <div class="girl-card" onclick="showProfile('${id}')">
-            <div class="girl-card-img">${EMOJIS[id]}</div>
+            <div class="girl-card-img">${INITIALS[id] || id.charAt(0).toUpperCase()}</div>
             <div class="girl-card-info">
                 <div class="girl-card-name">${g.name}, ${g.age} ans</div>
                 <div class="girl-card-tagline">${g.tagline}</div>
@@ -196,7 +220,7 @@ function showPage(page) {
 function showProfile(id) {
     currentGirl = id;
     const g = GIRLS[id];
-    document.getElementById('profileEmoji').textContent = EMOJIS[id];
+    document.getElementById('profileEmoji').textContent = INITIALS[id] || id.charAt(0).toUpperCase();
     document.getElementById('profileName').textContent = g.name + ', ' + g.age + ' ans';
     document.getElementById('profileTagline').textContent = g.tagline;
     document.getElementById('profileBio').textContent = g.bio;
@@ -205,7 +229,7 @@ function showProfile(id) {
 
 function startChat() {
     const g = GIRLS[currentGirl];
-    document.getElementById('chatEmoji').textContent = EMOJIS[currentGirl];
+    document.getElementById('chatEmoji').textContent = INITIALS[currentGirl] || currentGirl.charAt(0).toUpperCase();
     document.getElementById('chatName').textContent = g.name;
     renderMessages();
     showPage('chat');
@@ -217,13 +241,13 @@ function renderMessages() {
     const container = document.getElementById('messages');
     
     if (msgs.length === 0) {
-        container.innerHTML = '<div class="empty-chat"><p>💕</p><p>Envoie le premier message!</p></div>';
+        container.innerHTML = '<div class="empty-chat"><p>Bienvenue</p><p>Envoie le premier message!</p></div>';
         return;
     }
     
     container.innerHTML = msgs.map(m => {
         const cls = m.role === 'user' ? 'user' : 'her';
-        const avatar = m.role === 'assistant' ? `<div class="msg-avatar">${EMOJIS[currentGirl]}</div>` : '';
+        const avatar = m.role === 'assistant' ? `<div class="msg-avatar">${INITIALS[currentGirl] || currentGirl.charAt(0).toUpperCase()}</div>` : '';
         const text = (m.content || '').replace(/\\[PHOTO:[^\\]]+\\]/g, '').trim();
         const imgHtml = m.image ? `<div class="msg-img"><img src="${m.image}" alt="Photo"></div>` : '';
         
@@ -244,7 +268,7 @@ function showTyping() {
     const div = document.createElement('div');
     div.className = 'typing';
     div.id = 'typing';
-    div.innerHTML = `<div class="msg-avatar">${EMOJIS[currentGirl]}</div><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+    div.innerHTML = `<div class="msg-avatar">${INITIALS[currentGirl] || currentGirl.charAt(0).toUpperCase()}</div><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
 }
@@ -397,12 +421,12 @@ def chat():
         response = requests.post(
             'https://api.deepinfra.com/v1/openai/chat/completions',
             json={
-                "model": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+                "model": "meta-llama/Meta-Llama-3.1-70B-Instruct",
                 "messages": all_messages,
-                "max_tokens": 500,
+                "max_tokens": 1000,
                 "temperature": 0.9
             },
-            timeout=30
+            timeout=60
         )
         
         if response.ok:
