@@ -33,6 +33,14 @@ Dream AI is a Flask-based adult dating/companion application featuring 6 AI-powe
 - Auto-triggers on keywords: photo, nude, montre, voir, déshabille
 - Proactive sending after 5+ messages with high affection
 
+### Profile Photo Gallery
+- 4 auto-generated photos per girl on first profile visit
+- Photo types: Portrait, Full body, Sexy pose, Lingerie
+- Photos saved to localStorage to avoid regeneration
+- Fullscreen viewing with prev/next navigation
+- Loading spinners during generation
+- "Appel Vidéo" button with "Bientôt disponible" toast
+
 ## Architecture
 
 ### Single-File Structure
