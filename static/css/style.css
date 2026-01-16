@@ -1,0 +1,122 @@
+:root {
+    --bg-color: #121212;
+    --container-bg: #1e1e1e;
+    --text-color: #e0e0e0;
+    --accent-color: #ff4081;
+    --msg-user-bg: #2c2c2c;
+    --msg-ai-bg: #38001d;
+}
+
+body.dark-theme {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.chat-container {
+    width: 100%;
+    max-width: 600px;
+    height: 90vh;
+    background-color: var(--container-bg);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    border: 1px solid #333;
+}
+
+header {
+    padding: 1rem;
+    border-bottom: 2px solid var(--accent-color);
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    color: var(--accent-color);
+    font-size: 1.5rem;
+}
+
+header p {
+    margin: 0.2rem 0 0;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.messages {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.message {
+    max-width: 80%;
+    padding: 0.8rem 1rem;
+    border-radius: 15px;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.message.user {
+    align-self: flex-end;
+    background-color: var(--msg-user-bg);
+    border-bottom-right-radius: 2px;
+}
+
+.message.ai {
+    align-self: flex-start;
+    background-color: var(--msg-ai-bg);
+    border-bottom-left-radius: 2px;
+    border: 1px solid rgba(255, 64, 129, 0.2);
+}
+
+.input-area {
+    padding: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    border-top: 1px solid #333;
+}
+
+input {
+    flex: 1;
+    background: #2c2c2c;
+    border: 1px solid #444;
+    border-radius: 20px;
+    padding: 0.8rem 1.2rem;
+    color: white;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--accent-color);
+}
+
+button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 0 1.5rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: opacity 0.2s;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.photo-msg {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    display: block;
+}
