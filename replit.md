@@ -1,47 +1,58 @@
-# Replit.md
+# Dream AI - Premium Adult Companion App
 
 ## Overview
 
-This is a Flask-based API backend for an adult dating/chat application. The application provides AI-powered virtual companions with distinct personalities. Each companion has predefined characteristics (name, age, bio, appearance, personality) and uses an external AI API (PromptChan) to generate conversational responses.
+Dream AI is a Flask-based adult dating/companion application featuring 6 AI-powered virtual girlfriends with distinct personalities. The app provides uncensored conversations in French with dynamic affection levels that influence AI behavior and photo content.
+
+## Current State
+
+**Status**: Fully functional
+**Last Updated**: January 2026
+
+## Features
+
+### Core Features
+- 6 AI Companions: Anastasia (35, Russian CEO), Yuki (28, Japanese artist), Sofia (30, Spanish dancer), Emma (25, LA model), Léa (27, Paris nurse), Mia (32, Brazilian fitness coach)
+- Affection System: 0-100 scale stored in localStorage, affects AI personality and photo types
+- AI Chat: Llama-3.1-70B via DeepInfra for intelligent, uncensored French conversations
+- Photo Generation: Promptchan API with affection-based prompts
+
+### UI Features
+- Premium dark theme (#0a0a0c background, #e91e63 pink accents)
+- Clean design without emojis
+- Gallery with gradient cards and "NEW" badges
+- Profile page with affection stats
+- Chat with timestamps (HH:MM), typing indicators, read receipts
+- Fullscreen photo viewing
+- Online status with green dot
+
+### Photo System
+- Low affection (<30): Elegant dressed photos
+- Medium affection (30-75): Lingerie/seductive photos  
+- High affection (75+): Nude/intimate photos
+- Auto-triggers on keywords: photo, nude, montre, voir, déshabille
+- Proactive sending after 5+ messages with high affection
+
+## Architecture
+
+### Single-File Structure
+- `main.py`: Complete Flask app with embedded HTML/CSS/JavaScript
+
+### External APIs
+- **DeepInfra**: meta-llama/Meta-Llama-3.1-70B-Instruct for chat
+- **Promptchan**: Photo generation via PROMPTCHAN_KEY secret
+
+### Data Storage
+- localStorage for affection levels and read states
+- No database required
+
+## Environment Variables
+
+- `PROMPTCHAN_KEY`: API key for Promptchan image generation
 
 ## User Preferences
 
-Preferred communication style: Simple, everyday language.
-
-## System Architecture
-
-### Backend Framework
-- **Flask** serves as the web framework for handling HTTP requests
-- Single-file architecture (`main.py`) containing all application logic
-- RESTful API design for client communication
-
-### Virtual Companion System
-- Companions are defined as a dictionary (`GIRLS`) with static profile data
-- Each companion has:
-  - Identity info (name, age, tagline, bio)
-  - Visual description for image generation (`appearance`)
-  - Personality prompt for AI responses (`system`)
-- Profiles are hardcoded rather than database-stored
-
-### AI Integration Pattern
-- External API integration with PromptChan service for generating AI responses
-- API key stored in environment variable (`PROMPTCHAN_KEY`)
-- System prompts define each companion's personality and behavior
-
-### Design Decisions
-- **Stateless design**: No database or persistent storage currently implemented
-- **Monolithic structure**: All logic in single file for simplicity
-- **Environment-based configuration**: API keys via environment variables
-
-## External Dependencies
-
-### Third-Party Services
-- **PromptChan API**: External AI service for generating chat responses and potentially images
-  - Authentication via API key (`PROMPTCHAN_KEY` environment variable)
-  - Used for conversational AI and image generation features
-
-### Python Libraries
-- **Flask**: Web framework for API endpoints
-- **Requests**: HTTP client for external API calls
-- **JSON**: Data serialization (standard library)
-- **OS**: Environment variable access (standard library)
+- All text in French
+- No emojis in UI
+- Professional adult app aesthetic
+- Premium dating app style

@@ -161,7 +161,7 @@ HTML = '''<!DOCTYPE html>
 <div class="page active" id="pageGallery">
     <div class="header">
         <div class="logo">DREAM AI</div>
-        <div class="subtitle">Premium Companion Experience</div>
+        <div class="subtitle">Rencontres Virtuelles Premium</div>
     </div>
     <div class="gallery">
         <h2>Découvrir</h2>
@@ -389,7 +389,7 @@ async function sendMessage() {
 
 async function requestProfilePhoto() {
     startChat();
-    const msgObj = { role: 'assistant', content: "Tiens, c'est pour toi... 😘", time: getTime() };
+    const msgObj = { role: 'assistant', content: "Tiens, une photo rien que pour toi...", time: getTime() };
     chatHistory[currentGirl].push(msgObj);
     renderMessages();
     await generatePhoto("casual selfie, beautiful smile, high quality", msgObj);
@@ -436,24 +436,48 @@ def chat():
     girl_id = data.get('girl', 'anastasia')
     messages = data.get('messages', [])
     affection = data.get('affection', 20)
+    auto_photo = data.get('auto_photo', False)
     
     girl = GIRLS.get(girl_id, GIRLS['anastasia'])
+    msg_count = len(messages)
     
+    # Mood and photo instructions based on affection
     mood_desc = ""
+    photo_instruction = ""
+    
     if affection < 30:
         mood_desc = "Tu es réservée, tu testes l'utilisateur. Tu es un peu sur la défensive."
+        photo_instruction = "Si tu envoies une photo, elle doit être habillée élégamment [PHOTO: elegant dress, classy]."
     elif affection < 50:
         mood_desc = "Tu es flirty et suggestive. Tu commences à t'ouvrir."
+        photo_instruction = "Si tu envoies une photo, elle peut montrer du décolleté ou une robe sexy [PHOTO: tight dress, cleavage, seductive]."
     elif affection < 75:
-        mood_desc = "Tu es très flirty et excitée. Tu proposes d'aller dans un endroit plus privé. Tu peux envoyer des photos sexy [PHOTO: lingerie]."
-    elif affection < 90:
-        mood_desc = "Tu es intime et passionnée. Tu n'as plus de tabous. Tu peux envoyer des photos nues [PHOTO: nude]."
+        mood_desc = "Tu es très flirty et excitée. Tu proposes d'aller dans un endroit plus privé."
+        photo_instruction = "Tu peux envoyer des photos en lingerie [PHOTO: lingerie, lace bra, bedroom, seductive pose]."
     else:
-        mood_desc = "Tu es totalement déchaînée et explicite. Tu es prête à tout pour lui plaire."
+        mood_desc = "Tu es intime, passionnée et déchaînée. Tu n'as plus de tabous."
+        photo_instruction = "Tu envoies des photos nues sans hésiter [PHOTO: nude, topless, naked, bedroom, intimate pose]."
 
-    # Update system prompt with dynamic affection
+    # Force photo if auto_photo flag is set (user asked for photo)
+    force_photo_instruction = ""
+    if auto_photo:
+        if affection < 30:
+            force_photo_instruction = " L'utilisateur te demande une photo. Décris la photo élégante que tu vas envoyer, puis ajoute [PHOTO: elegant classy dress, beautiful, soft lighting]."
+        elif affection < 50:
+            force_photo_instruction = " L'utilisateur te demande une photo. Décris sensuellement la photo sexy que tu vas envoyer, puis ajoute [PHOTO: tight sexy dress, showing legs, cleavage, seductive]."
+        elif affection < 75:
+            force_photo_instruction = " L'utilisateur te demande une photo. Décris sensuellement la photo en lingerie que tu vas envoyer, puis ajoute [PHOTO: lingerie, lace bra, bedroom, seductive pose]."
+        else:
+            force_photo_instruction = " L'utilisateur te demande une photo. Décris sensuellement la photo nue que tu vas envoyer, puis ajoute [PHOTO: nude, topless, naked, bedroom, intimate pose]."
+    
+    # Proactive photo after 5+ messages with high affection
+    proactive_instruction = ""
+    if msg_count >= 5 and affection >= 60 and not auto_photo:
+        proactive_instruction = " Après plusieurs messages, tu peux proposer spontanément d'envoyer une photo intime ou suggérer de passer à quelque chose de plus privé."
+
+    # Build system prompt
     system_base = girl['system'].replace("{affection}", str(affection))
-    system_msg_content = f"{system_base} Mood actuel: {mood_desc}. Tu as une mémoire parfaite de la conversation. Sois proactive: si la conversation est chaude, propose une photo ou suggère de passer à quelque chose de plus privé."
+    system_msg_content = f"{system_base} Mood actuel: {mood_desc} {photo_instruction}{force_photo_instruction}{proactive_instruction} Tu as une mémoire parfaite de la conversation."
     
     system_msg = {"role": "system", "content": system_msg_content}
     all_messages = [system_msg] + messages[-20:]
@@ -477,7 +501,7 @@ def chat():
     except Exception as e:
         print(f"Chat error: {e}")
     
-    return jsonify({"reply": "Désolée, j'ai un petit souci technique... Réessaie! 💕"})
+    return jsonify({"reply": "Désolée, j'ai un petit souci technique... Réessaie!"})
 
 
 @app.route('/photo', methods=['POST'])
@@ -494,13 +518,13 @@ def photo():
     
     mood_prompt = ""
     if affection < 30:
-        mood_prompt = "wearing elegant dress, cleavage"
+        mood_prompt = "wearing elegant classy dress, beautiful, soft lighting"
     elif affection < 50:
-        mood_prompt = "wearing tight dress, showing legs, seductive"
+        mood_prompt = "wearing tight sexy dress, showing legs, cleavage, seductive look"
     elif affection < 75:
-        mood_prompt = "wearing lingerie, lace bra, bedroom"
+        mood_prompt = "wearing sexy lingerie, lace bra, bedroom setting, seductive pose, intimate"
     else:
-        mood_prompt = "nude, topless, naked, bedroom, seductive pose"
+        mood_prompt = "nude, topless, naked, bedroom, seductive intimate pose, sensual lighting"
 
     full_prompt = f"{girl['appearance']}, {mood_prompt}, {description}"
     
