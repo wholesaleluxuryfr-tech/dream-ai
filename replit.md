@@ -2,7 +2,16 @@
 
 ## Overview
 
-Dream AI is a Flask-based adult dating application featuring 27 diverse AI-powered virtual girlfriends with uncensored French conversations. The app uses a Tinder-style swipe matching system with realistic match probabilities, dynamic affection levels, and AI-generated photos.
+Dream AI is a Flask-based adult dating application featuring 42 diverse AI-powered virtual girlfriends from around the world with uncensored French conversations. The app uses a Tinder-style swipe matching system with realistic match probabilities, dynamic affection levels, and AI-generated photos.
+
+## Navigation
+
+The app features a fixed bottom navigation bar with 5 tabs:
+- **Discover**: Swipe through profiles (Tinder-style)
+- **Messages**: View all chat conversations
+- **Matches**: Grid view of all matched girls
+- **Gallery**: All received photos organized by girl
+- **Profile**: User settings and statistics
 
 ## Current State
 
@@ -11,7 +20,26 @@ Dream AI is a Flask-based adult dating application featuring 27 diverse AI-power
 
 ## Features
 
-### 27 Diverse AI Companions
+### 42 Diverse AI Companions
+
+**15 New Worldwide Profiles:**
+- Aaliya (23, Dubai) - Princess, luxury lifestyle
+- Ingrid (41, Sweden) - CEO MILF, dominant
+- Sakura (22, Japan) - Traditional geisha, submissive
+- Nia (28, Ghana) - Lawyer, powerful queen
+- Isabella (35, Italy) - Fashion designer, passionate
+- Katya (19, Ukraine) - Naive student
+- Priya (27, India) - Doctor with secret life
+- Chen Wei (30, China) - Banker, needs domination
+- Fatima (26, Morocco) - Double life, hijab secret
+- Olga Belarus (45, Belarus) - Strict teacher
+- Kim (24, Korea) - K-pop trainee
+- Amara Nigeria (31, Nigeria) - Businesswoman
+- Svetlana Belarus (38, Belarus) - Former ballerina
+- Lucia (29, Argentina) - Tango dancer
+- Hana (20, Thailand) - Sweet submissive
+
+**Original 27 Diverse AI Companions
 
 **Young (18-23):**
 - Jade (19, French art student) - petite, natural, amateur look
@@ -53,11 +81,11 @@ Dream AI is a Flask-based adult dating application featuring 27 diverse AI-power
 - Mia (32, Brazilian fitness) - muscular, abs, round athletic butt
 - Svetlana (27, Ukrainian athlete) - tall, strong, powerful
 
-### Photo System - 4 Varied Types Per Girl
-1. **Selfie** - Face closeup, smartphone angle, natural home settings
-2. **Outdoor** - Full body, various locations (beach, park, city, pool)
-3. **Night Out** - Dressed up, club/bar/restaurant backgrounds
-4. **Intimate** - Bedroom/bathroom, affection-based clothing level
+### Photo System - 4 Varied Outfit Types Per Girl
+1. **Casual** - Jeans & t-shirt, comfortable everyday clothes
+2. **Elegant** - Cocktail dress, sophisticated evening wear
+3. **Swimsuit** - Bikini/swimwear, beach/pool setting
+4. **Sexy** - Lingerie/revealing outfits (affection-based)
 
 ### Photo Backgrounds
 - **Day**: beach, city street, park, cafe terrace, gym, office

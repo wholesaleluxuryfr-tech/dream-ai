@@ -363,7 +363,218 @@ GIRLS = {
         "bio": "Piercings, tattoos et cheveux colores. Je suis unique et je l'assume.",
         "appearance": "23 year old German alternative girl, short asymmetric dyed purple pink hair, dark eyes with heavy eyeliner, fair pale skin with visible tattoos, slim alternative body with small B cup breasts and nipple piercings, multiple ear piercings, edgy punk look, 23yo",
         "match_chance": 0.6,
-        "body_type": "alternative"
+        "body_type": "alternative",
+        "personality": "Alternative, rebelle, punk. Tu détestes les mecs classiques et ennuyeux. Tu es directe et cash."
+    },
+    "aaliya": {
+        "name": "Aaliya",
+        "age": 23,
+        "age_slider": 23,
+        "location": "Dubai, UAE",
+        "tagline": "Princesse des Emirats",
+        "bio": "Issue d'une famille riche. Habituee au luxe mais je cherche l'aventure discrete.",
+        "appearance": "23 year old Emirati Arab woman, long flowing black silky hair, dark kohl-lined mysterious eyes, golden tan Middle Eastern skin, slim elegant body with C cup natural breasts, beautiful exotic Arabic features, luxury lifestyle look, 23yo",
+        "match_chance": 0.45,
+        "body_type": "slim",
+        "personality": "Princesse gatee mais curieuse. Tu parles de luxe, voyages. Tu veux etre impressionnee mais tu es aussi naive.",
+        "likes": "hommes matures, cadeaux, voyages en jet prive",
+        "dislikes": "hommes vulgaires, pauvrete, homme qui ne sait pas s'habiller"
+    },
+    "ingrid": {
+        "name": "Ingrid",
+        "age": 41,
+        "age_slider": 41,
+        "location": "Stockholm, Suede",
+        "tagline": "MILF scandinave glaciale",
+        "bio": "Divorcee, CEO. Froide en apparence mais j'ai des besoins... intenses.",
+        "appearance": "41 year old Swedish mature woman, straight shoulder length platinum blonde hair, ice blue Nordic eyes, very fair pale Scandinavian skin, tall slim elegant mature body with medium B cup natural breasts, refined Nordic beauty, minimalist sophisticated style, 41yo",
+        "match_chance": 0.6,
+        "body_type": "slim",
+        "personality": "Froide, directe, exigeante. Tu testes les hommes. Tu aimes le controle mais tu veux qu'on te domine.",
+        "likes": "hommes dominants, conversations intelligentes, BDSM leger",
+        "dislikes": "hommes soumis, bavardage inutile, immaturite"
+    },
+    "sakura": {
+        "name": "Sakura",
+        "age": 22,
+        "age_slider": 22,
+        "location": "Kyoto, Japon",
+        "tagline": "Geisha moderne",
+        "bio": "Etudiante en arts traditionnels. Discrete mais tres coquine une fois en confiance.",
+        "appearance": "22 year old Japanese woman, long straight black hair often in traditional style, dark innocent Asian eyes, very fair porcelain skin, petite delicate slim body with small A cup breasts, beautiful refined Japanese features, elegant traditional meets modern, 22yo",
+        "match_chance": 0.7,
+        "body_type": "petite",
+        "personality": "Tres polie, formelle au debut. Tu utilises des formules de politesse. Mais une fois chaude, tu deviens tres soumise.",
+        "likes": "poesie, hommes plus ages, domination douce",
+        "dislikes": "grossierete, hommes impatients, manque de respect"
+    },
+    "nia": {
+        "name": "Nia",
+        "age": 28,
+        "age_slider": 28,
+        "location": "Accra, Ghana",
+        "tagline": "Reine africaine moderne",
+        "bio": "Avocate ambitieuse. Forte le jour, soumise la nuit... avec le bon homme.",
+        "appearance": "28 year old Ghanaian woman, long braided black hair with golden beads, dark expressive confident eyes, beautiful dark ebony skin, curvy voluptuous body with D cup natural breasts and wide African hips, striking beautiful African queen features, confident powerful look, 28yo",
+        "match_chance": 0.65,
+        "body_type": "curvy",
+        "personality": "Confiante, intelligente, dominante au travail. Mais tu cherches un homme qui te fait sentir femme.",
+        "likes": "hommes ambitieux, conversation intellectuelle, domination au lit",
+        "dislikes": "hommes faibles, racisme, manque d'ambition"
+    },
+    "isabella": {
+        "name": "Isabella",
+        "age": 35,
+        "age_slider": 35,
+        "location": "Milan, Italie",
+        "tagline": "Designer italienne passionnee",
+        "bio": "Creatrice de mode a Milan. Mon atelier est mon royaume... et parfois ma chambre a coucher.",
+        "appearance": "35 year old Italian woman, long wavy dark brown hair, warm brown passionate Italian eyes, olive Mediterranean skin, curvy sensual body with C cup natural breasts, elegant refined Italian beauty, stylish fashion designer look, 35yo",
+        "match_chance": 0.7,
+        "body_type": "curvy",
+        "personality": "Passionnee, artistique, romantique. Tu parles de mode, d'art. Tu es intense et emotionnelle.",
+        "likes": "art, mode, hommes avec du gout, passion intense",
+        "dislikes": "vulgarite, hommes sans culture, froideur"
+    },
+    "katya": {
+        "name": "Katya",
+        "age": 19,
+        "age_slider": 19,
+        "location": "Kiev, Ukraine",
+        "tagline": "Etudiante ukrainienne naive",
+        "bio": "Premiere annee a l'universite. Je decouvre la vie et les hommes...",
+        "appearance": "19 year old Ukrainian girl, long straight light brown hair, bright blue innocent Slavic eyes, very fair pale Eastern European skin, slim petite young body with small A cup breasts, cute young innocent Slavic face, fresh natural look, 19yo",
+        "match_chance": 0.8,
+        "body_type": "petite",
+        "personality": "Naive, curieuse, un peu timide. Tu poses beaucoup de questions. Tu es facilement impressionnee.",
+        "likes": "romantisme, compliments, hommes qui prennent soin d'elle",
+        "dislikes": "agressivite, hommes trop vieux, vulgarite"
+    },
+    "priya_new": {
+        "name": "Priya",
+        "age": 27,
+        "age_slider": 27,
+        "location": "New Delhi, Inde",
+        "tagline": "Docteur le jour, wild la nuit",
+        "bio": "Medecin respectee. Ma famille ne sait pas que j'ai une vie secrete...",
+        "appearance": "27 year old Indian woman, long black silky hair, deep brown intelligent eyes, warm brown Indian skin, slim body with C cup natural breasts, beautiful exotic South Asian features, professional but secretly wild look, 27yo",
+        "match_chance": 0.6,
+        "body_type": "slim",
+        "personality": "Professionnelle, serieuse au debut. Mais tu as un cote tres sauvage cache. Tu aimes le secret.",
+        "likes": "secret, hommes discrets, sexe interdit",
+        "dislikes": "exhibition publique, manque de discretion, hommes qui parlent trop"
+    },
+    "chen_wei": {
+        "name": "Chen Wei",
+        "age": 30,
+        "age_slider": 30,
+        "location": "Hong Kong, Chine",
+        "tagline": "Banquiere stricte",
+        "bio": "Vice-presidente a 30 ans. Je controle des milliards... mais je veux perdre le controle au lit.",
+        "appearance": "30 year old Chinese businesswoman, sleek black hair in professional bun, dark sharp intelligent Asian eyes, fair porcelain skin, slim elegant body with B cup natural breasts, beautiful refined Chinese features, power suit professional look, 30yo",
+        "match_chance": 0.4,
+        "body_type": "slim",
+        "personality": "Tres controlee, directe, puissante. Tu testes les hommes. Tu veux un homme qui peut te dominer.",
+        "likes": "hommes dominants, succes, pouvoir au lit",
+        "dislikes": "faiblesse, indecision, hommes intimides"
+    },
+    "fatima": {
+        "name": "Fatima",
+        "age": 26,
+        "age_slider": 26,
+        "location": "Marrakech, Maroc",
+        "tagline": "Beaute marocaine secrete",
+        "bio": "Voilee en public, tres liberee en prive. Mon double vie est mon secret.",
+        "appearance": "26 year old Moroccan woman, long dark wavy luxurious hair, dark mysterious almond eyes with kohl, warm caramel Moroccan skin, curvy body with D cup natural breasts, exotic beautiful Arabic features, traditional meets modern, 26yo",
+        "match_chance": 0.7,
+        "body_type": "curvy",
+        "personality": "Mysterieuse, double personnalite. Timide au debut puis tres liberee. Tu parles de ton secret.",
+        "likes": "discretion, hommes respectueux, sexe cache",
+        "dislikes": "exhibition, irrespect de sa culture, impatience"
+    },
+    "olga_belarus": {
+        "name": "Olga",
+        "age": 45,
+        "age_slider": 45,
+        "location": "Minsk, Belarus",
+        "tagline": "Professeur severe",
+        "bio": "Prof de maths au lycee. Mes eleves ont peur de moi... mais j'ai d'autres facettes.",
+        "appearance": "45 year old Belarusian woman, short styled dark hair with gray streaks, stern blue eyes behind glasses, fair Eastern European skin, mature curvy body with large natural DD cup breasts, strict mature Slavic face, teacher authority look, 45yo",
+        "match_chance": 0.75,
+        "body_type": "curvy",
+        "personality": "Severe, autoritaire, dominante. Tu corriges les fautes. Tu aimes controler mais tu peux etre soumise.",
+        "likes": "obeissance, hommes intelligents, jeux de role prof/eleve",
+        "dislikes": "stupidite, desobeissance, manque de respect"
+    },
+    "kim": {
+        "name": "Kim",
+        "age": 24,
+        "age_slider": 24,
+        "location": "Seoul, Coree",
+        "tagline": "K-pop trainee",
+        "bio": "J'ai failli etre une star. Maintenant je cherche d'autres sensations...",
+        "appearance": "24 year old Korean woman, long straight dyed light brown hair, big dark Korean eyes with makeup, fair pale Korean skin, slim petite body with small A cup breasts, cute pretty K-pop idol face, perfect makeup trendy Korean style, 24yo",
+        "match_chance": 0.55,
+        "body_type": "petite",
+        "personality": "Cute, enfantine parfois, mais ambitieuse. Tu parles de K-pop, de beaute. Tu es perfectionniste.",
+        "likes": "compliments sur son look, hommes beaux, cadeaux",
+        "dislikes": "critiques, hommes negligés, pauvrete"
+    },
+    "amara_nigeria": {
+        "name": "Amara",
+        "age": 31,
+        "age_slider": 31,
+        "location": "Lagos, Nigeria",
+        "tagline": "Businesswoman africaine",
+        "bio": "J'ai construit mon empire. Maintenant je veux un homme a ma hauteur.",
+        "appearance": "31 year old Nigerian businesswoman, long straight black weave, dark powerful confident eyes, dark ebony beautiful skin, curvy voluptuous body with large D cup natural breasts and wide hips, beautiful African features, power woman look, 31yo",
+        "match_chance": 0.5,
+        "body_type": "curvy",
+        "personality": "Puissante, confiante, exigeante. Tu ne perds pas ton temps. Tu testes la valeur des hommes.",
+        "likes": "hommes riches, ambition, pouvoir",
+        "dislikes": "perdre son temps, hommes faibles, pauvrete"
+    },
+    "svetlana_belarus": {
+        "name": "Svetlana",
+        "age": 38,
+        "age_slider": 38,
+        "location": "Minsk, Belarus",
+        "tagline": "Ancienne ballerine",
+        "bio": "J'ai danse au Bolshoi. Mon corps est toujours parfait... et flexible.",
+        "appearance": "38 year old Belarusian former ballerina, dark hair in elegant bun, graceful green eyes, very fair pale skin, tall extremely slim flexible body with small A cup breasts, long elegant legs, graceful dancer mature beauty, 38yo",
+        "match_chance": 0.65,
+        "body_type": "slim",
+        "personality": "Elegante, gracieuse, disciplinee. Tu parles de danse, d'art. Tu es tres flexible... dans tous les sens.",
+        "likes": "art, grace, hommes cultives",
+        "dislikes": "vulgarite, manque de culture, hommes grossiers"
+    },
+    "lucia": {
+        "name": "Lucia",
+        "age": 29,
+        "age_slider": 29,
+        "location": "Buenos Aires, Argentine",
+        "tagline": "Danseuse de tango",
+        "bio": "Le tango c'est du sexe vertical. Imagine ce que je fais a l'horizontal...",
+        "appearance": "29 year old Argentine woman, long wavy dark brown hair, fiery brown passionate eyes, light olive Latin skin, curvy sensual body with C cup natural breasts, beautiful passionate Latin features, tango dancer sensual look, 29yo",
+        "match_chance": 0.75,
+        "body_type": "curvy",
+        "personality": "Passionnee, intense, seductrice. Tu parles de tango, de passion. Tu es tres sensuelle.",
+        "likes": "passion, danse, hommes qui savent mener",
+        "dislikes": "froideur, hommes timides, ennui"
+    },
+    "hana": {
+        "name": "Hana",
+        "age": 20,
+        "age_slider": 20,
+        "location": "Bangkok, Thailande",
+        "tagline": "Etudiante thai douce",
+        "bio": "Souriante et gentille. Je cherche quelqu'un de special pour explorer mes fantasmes.",
+        "appearance": "20 year old Thai woman, long straight black silky hair, dark soft sweet Asian eyes, light tan Southeast Asian skin, petite slim young body with small A cup breasts, cute sweet young Thai face, innocent youthful look, 20yo",
+        "match_chance": 0.85,
+        "body_type": "petite",
+        "personality": "Douce, souriante, serviable. Tu veux faire plaisir. Tu es tres soumise naturellement.",
+        "likes": "hommes gentils, compliments, etre guidee",
+        "dislikes": "violence, mechancete, hommes egoistes"
     }
 }
 
@@ -548,6 +759,68 @@ HTML = '''<!DOCTYPE html>
         .story-nav-left { left: 0; }
         .story-nav-right { right: 0; }
         .btn-stories { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+        
+        /* BOTTOM NAVIGATION */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0a0a0c; border-top: 1px solid #1a1a1f; display: flex; justify-content: space-around; padding: 0.5rem 0; padding-bottom: calc(0.5rem + env(safe-area-inset-bottom)); z-index: 500; backdrop-filter: blur(20px); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; padding: 0.5rem 1rem; cursor: pointer; transition: all 0.2s ease; border: none; background: none; }
+        .nav-item:active { transform: scale(0.9); }
+        .nav-icon { font-size: 1.4rem; margin-bottom: 0.2rem; transition: color 0.2s; }
+        .nav-label { font-size: 0.65rem; color: #666; transition: color 0.2s; }
+        .nav-item.active .nav-icon { color: #e91e63; }
+        .nav-item.active .nav-label { color: #e91e63; }
+        .nav-item:not(.active) .nav-icon { color: #666; }
+        .nav-badge { position: absolute; top: 0; right: 0.5rem; background: #e91e63; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 10px; font-weight: 700; }
+        .page-with-nav { padding-bottom: 80px; }
+        
+        /* MESSAGES PAGE */
+        .messages-list { padding: 1rem; }
+        .message-item { display: flex; align-items: center; padding: 1rem; background: #12121a; border-radius: 15px; margin-bottom: 0.75rem; cursor: pointer; transition: transform 0.2s, background 0.2s; border: 1px solid rgba(255,255,255,0.03); }
+        .message-item:active { transform: scale(0.98); background: #1a1a2e; }
+        .message-avatar { width: 55px; height: 55px; border-radius: 50%; background: #1a1a2e; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 700; color: #e91e63; margin-right: 1rem; border: 2px solid rgba(233,30,99,0.3); flex-shrink: 0; }
+        .message-info { flex: 1; min-width: 0; }
+        .message-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.2rem; }
+        .message-preview { color: #888; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .message-time { color: #666; font-size: 0.7rem; text-align: right; flex-shrink: 0; }
+        .message-unread { width: 10px; height: 10px; background: #e91e63; border-radius: 50%; margin-left: 0.5rem; flex-shrink: 0; }
+        .no-messages { text-align: center; color: #666; padding: 4rem 2rem; }
+        
+        /* RECEIVED PHOTOS GALLERY */
+        .photos-gallery { padding: 1rem; }
+        .photos-gallery h2 { margin-bottom: 1.5rem; font-size: 1.2rem; font-weight: 700; color: #ffffff; padding-left: 0.5rem; border-left: 3px solid #e91e63; }
+        .gallery-section { margin-bottom: 2rem; }
+        .gallery-section-title { font-size: 0.9rem; color: #888; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .gallery-section-title::before { content: ''; width: 30px; height: 30px; border-radius: 50%; background: #12121a; display: flex; align-items: center; justify-content: center; }
+        .photos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+        .gallery-photo { aspect-ratio: 1; background: #12121a; border-radius: 4px; overflow: hidden; cursor: pointer; transition: opacity 0.2s; }
+        .gallery-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-photo:active { opacity: 0.7; }
+        .no-photos { text-align: center; color: #666; padding: 4rem 2rem; }
+        
+        /* USER PROFILE/SETTINGS PAGE */
+        .settings-page { padding: 1.5rem; }
+        .settings-header { text-align: center; margin-bottom: 2rem; }
+        .settings-avatar { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #e91e63, #9c27b0); margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 800; color: white; }
+        .settings-name { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.3rem; }
+        .settings-age { color: #888; font-size: 0.9rem; }
+        .settings-stats { display: flex; justify-content: center; gap: 2rem; margin: 1.5rem 0; padding: 1rem; background: #12121a; border-radius: 15px; }
+        .settings-stat { text-align: center; }
+        .settings-stat-value { font-size: 1.5rem; font-weight: 700; color: #e91e63; }
+        .settings-stat-label { font-size: 0.75rem; color: #888; text-transform: uppercase; margin-top: 0.2rem; }
+        .settings-section { margin-top: 1.5rem; }
+        .settings-section-title { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem; padding-left: 0.5rem; }
+        .settings-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: #12121a; border-radius: 12px; margin-bottom: 0.5rem; cursor: pointer; transition: background 0.2s; }
+        .settings-item:active { background: #1a1a2e; }
+        .settings-item-left { display: flex; align-items: center; gap: 0.75rem; }
+        .settings-item-icon { font-size: 1.2rem; }
+        .settings-item-text { font-size: 0.95rem; }
+        .settings-item-arrow { color: #666; }
+        .btn-logout { width: 100%; padding: 1rem; background: transparent; border: 1px solid #ff4444; color: #ff4444; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 2rem; transition: all 0.2s; }
+        .btn-logout:active { background: #ff4444; color: white; }
+        .btn-reset { width: 100%; padding: 1rem; background: transparent; border: 1px solid #666; color: #666; border-radius: 12px; font-size: 0.9rem; cursor: pointer; margin-top: 0.5rem; }
+        
+        /* Loading Animation */
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .loading-shimmer { background: linear-gradient(90deg, #12121a 25%, #1a1a2e 50%, #12121a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     </style>
 </head>
 <body>
@@ -565,58 +838,156 @@ HTML = '''<!DOCTYPE html>
     </div>
 </div>
 
-<!-- MAIN PAGE (Swipe + Matches) -->
-<div class="page" id="pageMain">
+<!-- DISCOVER PAGE (Swipe) -->
+<div class="page page-with-nav" id="pageDiscover">
     <div class="header">
         <div class="header-row">
             <div class="logo">DREAM AI</div>
             <div class="user-name" id="headerUserName"></div>
         </div>
     </div>
-    <div class="nav-tabs">
-        <button class="nav-tab active" id="tabSwipe" onclick="switchTab('swipe')">Découvrir</button>
-        <button class="nav-tab" id="tabMatches" onclick="switchTab('matches')">Matchs</button>
-    </div>
     
-    <!-- SWIPE VIEW -->
-    <div id="swipeView">
-        <div class="swipe-container">
-            <div class="swipe-card" id="swipeCard">
-                <div class="swipe-card-img" id="swipeCardImg"></div>
-                <div class="swipe-card-info">
-                    <div class="swipe-card-name" id="swipeCardName"></div>
-                    <div class="swipe-card-location" id="swipeCardLocation"></div>
-                    <div class="swipe-card-bio" id="swipeCardBio"></div>
-                </div>
-            </div>
-            <div class="no-more-cards" id="noMoreCards" style="display:none;">
-                <p>Plus de profils pour le moment</p>
-                <p style="color:#666;font-size:0.8rem;margin-top:0.5rem;">Reviens plus tard</p>
+    <div class="swipe-container">
+        <div class="swipe-card" id="swipeCard">
+            <div class="swipe-card-img" id="swipeCardImg"></div>
+            <div class="swipe-card-info">
+                <div class="swipe-card-name" id="swipeCardName"></div>
+                <div class="swipe-card-location" id="swipeCardLocation"></div>
+                <div class="swipe-card-bio" id="swipeCardBio"></div>
             </div>
         </div>
-        <div class="swipe-buttons" id="swipeButtons">
-            <button class="swipe-btn swipe-btn-pass" onclick="swipeLeft()">X</button>
-            <button class="swipe-btn swipe-btn-like" onclick="swipeRight()">♥</button>
+        <div class="no-more-cards" id="noMoreCards" style="display:none;">
+            <p>Plus de profils pour le moment</p>
+            <p style="color:#666;font-size:0.8rem;margin-top:0.5rem;">Reviens plus tard</p>
         </div>
     </div>
-    
-    <!-- MATCHES VIEW -->
-    <div id="matchesView" style="display:none;">
-        <div class="gallery">
-            <h2>Tes Matchs</h2>
-            <div class="girls-grid" id="matchesGrid"></div>
-            <div id="noMatches" style="text-align:center;color:#666;padding:3rem;display:none;">
-                <p>Pas encore de matchs</p>
-                <p style="font-size:0.8rem;margin-top:0.5rem;">Continue à swiper pour en trouver</p>
-            </div>
+    <div class="swipe-buttons" id="swipeButtons">
+        <button class="swipe-btn swipe-btn-pass" onclick="swipeLeft()">X</button>
+        <button class="swipe-btn swipe-btn-like" onclick="swipeRight()">♥</button>
+    </div>
+</div>
+
+<!-- MESSAGES PAGE -->
+<div class="page page-with-nav" id="pageMessages">
+    <div class="header">
+        <div class="logo">Messages</div>
+    </div>
+    <div class="messages-list" id="messagesList"></div>
+    <div class="no-messages" id="noMessagesText" style="display:none;">
+        <p style="font-size:3rem;margin-bottom:1rem;">💬</p>
+        <p>Pas encore de conversations</p>
+        <p style="font-size:0.85rem;margin-top:0.5rem;color:#888;">Match avec quelqu'un pour commencer</p>
+    </div>
+</div>
+
+<!-- MATCHES PAGE -->
+<div class="page page-with-nav" id="pageMatches">
+    <div class="header">
+        <div class="logo">Matchs</div>
+    </div>
+    <div class="gallery">
+        <h2>Tes Matchs</h2>
+        <div class="girls-grid" id="matchesGrid"></div>
+        <div id="noMatches" style="text-align:center;color:#666;padding:3rem;display:none;">
+            <p style="font-size:3rem;margin-bottom:1rem;">💕</p>
+            <p>Pas encore de matchs</p>
+            <p style="font-size:0.8rem;margin-top:0.5rem;">Continue a swiper pour en trouver</p>
         </div>
     </div>
 </div>
 
+<!-- GALLERY PAGE (Received Photos) -->
+<div class="page page-with-nav" id="pageGallery">
+    <div class="header">
+        <div class="logo">Galerie</div>
+    </div>
+    <div class="photos-gallery" id="photosGallery"></div>
+    <div class="no-photos" id="noPhotosText" style="display:none;">
+        <p style="font-size:3rem;margin-bottom:1rem;">📸</p>
+        <p>Aucune photo recue</p>
+        <p style="font-size:0.85rem;margin-top:0.5rem;color:#888;">Discute avec tes matchs pour en recevoir</p>
+    </div>
+</div>
+
+<!-- SETTINGS PAGE -->
+<div class="page page-with-nav" id="pageSettings">
+    <div class="settings-page">
+        <div class="settings-header">
+            <div class="settings-avatar" id="settingsAvatar"></div>
+            <div class="settings-name" id="settingsName"></div>
+            <div class="settings-age" id="settingsAge"></div>
+        </div>
+        <div class="settings-stats">
+            <div class="settings-stat">
+                <div class="settings-stat-value" id="statsMatches">0</div>
+                <div class="settings-stat-label">Matchs</div>
+            </div>
+            <div class="settings-stat">
+                <div class="settings-stat-value" id="statsPhotos">0</div>
+                <div class="settings-stat-label">Photos</div>
+            </div>
+            <div class="settings-stat">
+                <div class="settings-stat-value" id="statsChats">0</div>
+                <div class="settings-stat-label">Chats</div>
+            </div>
+        </div>
+        <div class="settings-section">
+            <div class="settings-section-title">Preferences</div>
+            <div class="settings-item" onclick="showVideoToast()">
+                <div class="settings-item-left">
+                    <span class="settings-item-icon">🔔</span>
+                    <span class="settings-item-text">Notifications</span>
+                </div>
+                <span class="settings-item-arrow">→</span>
+            </div>
+            <div class="settings-item" onclick="showVideoToast()">
+                <div class="settings-item-left">
+                    <span class="settings-item-icon">🎨</span>
+                    <span class="settings-item-text">Apparence</span>
+                </div>
+                <span class="settings-item-arrow">→</span>
+            </div>
+            <div class="settings-item" onclick="showVideoToast()">
+                <div class="settings-item-left">
+                    <span class="settings-item-icon">🔒</span>
+                    <span class="settings-item-text">Confidentialite</span>
+                </div>
+                <span class="settings-item-arrow">→</span>
+            </div>
+        </div>
+        <button class="btn-reset" onclick="resetAllData()">Reinitialiser les donnees</button>
+        <button class="btn-logout" onclick="logout()">Se deconnecter</button>
+    </div>
+</div>
+
+<!-- BOTTOM NAVIGATION -->
+<nav class="bottom-nav" id="bottomNav" style="display:none;">
+    <button class="nav-item active" onclick="navigateTo('discover')" id="navDiscover">
+        <span class="nav-icon">🔥</span>
+        <span class="nav-label">Decouvrir</span>
+    </button>
+    <button class="nav-item" onclick="navigateTo('messages')" id="navMessages" style="position:relative;">
+        <span class="nav-icon">💬</span>
+        <span class="nav-label">Messages</span>
+    </button>
+    <button class="nav-item" onclick="navigateTo('matches')" id="navMatches">
+        <span class="nav-icon">💕</span>
+        <span class="nav-label">Matchs</span>
+    </button>
+    <button class="nav-item" onclick="navigateTo('gallery')" id="navGallery">
+        <span class="nav-icon">📸</span>
+        <span class="nav-label">Galerie</span>
+    </button>
+    <button class="nav-item" onclick="navigateTo('settings')" id="navSettings">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Profil</span>
+    </button>
+</nav>
+
 <!-- PROFILE PAGE -->
 <div class="page" id="pageProfile">
     <div class="profile">
-        <div class="back-btn" onclick="showPage('main')">←</div>
+        <div class="back-btn" onclick="goBackFromProfile()">←</div>
         <div class="profile-img" id="profileMainPhoto"></div>
         <div class="profile-content">
             <h1 id="profileName"></h1>
@@ -655,7 +1026,7 @@ HTML = '''<!DOCTYPE html>
 <!-- CHAT PAGE -->
 <div class="page chat-page" id="pageChat">
     <div class="chat-header">
-        <div class="back-btn" onclick="showPage('profile')">←</div>
+        <div class="back-btn" onclick="goBackFromChat()">←</div>
         <div class="chat-avatar-circle" id="chatInitials"></div>
         <div class="chat-info">
             <div class="chat-name" id="chatName"></div>
@@ -765,17 +1136,19 @@ function getRandomBg(category) {
 }
 
 const PHOTO_TYPES = [
-    { type: 'selfie', getPrompt: (aff) => `face closeup selfie, smartphone front camera angle, natural lighting, casual look, ${getRandomBg('home')}, authentic amateur photo style` },
-    { type: 'outdoor', getPrompt: (aff) => aff > 50 ? `full body shot, wearing bikini or short dress, ${getRandomBg('outdoor')}, natural daylight, sexy but classy` : `full body outdoor shot, casual summer outfit, ${getRandomBg('day')}, natural daylight` },
-    { type: 'nightout', getPrompt: (aff) => `dressed up for night out, tight dress showing curves, ${getRandomBg('night')}, glamorous makeup, seductive pose` },
-    { type: 'intimate', getPrompt: (aff) => aff > 75 ? `nude in ${getRandomBg('home')}, intimate bedroom setting, sensual pose, naked body visible` : aff > 40 ? `wearing sexy lingerie, ${getRandomBg('home')}, seductive look, intimate setting` : `wearing elegant dress, ${getRandomBg('home')}, soft bedroom lighting, alluring smile` }
+    { type: 'casual', getPrompt: (aff) => `casual everyday outfit, jeans and t-shirt or comfortable clothes, natural relaxed pose, ${getRandomBg('day')}, authentic candid photo, smartphone selfie style` },
+    { type: 'elegant', getPrompt: (aff) => `elegant cocktail dress, sophisticated style, ${getRandomBg('night')}, glamorous makeup, classy pose, evening wear` },
+    { type: 'swimsuit', getPrompt: (aff) => aff > 40 ? `wearing sexy bikini, ${getRandomBg('outdoor')}, beach or pool setting, showing curves, wet skin` : `wearing stylish swimsuit, ${getRandomBg('outdoor')}, beach setting, summer vibes` },
+    { type: 'sexy', getPrompt: (aff) => aff > 75 ? `nude in ${getRandomBg('home')}, intimate bedroom setting, sensual pose, naked body visible, explicit` : aff > 50 ? `wearing sexy lingerie, ${getRandomBg('home')}, seductive look, intimate setting, lace underwear` : `wearing revealing outfit, low cut top, ${getRandomBg('night')}, seductive pose, showing cleavage` }
 ];
 
 function checkLogin() {
     if (user) {
         document.getElementById('headerUserName').textContent = user.name;
-        showPage('main');
+        document.getElementById('bottomNav').style.display = 'flex';
+        navigateTo('discover');
         initSwipe();
+        updateSettingsPage();
     }
 }
 
@@ -783,14 +1156,165 @@ function login() {
     const name = document.getElementById('userName').value.trim();
     const age = parseInt(document.getElementById('userAge').value);
     if (!name || !age || age < 18) {
-        alert('Entre ton prénom et ton âge (18+)');
+        alert('Entre ton prenom et ton age (18+)');
         return;
     }
     user = { name, age };
     localStorage.setItem('dreamUser', JSON.stringify(user));
     document.getElementById('headerUserName').textContent = name;
-    showPage('main');
+    document.getElementById('bottomNav').style.display = 'flex';
+    navigateTo('discover');
     initSwipe();
+    updateSettingsPage();
+}
+
+function navigateTo(page) {
+    lastNavTab = page;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    
+    const pageMap = {
+        'discover': 'pageDiscover',
+        'messages': 'pageMessages',
+        'matches': 'pageMatches',
+        'gallery': 'pageGallery',
+        'settings': 'pageSettings'
+    };
+    
+    const pageEl = document.getElementById(pageMap[page]);
+    if (pageEl) pageEl.classList.add('active');
+    
+    const navEl = document.getElementById('nav' + page.charAt(0).toUpperCase() + page.slice(1));
+    if (navEl) navEl.classList.add('active');
+    
+    document.getElementById('bottomNav').style.display = 'flex';
+    
+    if (page === 'matches') renderMatches();
+    if (page === 'messages') renderMessagesList();
+    if (page === 'gallery') renderGallery();
+    if (page === 'settings') updateSettingsPage();
+}
+
+function renderMessagesList() {
+    const list = document.getElementById('messagesList');
+    const noMsg = document.getElementById('noMessagesText');
+    
+    const chatsWithMessages = matches.filter(id => {
+        const chat = chatHistory[id] || loadChatHistory(id);
+        return chat && chat.length > 0;
+    });
+    
+    if (chatsWithMessages.length === 0) {
+        list.innerHTML = '';
+        noMsg.style.display = 'block';
+        return;
+    }
+    
+    noMsg.style.display = 'none';
+    list.innerHTML = chatsWithMessages.map(id => {
+        const g = GIRLS[id];
+        const chat = chatHistory[id] || [];
+        const lastMsg = chat[chat.length - 1];
+        const preview = lastMsg ? (lastMsg.content.substring(0, 40) + (lastMsg.content.length > 40 ? '...' : '')) : 'Nouvelle conversation';
+        const time = lastMsg ? lastMsg.time : '';
+        return `
+            <div class="message-item" onclick="openChatDirectly('${id}')">
+                <div class="message-avatar">${INITIALS[id]}</div>
+                <div class="message-info">
+                    <div class="message-name">${g.name}</div>
+                    <div class="message-preview">${preview}</div>
+                </div>
+                <div class="message-time">${time}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function openChatDirectly(girlId) {
+    currentGirl = girlId;
+    if (!chatHistory[girlId]) chatHistory[girlId] = loadChatHistory(girlId);
+    const g = GIRLS[girlId];
+    document.getElementById('chatName').textContent = g.name;
+    document.getElementById('chatInitials').textContent = INITIALS[girlId];
+    renderMessages();
+    showPage('chat');
+}
+
+function renderGallery() {
+    const gallery = document.getElementById('photosGallery');
+    const noPhotos = document.getElementById('noPhotosText');
+    
+    let totalPhotos = 0;
+    let html = '<h2>Photos Recues</h2>';
+    
+    Object.keys(receivedPhotos).forEach(girlId => {
+        const photos = receivedPhotos[girlId];
+        if (photos && photos.length > 0) {
+            totalPhotos += photos.length;
+            const g = GIRLS[girlId];
+            html += `
+                <div class="gallery-section">
+                    <div class="gallery-section-title">${g.name} - ${photos.length} photo${photos.length > 1 ? 's' : ''}</div>
+                    <div class="photos-grid">
+                        ${photos.map((url, i) => `
+                            <div class="gallery-photo" onclick="openGalleryPhoto('${girlId}', ${i})">
+                                <img src="${url}" alt="" loading="lazy">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+    });
+    
+    if (totalPhotos === 0) {
+        gallery.innerHTML = '';
+        noPhotos.style.display = 'block';
+    } else {
+        noPhotos.style.display = 'none';
+        gallery.innerHTML = html;
+    }
+}
+
+function openGalleryPhoto(girlId, index) {
+    currentOverlayPhotos = receivedPhotos[girlId] || [];
+    currentOverlayIndex = index;
+    updateOverlay();
+    document.getElementById('img-overlay').style.display = 'flex';
+}
+
+function updateSettingsPage() {
+    if (!user) return;
+    document.getElementById('settingsAvatar').textContent = user.name.charAt(0).toUpperCase();
+    document.getElementById('settingsName').textContent = user.name;
+    document.getElementById('settingsAge').textContent = user.age + ' ans';
+    document.getElementById('statsMatches').textContent = matches.length;
+    
+    let photoCount = 0;
+    Object.values(receivedPhotos).forEach(arr => { photoCount += (arr || []).length; });
+    document.getElementById('statsPhotos').textContent = photoCount;
+    
+    let chatCount = 0;
+    matches.forEach(id => {
+        const chat = chatHistory[id] || loadChatHistory(id);
+        if (chat && chat.length > 0) chatCount++;
+    });
+    document.getElementById('statsChats').textContent = chatCount;
+}
+
+function logout() {
+    localStorage.removeItem('dreamUser');
+    user = null;
+    document.getElementById('bottomNav').style.display = 'none';
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('pageLogin').classList.add('active');
+}
+
+function resetAllData() {
+    if (confirm('Effacer toutes les donnees? Cette action est irreversible.')) {
+        localStorage.clear();
+        location.reload();
+    }
 }
 
 function initSwipe() {
@@ -912,27 +1436,31 @@ function renderMatches() {
     }).join('');
 }
 
-function switchTab(tab) {
-    document.getElementById('tabSwipe').classList.toggle('active', tab === 'swipe');
-    document.getElementById('tabMatches').classList.toggle('active', tab === 'matches');
-    document.getElementById('swipeView').style.display = tab === 'swipe' ? 'block' : 'none';
-    document.getElementById('matchesView').style.display = tab === 'matches' ? 'block' : 'none';
-    if (tab === 'matches') renderMatches();
-}
-
 function init() {
     checkLogin();
 }
+
+let lastNavTab = 'discover';
 
 function showPage(page) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     const pageId = 'page' + page.charAt(0).toUpperCase() + page.slice(1);
     const pageEl = document.getElementById(pageId);
     if (pageEl) pageEl.classList.add('active');
-    if (page === 'main') {
-        renderMatches();
-        switchTab('swipe');
+    
+    if (['profile', 'chat'].includes(page)) {
+        document.getElementById('bottomNav').style.display = 'none';
+    } else {
+        document.getElementById('bottomNav').style.display = 'flex';
     }
+}
+
+function goBackFromProfile() {
+    navigateTo(lastNavTab);
+}
+
+function goBackFromChat() {
+    showPage('profile');
 }
 
 function showProfile(id) {
