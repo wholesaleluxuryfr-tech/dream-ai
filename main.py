@@ -101,12 +101,12 @@ def photo():
     full_prompt = f"{base_prompt}, {description}, high quality, cinematic lighting, masterpiece"
 
     payload = {
-        "style": "cinematic",
-        "pose": "standing",
+        "style": "Photo XL+ v2",
+        "pose": "Default",
         "prompt": full_prompt,
         "quality": "Ultra",
-        "age_slider": girl["age"] if girl else 30,
-        "creativity": 0.7,
+        "age_slider": girl["age"] if girl else 35,
+        "creativity": 50,
         "restore_faces": True,
         "seed": -1
     }
@@ -118,8 +118,12 @@ def photo():
             json=payload,
             timeout=60
         )
-        return jsonify(response.json())
+        print(f"DEBUG: API Response Status: {response.status_code}")
+        response_data = response.json()
+        print(f"DEBUG: API Response Body: {response_data}")
+        return jsonify(response_data)
     except Exception as e:
+        print(f"DEBUG: /photo error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":

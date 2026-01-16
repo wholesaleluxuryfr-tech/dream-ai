@@ -84,11 +84,13 @@ async function generatePhoto(description, targetDiv) {
         });
         
         const data = await response.json();
-        const url = data.url || (data.data && data.data[0] && data.data[0].url);
+        const url = data.image_url || data.url || (data.data && data.data[0] && data.data[0].url);
         
         if (url) {
             const img = document.createElement('img');
             img.src = url;
+            img.style.maxWidth = "250px";
+            img.style.borderRadius = "12px";
             img.classList.add('photo-msg');
             img.onload = () => {
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
