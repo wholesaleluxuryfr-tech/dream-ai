@@ -47,8 +47,17 @@ Dream AI is a Flask-based adult dating/companion application featuring 6 AI-powe
 - `main.py`: Complete Flask app with embedded HTML/CSS/JavaScript
 
 ### External APIs
-- **DeepInfra**: meta-llama/Meta-Llama-3.1-70B-Instruct for chat
-- **Promptchan**: Photo generation via PROMPTCHAN_KEY secret
+- **DeepInfra**: meta-llama/Meta-Llama-3.1-8B-Instruct for chat (30s timeout)
+- **Pollinations**: Fallback chat API (text.pollinations.ai)
+- **Promptchan**: Photo generation via PROMPTCHAN_KEY secret (30s timeout)
+
+### Girl Appearances (Unique)
+- Anastasia (35): Platinum blonde, ice blue eyes, Russian
+- Yuki (28): Black hair, dark Asian eyes, Japanese
+- Sofia (30): Dark brown wavy hair, olive skin, Spanish
+- Emma (25): Golden blonde beach waves, green eyes, American
+- Léa (27): Brown wavy hair, hazel eyes, French
+- Mia (32): Dark curly hair, tan skin, Brazilian
 
 ### Data Storage
 - localStorage for affection levels and read states
