@@ -62,7 +62,7 @@ def photo():
         "style": "cinematic",
         "pose": "standing",
         "prompt": data.get("prompt", "a beautiful woman"),
-        "quality": "high",
+        "quality": "Ultra",
         "age_slider": 35,
         "creativity": 0.7,
         "restore_faces": True,
