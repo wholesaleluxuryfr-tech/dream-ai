@@ -1506,7 +1506,9 @@ function setAgeFilter(filter) {
 function setRegionFilter(filter) {
     currentRegionFilter = filter;
     document.querySelectorAll('.filter-row:last-child .filter-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById('filterRegion' + (filter === 'all' ? 'All' : filter.charAt(0).toUpperCase() + filter.slice(1))).classList.add('active');
+    const idMap = {all: 'filterRegionAll', europe: 'filterEurope', asie: 'filterAsie', afrique: 'filterAfrique', amerique: 'filterAmerique'};
+    const el = document.getElementById(idMap[filter]);
+    if (el) el.classList.add('active');
     initSwipe();
 }
 
