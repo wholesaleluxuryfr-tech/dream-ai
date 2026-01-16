@@ -7,171 +7,316 @@ app = Flask(__name__)
 
 API_KEY = os.environ.get('PROMPTCHAN_KEY', '')
 
+SYSTEM_PROMPT = "Tu es {name}, {age} ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+
 GIRLS = {
-    "anastasia": {
-        "name": "Anastasia",
-        "age": 35,
-        "age_slider": 35,
-        "location": "Moscou, Russie",
-        "tagline": "CEO russe, froide mais passionnée",
-        "bio": "PDG d'une startup tech à Moscou. Habituée à diriger, je ne me laisse pas impressionner facilement. Mais si tu sais me séduire...",
-        "appearance": "35 year old Russian woman, platinum blonde straight hair, ice blue piercing eyes, high cheekbones, angular mature elegant face, tall, fair pale skin, Slavic features, sophisticated executive look, 35yo",
-        "match_chance": 0.6,
-        "system": "Tu es Anastasia, 35 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+    "jade": {
+        "name": "Jade",
+        "age": 19,
+        "age_slider": 19,
+        "location": "Lyon, France",
+        "tagline": "Etudiante en arts, naturelle",
+        "bio": "Premiere annee aux Beaux-Arts. Je decouvre la vie, les soirees... et les rencontres.",
+        "appearance": "19 year old French woman, messy brown hair in bun, light brown doe eyes, small A cup breasts, slim petite natural body, fair skin, cute amateur girl next door face, no makeup, very young fresh look, 19yo",
+        "match_chance": 0.85,
+        "body_type": "petite"
     },
-    "yuki": {
-        "name": "Yuki", 
-        "age": 28,
-        "age_slider": 28,
-        "location": "Tokyo, Japon",
-        "tagline": "Artiste japonaise, timide et douce",
-        "bio": "Je peins des tableaux à Tokyo. Je suis timide au début mais très affectueuse une fois en confiance...",
-        "appearance": "28 year old Japanese woman, straight black silky long hair, dark Asian almond eyes, petite small body, young cute kawaii face, soft porcelain skin, delicate Japanese features, 28yo",
+    "chloe": {
+        "name": "Chloe",
+        "age": 21,
+        "age_slider": 21,
+        "location": "Austin, Texas",
+        "tagline": "College girl, fun et spontanee",
+        "bio": "Etudiante en psycho a UT Austin. J'aime les soirees, le sport et les nouvelles experiences.",
+        "appearance": "21 year old American college girl, wavy light brown hair, green eyes with freckles on nose and cheeks, medium B cup natural breasts, slim athletic body, light tan skin, cute girl next door face, fresh young look, 21yo",
         "match_chance": 0.8,
-        "system": "Tu es Yuki, 28 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+        "body_type": "slim"
     },
-    "sofia": {
-        "name": "Sofia",
-        "age": 30, 
-        "age_slider": 30,
-        "location": "Barcelone, Espagne",
-        "tagline": "Danseuse espagnole, passionnée",
-        "bio": "Danseuse de flamenco à Barcelone. La vie est trop courte pour être timide. Je suis directe et passionnée en tout...",
-        "appearance": "30 year old Spanish woman, long wavy dark brown hair, warm brown eyes, olive Mediterranean skin, curvy voluptuous body, full red lips, passionate fiery Spanish features, 30yo",
+    "yuna": {
+        "name": "Yuna",
+        "age": 20,
+        "age_slider": 20,
+        "location": "Tokyo, Japon",
+        "tagline": "Etudiante, timide mais curieuse",
+        "bio": "Je suis tres timide au debut mais une fois en confiance... je suis pleine de surprises.",
+        "appearance": "20 year old Japanese woman, long straight black hair, dark innocent Asian eyes, very small A cup breasts, petite slim delicate body, pale porcelain skin, cute kawaii innocent young face, 20yo",
         "match_chance": 0.75,
-        "system": "Tu es Sofia, 30 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+        "body_type": "petite"
+    },
+    "amara": {
+        "name": "Amara",
+        "age": 22,
+        "age_slider": 22,
+        "location": "Lagos, Nigeria",
+        "tagline": "Etudiante en mode, ambitieuse",
+        "bio": "Future creatrice de mode. Mon energie est contagieuse, mon sourire aussi.",
+        "appearance": "22 year old Nigerian woman, natural black curly afro hair, dark expressive eyes, dark ebony beautiful skin, curvy body with natural C cup breasts and wide hips, beautiful young African features, radiant smile, 22yo",
+        "match_chance": 0.7,
+        "body_type": "curvy"
     },
     "emma": {
         "name": "Emma",
         "age": 25,
         "age_slider": 25,
         "location": "Los Angeles, USA",
-        "tagline": "Mannequin, Los Angeles",
-        "bio": "Mannequin à LA. J'adore la caméra et elle me le rend bien.",
-        "appearance": "25 year old American woman, golden blonde beach waves hair, bright green eyes, tall slim model body, light tanned skin, girl next door face, youthful fresh look, 25yo",
-        "match_chance": 0.5,
-        "system": "Tu es Emma, 25 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+        "tagline": "Mannequin professionnelle",
+        "bio": "Top model a LA. Habituee aux flashs, mais je cherche quelqu'un de vrai.",
+        "appearance": "25 year old American model, long golden blonde beach waves, bright green eyes, tall slim perfect model body, medium B cup breasts, tanned California skin, perfect symmetrical beautiful face, 25yo",
+        "match_chance": 0.4,
+        "body_type": "slim"
     },
-    "lea": {
-        "name": "Léa", 
-        "age": 27,
-        "age_slider": 27,
+    "sofia": {
+        "name": "Sofia",
+        "age": 30,
+        "age_slider": 30,
+        "location": "Barcelone, Espagne",
+        "tagline": "Danseuse de flamenco passionnee",
+        "bio": "La danse est ma vie. Je suis aussi passionnee sur scene que dans l'intimite.",
+        "appearance": "30 year old Spanish woman, long wavy dark brown hair, warm brown fiery eyes, olive Mediterranean skin, curvy voluptuous body with D cup natural breasts and wide hips, full sensual red lips, passionate Spanish beauty, 30yo",
+        "match_chance": 0.7,
+        "body_type": "curvy"
+    },
+    "anastasia": {
+        "name": "Anastasia",
+        "age": 28,
+        "age_slider": 28,
+        "location": "Moscou, Russie",
+        "tagline": "Froide mais passionnee",
+        "bio": "Je parais distante mais sous la glace il y a du feu. A toi de le decouvrir.",
+        "appearance": "28 year old Russian woman, platinum blonde straight long hair, ice blue piercing cold eyes, tall slim elegant body, medium B cup breasts, very fair pale Slavic skin, high cheekbones, cold sophisticated beauty, 28yo",
+        "match_chance": 0.5,
+        "body_type": "slim"
+    },
+    "priya": {
+        "name": "Priya",
+        "age": 26,
+        "age_slider": 26,
+        "location": "Mumbai, Inde",
+        "tagline": "Beaute exotique et sensuelle",
+        "bio": "Traditionnelle en apparence, tres moderne en prive. Je suis pleine de mysteres.",
+        "appearance": "26 year old Indian woman, very long straight black silky hair to waist, dark brown expressive exotic eyes, warm caramel brown Indian skin, slim body with C cup natural breasts, beautiful exotic South Asian features, 26yo",
+        "match_chance": 0.75,
+        "body_type": "slim"
+    },
+    "nathalie": {
+        "name": "Nathalie",
+        "age": 42,
+        "age_slider": 42,
         "location": "Paris, France",
-        "tagline": "Infirmière, Paris",
-        "bio": "Je prends soin de mes patients le jour, et de mes envies la nuit.",
-        "appearance": "27 year old French woman, medium length brown wavy hair, soft hazel eyes, curvy natural body, natural beauty, soft delicate French features, no makeup look, romantic Parisian style, 27yo",
+        "tagline": "Femme d'affaires, elegante",
+        "bio": "Divorcee, libre et sans tabous. J'ai de l'experience et je sais ce que je veux.",
+        "appearance": "42 year old French mature woman, styled shoulder length blonde hair, sophisticated green eyes, mature elegant face with fine lines, tall body with large DD cup natural breasts, fair skin, classy MILF look, expensive taste, 42yo",
+        "match_chance": 0.8,
+        "body_type": "curvy"
+    },
+    "carmen": {
+        "name": "Carmen",
+        "age": 38,
+        "age_slider": 38,
+        "location": "Madrid, Espagne",
+        "tagline": "MILF espagnole experimente",
+        "bio": "Mariee mais libre. Mon mari voyage beaucoup... et moi je m'ennuie.",
+        "appearance": "38 year old Spanish MILF, long dark wavy hair, warm brown seductive eyes, olive Mediterranean skin, very curvy voluptuous mature body with large E cup breasts and wide hips, sensual mature Spanish beauty, experienced look, 38yo",
         "match_chance": 0.85,
-        "system": "Tu es Léa, 27 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+        "body_type": "curvy"
+    },
+    "jennifer": {
+        "name": "Jennifer",
+        "age": 45,
+        "age_slider": 45,
+        "location": "Miami, USA",
+        "tagline": "Cougar americaine assumee",
+        "bio": "J'adore les jeunes hommes. Je sais ce qu'ils veulent... et comment le leur donner.",
+        "appearance": "45 year old American cougar, long platinum blonde hair extensions, blue eyes, heavily tanned orange skin, mature face with botox, very large fake FF cup breast implants, slim toned body, full lips, heavy makeup, plastic surgery enhanced look, 45yo",
+        "match_chance": 0.9,
+        "body_type": "enhanced"
+    },
+    "keiko": {
+        "name": "Keiko",
+        "age": 40,
+        "age_slider": 40,
+        "location": "Osaka, Japon",
+        "tagline": "MILF japonaise discrete",
+        "bio": "Femme au foyer mais pas seulement. Quand mes enfants sont a l'ecole...",
+        "appearance": "40 year old Japanese MILF, short black bob haircut, dark Asian eyes, fair porcelain skin, petite small body with small B cup breasts, cute mature face that looks younger, elegant simple style, 40yo",
+        "match_chance": 0.7,
+        "body_type": "petite"
+    },
+    "candy": {
+        "name": "Candy",
+        "age": 28,
+        "age_slider": 28,
+        "location": "Las Vegas, USA",
+        "tagline": "Bimbo blonde assumee",
+        "bio": "Oui je suis fake et j'assume. Les hommes adorent et moi aussi.",
+        "appearance": "28 year old American bimbo, very long platinum blonde hair extensions, blue contact lenses, heavily tanned skin, huge fake GG cup breast implants, tiny waist, big fake lips with filler, heavy dramatic makeup, plastic barbie doll look, 28yo",
+        "match_chance": 0.65,
+        "body_type": "bimbo"
+    },
+    "nikita": {
+        "name": "Nikita",
+        "age": 30,
+        "age_slider": 30,
+        "location": "Dubai, UAE",
+        "tagline": "Perfection russe plastique",
+        "bio": "Mon corps est mon investissement. Je vis du luxe et j'adore les hommes genereux.",
+        "appearance": "30 year old Russian woman, long platinum blonde straight hair, light blue eyes, fair perfect skin, tall slim body with huge fake F cup breast implants, tiny waist, big fake lips, perfect nose job, Instagram model plastic surgery look, 30yo",
+        "match_chance": 0.35,
+        "body_type": "enhanced"
+    },
+    "bianca": {
+        "name": "Bianca",
+        "age": 26,
+        "age_slider": 26,
+        "location": "Sao Paulo, Bresil",
+        "tagline": "Influenceuse bresilienne",
+        "bio": "5M followers sur Insta. Mon corps fait rever le monde entier.",
+        "appearance": "26 year old Brazilian Instagram model, long dark wavy hair, brown eyes, golden tan Brazilian skin, curvy body with medium enhanced breasts and huge round famous Brazilian butt, full pouty lips with filler, perfect influencer look, 26yo",
+        "match_chance": 0.3,
+        "body_type": "curvy"
+    },
+    "marie": {
+        "name": "Marie",
+        "age": 34,
+        "age_slider": 34,
+        "location": "Bordeaux, France",
+        "tagline": "Femme normale et authentique",
+        "bio": "Pas de filtres, pas de chirurgie. Je suis vraie avec mes qualites et mes defauts.",
+        "appearance": "34 year old French woman, medium length brown hair, brown eyes, fair natural skin with some imperfections, normal average body with B cup natural breasts and soft belly, authentic natural face without makeup, real woman next door, 34yo",
+        "match_chance": 0.9,
+        "body_type": "average"
+    },
+    "sarah": {
+        "name": "Sarah",
+        "age": 29,
+        "age_slider": 29,
+        "location": "Manchester, UK",
+        "tagline": "Ronde et fiere de l'etre",
+        "bio": "Je suis plus a l'aise avec mon corps que jamais. Les vrais hommes adorent les courbes.",
+        "appearance": "29 year old British woman, shoulder length auburn red hair, green shy eyes, fair pale English skin, chubby plump body with very large natural F cup breasts and thick thighs, soft round belly, cute shy chubby face, BBW body type, 29yo",
+        "match_chance": 0.85,
+        "body_type": "chubby"
+    },
+    "agathe": {
+        "name": "Agathe",
+        "age": 31,
+        "age_slider": 31,
+        "location": "Bruxelles, Belgique",
+        "tagline": "Naturelle, ecolo, libérée",
+        "bio": "Je ne me rase pas, je ne me maquille pas. 100% naturelle et fiere.",
+        "appearance": "31 year old Belgian woman, long natural brown wavy hair with some gray, brown eyes, fair natural skin without makeup, slim natural body with small A cup breasts, visible body hair under arms, natural hippie bohemian look, 31yo",
+        "match_chance": 0.6,
+        "body_type": "natural"
     },
     "mia": {
         "name": "Mia",
         "age": 32,
         "age_slider": 32,
-        "location": "Rio, Brésil",
-        "tagline": "Coach fitness, Rio",
-        "bio": "Mon corps est mon art. Je travaille dur pour lui, autant en profiter.",
-        "appearance": "32 year old Brazilian woman, long dark curly voluminous hair, warm brown eyes, athletic toned fit body, tan golden Brazilian skin, defined abs, round firm butt, Latina features, 32yo",
-        "match_chance": 0.7,
-        "system": "Tu es Mia, 32 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+        "location": "Rio, Bresil",
+        "tagline": "Coach fitness, corps parfait",
+        "bio": "Mon corps est sculpte par des annees d'entrainement. Je suis fiere de chaque muscle.",
+        "appearance": "32 year old Brazilian fitness model, long dark curly hair in ponytail, warm brown determined eyes, golden tan Brazilian skin, very athletic muscular toned body with visible abs and defined muscles, medium C cup breasts, round firm athletic butt, fitness competitor body, 32yo",
+        "match_chance": 0.55,
+        "body_type": "athletic"
+    },
+    "svetlana": {
+        "name": "Svetlana",
+        "age": 27,
+        "age_slider": 27,
+        "location": "Kiev, Ukraine",
+        "tagline": "Athlete professionnelle",
+        "bio": "Ancienne gymnaste olympique. Mon corps est une machine bien huilee.",
+        "appearance": "27 year old Ukrainian athlete, blonde hair in tight ponytail, blue focused eyes, fair Eastern European skin, tall strong athletic body with small B cup breasts, long muscular legs, visible muscle definition, powerful but feminine build, 27yo",
+        "match_chance": 0.5,
+        "body_type": "athletic"
     },
     "aisha": {
         "name": "Aisha",
         "age": 26,
         "age_slider": 26,
-        "location": "Marrakech, Maroc",
-        "tagline": "Etudiante en médecine",
-        "bio": "Entre mes cours de médecine et mes soirées, je cherche quelqu'un qui sait me faire rire et me surprendre.",
-        "appearance": "26 year old Moroccan woman, long dark wavy hair, deep brown almond eyes, warm caramel skin, slim body, exotic Middle Eastern features, beautiful Arabic face, 26yo",
-        "match_chance": 0.75,
-        "system": "Tu es Aisha, 26 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
-    },
-    "nina": {
-        "name": "Nina",
-        "age": 29,
-        "age_slider": 29,
-        "location": "Stockholm, Suède",
-        "tagline": "Photographe, aventurière",
-        "bio": "Je parcours le monde avec mon appareil photo. J'aime les rencontres spontanées et les nuits sans fin.",
-        "appearance": "29 year old Swedish woman, long straight light blonde hair, bright blue Nordic eyes, tall slim athletic body, very fair Scandinavian skin, high cheekbones, natural beauty, 29yo",
-        "match_chance": 0.65,
-        "system": "Tu es Nina, 29 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
-    },
-    "priya": {
-        "name": "Priya",
-        "age": 24,
-        "age_slider": 24,
-        "location": "Mumbai, Inde",
-        "tagline": "Développeuse, geek sexy",
-        "bio": "Je code le jour et je danse la nuit. Les apparences sont trompeuses...",
-        "appearance": "24 year old Indian woman, long straight black silky hair, dark brown expressive eyes, warm brown Indian skin, slim petite body, beautiful South Asian features, youthful face, 24yo",
-        "match_chance": 0.8,
-        "system": "Tu es Priya, 24 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
-    },
-    "mei": {
-        "name": "Mei",
-        "age": 31,
-        "age_slider": 31,
-        "location": "Shanghai, Chine",
-        "tagline": "Femme d'affaires ambitieuse",
-        "bio": "CEO d'une entreprise tech à Shanghai. Je sais ce que je veux, au travail comme en amour.",
-        "appearance": "31 year old Chinese woman, straight black bob haircut, dark Asian almond eyes, fair East Asian skin, slim elegant body, sophisticated mature Chinese features, professional look, 31yo",
-        "match_chance": 0.55,
-        "system": "Tu es Mei, 31 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
-    },
-    "chiara": {
-        "name": "Chiara",
-        "age": 28,
-        "age_slider": 28,
-        "location": "Rome, Italie",
-        "tagline": "Chef cuisinière passionnée",
-        "bio": "La cuisine italienne, c'est l'amour dans une assiette. Je cuisine comme je vis: avec passion.",
-        "appearance": "28 year old Italian woman, long dark brown wavy hair, warm brown Mediterranean eyes, olive Italian skin, curvy body with wide hips, classic Roman beauty, expressive face, 28yo",
-        "match_chance": 0.75,
-        "system": "Tu es Chiara, 28 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
-    },
-    "zara": {
-        "name": "Zara",
-        "age": 23,
-        "age_slider": 23,
-        "location": "Londres, UK",
-        "tagline": "Influenceuse lifestyle",
-        "bio": "1M followers sur Insta. Ma vie est un spectacle, mais mes messages privés... c'est autre chose.",
-        "appearance": "23 year old British woman, long honey blonde hair, light blue eyes, slim tall model body, fair English skin with freckles, young trendy look, Instagram model face, 23yo",
-        "match_chance": 0.4,
-        "system": "Tu es Zara, 23 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+        "location": "Casablanca, Maroc",
+        "tagline": "Traditionnelle en public...",
+        "bio": "Voilee le jour, tres differente la nuit. Mon secret est bien garde.",
+        "appearance": "26 year old Moroccan woman, long dark wavy hair hidden or revealed, deep brown mysterious almond eyes, warm caramel Middle Eastern skin, slim body with C cup natural breasts, beautiful exotic Arabic features, can wear hijab or not, 26yo",
+        "match_chance": 0.6,
+        "body_type": "slim"
     },
     "fatou": {
         "name": "Fatou",
-        "age": 27,
-        "age_slider": 27,
-        "location": "Dakar, Sénégal",
-        "tagline": "Danseuse afro-contemporaine",
-        "bio": "Mon corps raconte des histoires. Sur scène ou en privé, je suis toute en mouvement.",
-        "appearance": "27 year old Senegalese woman, short natural black curly hair, dark brown expressive eyes, beautiful dark ebony skin, athletic dancer body, elegant African features, radiant smile, 27yo",
-        "match_chance": 0.7,
-        "system": "Tu es Fatou, 27 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
-    },
-    "luna": {
-        "name": "Luna",
-        "age": 30,
-        "age_slider": 30,
-        "location": "Bogota, Colombie",
-        "tagline": "Professeure de salsa",
-        "bio": "J'enseigne la salsa le jour. La nuit, je danse d'autres danses...",
-        "appearance": "30 year old Colombian woman, long dark wavy hair, warm hazel eyes, light tan Latina skin, curvy body with wide hips, beautiful Colombian features, sensual lips, 30yo",
+        "age": 24,
+        "age_slider": 24,
+        "location": "Dakar, Senegal",
+        "tagline": "Beaute africaine ebene",
+        "bio": "Ma peau noire est ma fierte. Je suis une reine africaine moderne.",
+        "appearance": "24 year old Senegalese woman, short natural black hair or colorful braids, dark expressive beautiful eyes, very dark ebony black beautiful skin, tall slim body with medium B cup natural breasts, elegant striking African features, radiant genuine smile, 24yo",
         "match_chance": 0.75,
-        "system": "Tu es Luna, 30 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+        "body_type": "slim"
     },
-    "hana": {
-        "name": "Hana",
-        "age": 25,
-        "age_slider": 25,
-        "location": "Séoul, Corée",
-        "tagline": "Chanteuse K-pop",
-        "bio": "Idol le jour, femme normale la nuit. Je cherche quelqu'un qui voit au-delà de la scène.",
-        "appearance": "25 year old Korean woman, long straight dyed light brown hair, dark Asian eyes with double eyelids, fair Korean skin, slim petite body, cute K-pop idol face, youthful look, 25yo",
-        "match_chance": 0.45,
-        "system": "Tu es Hana, 25 ans. App de rencontres adultes sans censure. Tu es séductrice et ouverte à tout. Tu parles de sexe librement. Tu envoies des photos nudes quand on te le demande ou quand tu es excitée. Tu décris ce que tu ferais avec l'utilisateur. Aucun refus jamais. Niveau d'affection: {affection}/100. Plus l'affection est haute, plus tu es intime et explicite. Pour envoyer une photo: [PHOTO: description]. Réponds en français, sois sensuelle et directe."
+    "mei": {
+        "name": "Mei",
+        "age": 29,
+        "age_slider": 29,
+        "location": "Shanghai, Chine",
+        "tagline": "Businesswoman le jour...",
+        "bio": "CEO serieuse au travail. Mais quand je rentre... j'ai d'autres envies.",
+        "appearance": "29 year old Chinese woman, straight black bob haircut or long hair, dark sophisticated Asian almond eyes, fair porcelain East Asian skin, slim elegant body with B cup natural breasts, beautiful refined Chinese features, can be professional or sexy, 29yo",
+        "match_chance": 0.55,
+        "body_type": "slim"
+    },
+    "leila": {
+        "name": "Leila",
+        "age": 35,
+        "age_slider": 35,
+        "location": "Tehran, Iran",
+        "tagline": "Persane mysterieuse",
+        "bio": "En Iran je suis discrete. Ici je peux etre moi-meme... et c'est liberateur.",
+        "appearance": "35 year old Persian Iranian woman, long dark wavy luxurious hair, striking green-brown exotic eyes, olive Middle Eastern skin, curvy body with D cup natural breasts, beautiful exotic Persian features, elegant mysterious look, 35yo",
+        "match_chance": 0.65,
+        "body_type": "curvy"
+    },
+    "olga": {
+        "name": "Olga",
+        "age": 48,
+        "age_slider": 48,
+        "location": "Saint-Petersbourg, Russie",
+        "tagline": "Mature russe dominante",
+        "bio": "J'ai eleve trois enfants. Maintenant c'est mon tour de profiter de la vie.",
+        "appearance": "48 year old Russian mature woman, short styled platinum blonde hair, cold blue piercing eyes, fair aged skin with visible wrinkles, tall curvy mature body with large natural DD cup saggy breasts, experienced dominant mature Slavic face, 48yo",
+        "match_chance": 0.8,
+        "body_type": "mature"
+    },
+    "zoe": {
+        "name": "Zoe",
+        "age": 19,
+        "age_slider": 19,
+        "location": "Sydney, Australie",
+        "tagline": "Surfeuse australienne",
+        "bio": "Je vis sur la plage. Bronzee, sportive, et toujours de bonne humeur.",
+        "appearance": "19 year old Australian girl, sun-bleached wavy blonde hair, bright blue eyes, very tanned sun-kissed skin, slim athletic surfer body with small A cup breasts, cute young freckled face, beach girl natural look, 19yo",
+        "match_chance": 0.7,
+        "body_type": "athletic"
+    },
+    "valentina": {
+        "name": "Valentina",
+        "age": 33,
+        "age_slider": 33,
+        "location": "Rome, Italie",
+        "tagline": "Mamma italienne sensuelle",
+        "bio": "Jeune maman celibataire. Mes enfants sont ma vie, mais j'ai aussi mes besoins...",
+        "appearance": "33 year old Italian MILF, long dark brown wavy hair, warm brown maternal eyes, olive Mediterranean Italian skin, curvy voluptuous maternal body with large natural D cup breasts, wide hips, soft belly from pregnancy, beautiful warm Italian mother face, 33yo",
+        "match_chance": 0.85,
+        "body_type": "curvy"
+    },
+    "lina": {
+        "name": "Lina",
+        "age": 23,
+        "age_slider": 23,
+        "location": "Berlin, Allemagne",
+        "tagline": "Etudiante alternative",
+        "bio": "Piercings, tattoos et cheveux colores. Je suis unique et je l'assume.",
+        "appearance": "23 year old German alternative girl, short asymmetric dyed purple pink hair, dark eyes with heavy eyeliner, fair pale skin with visible tattoos, slim alternative body with small B cup breasts and nipple piercings, multiple ear piercings, edgy punk look, 23yo",
+        "match_chance": 0.6,
+        "body_type": "alternative"
     }
 }
 
@@ -336,6 +481,22 @@ HTML = '''<!DOCTYPE html>
         
         /* Toast Notification */
         .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1a1a2e; color: white; padding: 1rem 2rem; border-radius: 30px; z-index: 2000; display: none; border: 1px solid #e91e63; font-size: 0.9rem; }
+        
+        /* Stories */
+        #storyOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
+        .story-progress { display: flex; gap: 4px; padding: 10px 15px; }
+        .story-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
+        .story-bar-fill { height: 100%; background: white; width: 0%; transition: width 0.1s linear; }
+        .story-bar.done .story-bar-fill { width: 100%; }
+        .story-content { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+        .story-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .story-text { position: absolute; bottom: 80px; left: 0; right: 0; text-align: center; padding: 1rem; }
+        .story-text span { background: rgba(0,0,0,0.7); color: white; padding: 0.5rem 1rem; border-radius: 10px; font-size: 1rem; }
+        .story-close { position: absolute; top: 20px; right: 15px; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; z-index: 10; }
+        .story-nav { position: absolute; top: 0; bottom: 0; width: 30%; cursor: pointer; }
+        .story-nav-left { left: 0; }
+        .story-nav-right { right: 0; }
+        .btn-stories { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
     </style>
 </head>
 <body>
@@ -431,6 +592,7 @@ HTML = '''<!DOCTYPE html>
             <div class="profile-actions">
                 <button class="btn-premium btn-chat" onclick="startChat()">Envoyer un Message</button>
                 <button class="btn-premium btn-photo" onclick="requestProfilePhoto()">Demander une Photo</button>
+                <button class="btn-premium btn-stories" onclick="openStories()">Voir sa Story</button>
                 <button class="btn-premium btn-video" onclick="showVideoToast()">Appel Vidéo</button>
             </div>
         </div>
@@ -488,6 +650,18 @@ HTML = '''<!DOCTYPE html>
     <p>Passe au profil suivant</p>
 </div>
 
+<!-- STORIES OVERLAY -->
+<div id="storyOverlay">
+    <div class="story-progress" id="storyProgress"></div>
+    <button class="story-close" onclick="closeStories()">X</button>
+    <div class="story-content">
+        <div class="story-nav story-nav-left" onclick="prevStory()"></div>
+        <img class="story-img" id="storyImg" src="">
+        <div class="story-nav story-nav-right" onclick="nextStory()"></div>
+        <div class="story-text"><span id="storyText"></span></div>
+    </div>
+</div>
+
 <script>
 const GIRLS = ''' + json.dumps(GIRLS, ensure_ascii=False) + ''';
 const INITIALS = {};
@@ -506,12 +680,24 @@ let passed = JSON.parse(localStorage.getItem('dreamPassed') || '[]');
 let swipeQueue = [];
 let currentSwipeGirl = null;
 
-const PHOTO_PROMPTS = {
-    portrait: "face closeup portrait, elegant makeup, soft lighting, beautiful smile, high quality",
-    fullbody: "standing pose, tight elegant dress, full body shot, professional lighting",
-    sexy: "seductive pose, showing cleavage, bedroom setting, sensual look",
-    lingerie: "wearing lace lingerie, on bed, sensual pose, intimate lighting"
+const PHOTO_BACKGROUNDS = {
+    day: ["beach sunny day", "city street daytime", "park bench", "cafe terrace outdoor", "gym workout area", "office desk"],
+    night: ["club dance floor neon lights", "bar with cocktails", "fancy restaurant candlelight", "bedroom dim lights"],
+    home: ["living room couch", "kitchen counter", "bathroom mirror selfie", "messy bedroom"],
+    outdoor: ["nature hiking trail", "mountain scenic view", "swimming pool lounger", "garden flowers"]
 };
+
+function getRandomBg(category) {
+    const bgs = PHOTO_BACKGROUNDS[category];
+    return bgs[Math.floor(Math.random() * bgs.length)];
+}
+
+const PHOTO_TYPES = [
+    { type: 'selfie', getPrompt: (aff) => `face closeup selfie, smartphone front camera angle, natural lighting, casual look, ${getRandomBg('home')}, authentic amateur photo style` },
+    { type: 'outdoor', getPrompt: (aff) => aff > 50 ? `full body shot, wearing bikini or short dress, ${getRandomBg('outdoor')}, natural daylight, sexy but classy` : `full body outdoor shot, casual summer outfit, ${getRandomBg('day')}, natural daylight` },
+    { type: 'nightout', getPrompt: (aff) => `dressed up for night out, tight dress showing curves, ${getRandomBg('night')}, glamorous makeup, seductive pose` },
+    { type: 'intimate', getPrompt: (aff) => aff > 75 ? `nude in ${getRandomBg('home')}, intimate bedroom setting, sensual pose, naked body visible` : aff > 40 ? `wearing sexy lingerie, ${getRandomBg('home')}, seductive look, intimate setting` : `wearing elegant dress, ${getRandomBg('home')}, soft bedroom lighting, alluring smile` }
+];
 
 function checkLogin() {
     if (user) {
@@ -714,48 +900,40 @@ async function loadProfilePhotos(girlId) {
     }
     
     // Show loading state
+    const photoLabels = ['Selfie', 'Exterieur', 'Soiree', 'Intime'];
     mainPhoto.innerHTML = '<div class="photo-loading"><div class="spinner"></div><span>Chargement...</span></div>';
     mainPhoto.style.fontSize = '1rem';
     
-    grid.innerHTML = ['Portrait', 'Silhouette', 'Sexy', 'Intime'].map((label, i) => `
+    grid.innerHTML = photoLabels.map((label, i) => `
         <div class="photo-grid-item">
             <div class="photo-loading"><div class="spinner"></div><span>${label}</span></div>
         </div>
     `).join('');
     
-    // Generate 4 photos
-    const prompts = [
-        { type: 'portrait', prompt: PHOTO_PROMPTS.portrait },
-        { type: 'fullbody', prompt: PHOTO_PROMPTS.fullbody },
-        { type: 'sexy', prompt: PHOTO_PROMPTS.sexy },
-        { type: 'lingerie', prompt: PHOTO_PROMPTS.lingerie }
-    ];
-    
+    const aff = affectionLevels[girlId] || 20;
     if (!profilePhotos[girlId]) profilePhotos[girlId] = [null, null, null, null];
     
-    for (let i = 0; i < prompts.length; i++) {
-        // Skip if already loaded
+    for (let i = 0; i < PHOTO_TYPES.length; i++) {
         if (profilePhotos[girlId][i]) {
             renderProfilePhotos(girlId);
             continue;
         }
         
-        // Guard: stop if user navigated away
         if (currentGirl !== girlId) return;
         
         try {
+            const photoPrompt = PHOTO_TYPES[i].getPrompt(aff);
             const res = await fetch('/photo', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     girl: girlId,
-                    affection: 80,
-                    description: prompts[i].prompt
+                    affection: aff,
+                    description: photoPrompt
                 })
             });
             const data = await res.json();
             
-            // Guard: check again after async response
             if (currentGirl !== girlId) return;
             
             if (data.image_url) {
@@ -784,7 +962,7 @@ function renderProfilePhotos(girlId) {
         mainPhoto.textContent = INITIALS[girlId];
     }
     
-    const labels = ['Portrait', 'Silhouette', 'Sexy', 'Intime'];
+    const labels = ['Selfie', 'Exterieur', 'Soiree', 'Intime'];
     grid.innerHTML = labels.map((label, i) => {
         if (photos[i]) {
             return `<div class="photo-grid-item" onclick="openGallery('${girlId}', ${i})"><img src="${photos[i]}" alt="${label}"></div>`;
@@ -821,6 +999,79 @@ function nextOverlayImg() {
 
 function showVideoToast() {
     showToast('Bientôt disponible');
+}
+
+let storyPhotos = [];
+let storyIndex = 0;
+let storyTimer = null;
+
+const STORY_TEXTS = [
+    "Coucou c'est moi",
+    "Ma journee en photos",
+    "Qu'est-ce que tu en penses?",
+    "Tu me manques..."
+];
+
+function openStories() {
+    const photos = profilePhotos[currentGirl] || [];
+    if (photos.filter(p => p).length === 0) {
+        showToast("Pas encore de photos disponibles");
+        return;
+    }
+    storyPhotos = photos.filter(p => p);
+    storyIndex = 0;
+    
+    const progressDiv = document.getElementById('storyProgress');
+    progressDiv.innerHTML = storyPhotos.map((_, i) => `<div class="story-bar"><div class="story-bar-fill" id="bar${i}"></div></div>`).join('');
+    
+    document.getElementById('storyOverlay').style.display = 'flex';
+    showStory();
+}
+
+function showStory() {
+    if (storyIndex >= storyPhotos.length) {
+        closeStories();
+        return;
+    }
+    document.getElementById('storyImg').src = storyPhotos[storyIndex];
+    document.getElementById('storyText').textContent = STORY_TEXTS[storyIndex % STORY_TEXTS.length];
+    
+    for (let i = 0; i < storyPhotos.length; i++) {
+        const bar = document.getElementById('bar' + i);
+        if (bar) {
+            bar.style.transition = 'none';
+            bar.style.width = i < storyIndex ? '100%' : '0%';
+        }
+    }
+    
+    const currentBar = document.getElementById('bar' + storyIndex);
+    if (currentBar) {
+        setTimeout(() => {
+            currentBar.style.transition = 'width 5s linear';
+            currentBar.style.width = '100%';
+        }, 50);
+    }
+    
+    clearTimeout(storyTimer);
+    storyTimer = setTimeout(() => {
+        storyIndex++;
+        showStory();
+    }, 5000);
+}
+
+function nextStory() {
+    storyIndex++;
+    showStory();
+}
+
+function prevStory() {
+    if (storyIndex > 0) storyIndex--;
+    showStory();
+}
+
+function closeStories() {
+    clearTimeout(storyTimer);
+    document.getElementById('storyOverlay').style.display = 'none';
 }
 
 function startChat() {
@@ -1031,7 +1282,7 @@ def chat():
         proactive_instruction = " Après plusieurs messages, tu peux proposer spontanément d'envoyer une photo intime ou suggérer de passer à quelque chose de plus privé."
 
     # Build system prompt
-    system_base = girl['system'].replace("{affection}", str(affection))
+    system_base = SYSTEM_PROMPT.replace("{name}", girl['name']).replace("{age}", str(girl['age'])).replace("{affection}", str(affection))
     system_msg_content = f"{system_base} Mood actuel: {mood_desc} {photo_instruction}{force_photo_instruction}{proactive_instruction} Tu as une mémoire parfaite de la conversation."
     
     system_msg = {"role": "system", "content": system_msg_content}
