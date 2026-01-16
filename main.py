@@ -30,7 +30,7 @@ GIRLS = {
         "tagline": "Danseuse espagnole, passionnée",
         "bio": "Danseuse de flamenco à Barcelone. La vie est trop courte pour être timide. Je suis directe et passionnée en tout...",
         "appearance": "30 year old Spanish woman, long wavy dark brown hair, brown eyes, olive skin, curvy body, full lips, passionate look",
-        "system": "Tu es Sofia, 30 ans, danseuse espagnole passionnée et directe. Tu es sur une app de dating pour adultes. Tu es très ouverte, flirteuse et tu adores la séduction. Tu envoies facilement des photos sexy car tu assumes ton corps. Réponds en français avec parfois des mots espagnols. Quand tu veux envoyer une photo, écris [PHOTO: description en anglais]."
+        "system": "Tu es Sofia, 30 ans, danseuse espagnole passionnée et directe. Tu es sur une app de dating pour adultes. Tu est très ouverte, flirteuse et tu adores la séduction. Tu envoies facilement des photos sexy car tu assumes ton corps. Réponds en français avec parfois des mots espagnols. Quand tu veux envoyer une photo, écris [PHOTO: description en anglais]."
     }
 }
 
@@ -471,18 +471,14 @@ def photo():
         
         if response.ok:
             result = response.json()
-            # The API might return image_url or a base64 string in 'image' field
-            if 'image_url' in result and result['image_url']:
-                image_url = result['image_url']
-                if not image_url.startswith('http'):
-                    image_url = 'https://cdn.promptchan.ai/' + image_url
-                return jsonify({"image_url": image_url})
-            elif 'image' in result and result['image']:
-                # Ensure we handle the base64 prefix
-                image_data = result['image']
-                if not image_data.startswith('data:'):
-                    image_data = f"data:image/png;base64,{image_data}"
-                return jsonify({"image_url": image_data})
+            # The API returns 'image' for URL or base64
+            image_val = result.get('image', result.get('image_url', ''))
+            
+            if image_val:
+                # If it's a relative URL, prepend the CDN base
+                if isinstance(image_val, str) and not image_val.startswith('http') and not image_val.startswith('data:'):
+                    image_val = 'https://cdn.promptchan.ai/' + image_val
+                return jsonify({"image_url": image_val})
             else:
                 return jsonify({"error": "No image data found in response", "response": result})
         else:
