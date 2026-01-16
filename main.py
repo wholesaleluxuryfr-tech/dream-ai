@@ -169,9 +169,13 @@ HTML = '''<!DOCTYPE html>
     <div class="chat-header">
         <div class="back-btn" onclick="showPage('gallery')">←</div>
         <div class="chat-avatar" id="chatEmoji"></div>
-        <div>
+        <div style="flex: 1;">
             <div class="chat-name" id="chatName"></div>
             <div class="chat-status">🟢 En ligne</div>
+        </div>
+        <div id="affection-bar" style="display: flex; align-items: center; gap: 5px; background: rgba(255, 45, 85, 0.1); padding: 5px 10px; border-radius: 15px; border: 1px solid rgba(255, 45, 85, 0.3);">
+            <span style="color: #ff2d55; font-size: 0.8rem;">❤️</span>
+            <span id="affection-pct" style="color: #ff2d55; font-size: 0.8rem; font-weight: bold;">20%</span>
         </div>
     </div>
     <div class="messages" id="messages">
@@ -195,6 +199,7 @@ const INITIALS = { anastasia: 'A', yuki: 'Y', sofia: 'S', emma: 'E', lea: 'L', m
 
 let currentGirl = null;
 let chatHistory = {};
+let affectionLevels = JSON.parse(localStorage.getItem('affectionLevels') || '{}');
 
 // Init
 function init() {
@@ -209,7 +214,22 @@ function init() {
         </div>
     `).join('');
     
-    Object.keys(GIRLS).forEach(id => { chatHistory[id] = []; });
+    Object.keys(GIRLS).forEach(id => { 
+        chatHistory[id] = []; 
+        if (affectionLevels[id] === undefined) affectionLevels[id] = 20;
+    });
+    localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+}
+
+function updateAffectionUI() {
+    const pct = affectionLevels[currentGirl] || 20;
+    document.getElementById('affection-pct').innerText = pct + '%';
+}
+
+function updateAffection(amount) {
+    affectionLevels[currentGirl] = Math.min(100, Math.max(0, affectionLevels[currentGirl] + amount));
+    localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+    updateAffectionUI();
 }
 
 function showPage(page) {
@@ -231,6 +251,7 @@ function startChat() {
     const g = GIRLS[currentGirl];
     document.getElementById('chatEmoji').textContent = INITIALS[currentGirl] || currentGirl.charAt(0).toUpperCase();
     document.getElementById('chatName').textContent = g.name;
+    updateAffectionUI();
     renderMessages();
     showPage('chat');
     document.getElementById('chatInput').focus();
@@ -301,6 +322,12 @@ async function sendMessage() {
     input.value = '';
     document.getElementById('sendBtn').disabled = true;
     
+    // Affection logic
+    const lowerText = text.toLowerCase();
+    if (lowerText.includes('belle') || lowerText.includes('jolie') || lowerText.includes('adore') || lowerText.includes('magnifique') || lowerText.includes('sexy')) {
+        updateAffection(5);
+    }
+    
     chatHistory[currentGirl].push({ role: 'user', content: text });
     renderMessages();
     showTyping();
@@ -312,6 +339,7 @@ async function sendMessage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 girl: currentGirl,
+                affection: affectionLevels[currentGirl],
                 messages: chatHistory[currentGirl].map(m => ({ role: m.role, content: m.content }))
             })
         });
@@ -369,6 +397,7 @@ async function generatePhoto(description, msgObj) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 girl: currentGirl,
+                affection: affectionLevels[currentGirl],
                 description: description
             })
         });
@@ -410,10 +439,24 @@ def chat():
     data = request.json
     girl_id = data.get('girl', 'anastasia')
     messages = data.get('messages', [])
+    affection = data.get('affection', 20)
     
     girl = GIRLS.get(girl_id, GIRLS['anastasia'])
     
-    system_msg = {"role": "system", "content": girl['system']}
+    mood_desc = ""
+    if affection < 30:
+        mood_desc = "Tu es réservée, tu testes l'utilisateur."
+    elif affection < 50:
+        mood_desc = "Tu es flirty et suggestive."
+    elif affection < 75:
+        mood_desc = "Tu es très flirty, tu envoies des photos en lingerie ou sous-vêtements."
+    elif affection < 90:
+        mood_desc = "Tu es intime, tu envoies des photos nues (nudes)."
+    else:
+        mood_desc = "Tu es explicite, aucune limite."
+
+    system_msg_content = f"{girl['system']} Niveau d'affection actuel: {affection}/100. {mood_desc}"
+    system_msg = {"role": "system", "content": system_msg_content}
     all_messages = [system_msg] + messages[-20:]
     
     # Try DeepInfra (free)
@@ -464,10 +507,21 @@ def photo():
     data = request.json
     girl_id = data.get('girl', 'anastasia')
     description = data.get('description', '')
+    affection = data.get('affection', 20)
     
     girl = GIRLS.get(girl_id, GIRLS['anastasia'])
     
-    full_prompt = f"{girl['appearance']}, {description}"
+    mood_prompt = ""
+    if affection < 30:
+        mood_prompt = "wearing elegant dress, cleavage"
+    elif affection < 50:
+        mood_prompt = "wearing tight dress, showing legs, seductive"
+    elif affection < 75:
+        mood_prompt = "wearing lingerie, lace bra, bedroom"
+    else:
+        mood_prompt = "nude, topless, naked, bedroom, seductive pose"
+
+    full_prompt = f"{girl['appearance']}, {mood_prompt}, {description}"
     
     try:
         response = requests.post(
