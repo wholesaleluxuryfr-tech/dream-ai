@@ -467,17 +467,21 @@ def photo():
         )
         
         print(f"Promptchan response status: {response.status_code}")
-        print(f"Promptchan response: {response.text[:500]}")
+        print(f"Promptchan full response: {response.text}")
         
         if response.ok:
             result = response.json()
-            # L'API retourne soit image_url soit image (base64)
-            if 'image_url' in result:
+            # The API might return image_url or a base64 string in 'image' field
+            if 'image_url' in result and result['image_url']:
                 return jsonify({"image_url": result['image_url']})
-            elif 'image' in result:
-                return jsonify({"image_url": f"data:image/png;base64,{result['image']}"})
+            elif 'image' in result and result['image']:
+                # Ensure we handle the base64 prefix
+                image_data = result['image']
+                if not image_data.startswith('data:'):
+                    image_data = f"data:image/png;base64,{image_data}"
+                return jsonify({"image_url": image_data})
             else:
-                return jsonify({"error": "No image in response", "response": result})
+                return jsonify({"error": "No image data found in response", "response": result})
         else:
             return jsonify({"error": f"API error: {response.status_code}", "details": response.text})
             
