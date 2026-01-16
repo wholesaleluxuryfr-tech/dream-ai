@@ -2,7 +2,7 @@
 
 ## Overview
 
-Dream AI is a Flask-based adult dating application featuring 15 diverse AI-powered virtual girlfriends with uncensored French conversations. The app uses a Tinder-style swipe matching system with realistic match probabilities, dynamic affection levels, and AI-generated photos.
+Dream AI is a Flask-based adult dating application featuring 27 diverse AI-powered virtual girlfriends with uncensored French conversations. The app uses a Tinder-style swipe matching system with realistic match probabilities, dynamic affection levels, and AI-generated photos.
 
 ## Current State
 
@@ -11,60 +11,82 @@ Dream AI is a Flask-based adult dating application featuring 15 diverse AI-power
 
 ## Features
 
-### Core Features
-- 15 AI Companions with diverse ethnicities:
-  - Anastasia (35, Russian CEO) - 60% match chance
-  - Yuki (28, Japanese artist) - 80% match chance
-  - Sofia (30, Spanish dancer) - 65% match chance
-  - Emma (25, LA model) - 50% match chance
-  - Léa (27, Paris nurse) - 85% match chance
-  - Mia (32, Brazilian fitness coach) - 75% match chance
-  - Zara (24, Moroccan student) - 40% match chance
-  - Ingrid (29, Swedish photographer) - 70% match chance
-  - Priya (26, Indian developer) - 80% match chance
-  - Mei (31, Chinese businesswoman) - 55% match chance
-  - Giulia (33, Italian chef) - 72% match chance
-  - Olivia (22, British actress) - 45% match chance
-  - Awa (28, Senegalese model) - 68% match chance
-  - Valentina (29, Colombian dancer) - 78% match chance
-  - Hana (25, Korean K-pop backup dancer) - 45% match chance
+### 27 Diverse AI Companions
+
+**Young (18-23):**
+- Jade (19, French art student) - petite, natural, amateur look
+- Chloe (21, American college girl) - freckles, girl next door
+- Yuna (20, Japanese student) - petite, innocent, kawaii
+- Amara (22, Nigerian fashion student) - curvy, dark skin, natural hair
+- Zoe (19, Australian surfer) - athletic, tanned, beach girl
+- Lina (23, German alternative) - tattoos, piercings, dyed hair
+
+**Classic Beauties (24-30):**
+- Emma (25, LA model) - slim, perfect, blonde
+- Sofia (30, Spanish dancer) - curvy, passionate, Mediterranean
+- Anastasia (28, Russian) - elegant, cold beauty, platinum blonde
+- Priya (26, Indian) - exotic, long black hair
+- Aisha (26, Moroccan) - can wear hijab, modest to wild
+- Fatou (24, Senegalese) - dark ebony skin, African beauty
+- Mei (29, Chinese businesswoman) - professional, refined
+
+**MILF/Cougar (35-50):**
+- Nathalie (42, French businesswoman) - elegant, big natural breasts
+- Carmen (38, Spanish MILF) - very curvy, experienced look
+- Jennifer (45, American cougar) - fake tits, tanned, plastic surgery
+- Keiko (40, Japanese MILF) - petite, mature cute face
+- Olga (48, Russian mature) - dominant, experienced
+- Leila (35, Persian) - exotic, mysterious
+- Valentina (33, Italian mom) - maternal, soft curves
+
+**Bimbo Type:**
+- Candy (28, Vegas bimbo) - huge fake breasts, plastic barbie look
+- Nikita (30, Dubai Russian) - plastic surgery, Instagram model
+- Bianca (26, Brazilian influencer) - huge butt, pouty lips
+
+**Natural/Amateur:**
+- Marie (34, French) - average body, authentic, real woman
+- Sarah (29, British) - chubby, big natural breasts, BBW
+- Agathe (31, Belgian) - no makeup, hairy, hippie natural
+
+**Athletic:**
+- Mia (32, Brazilian fitness) - muscular, abs, round athletic butt
+- Svetlana (27, Ukrainian athlete) - tall, strong, powerful
+
+### Photo System - 4 Varied Types Per Girl
+1. **Selfie** - Face closeup, smartphone angle, natural home settings
+2. **Outdoor** - Full body, various locations (beach, park, city, pool)
+3. **Night Out** - Dressed up, club/bar/restaurant backgrounds
+4. **Intimate** - Bedroom/bathroom, affection-based clothing level
+
+### Photo Backgrounds
+- **Day**: beach, city street, park, cafe terrace, gym, office
+- **Night**: club, bar, restaurant, bedroom with dim lights
+- **Home**: living room, kitchen, bathroom mirror, bedroom
+- **Outdoor**: nature, mountain, pool, garden
+
+### Stories Feature
+- Instagram-style photo slideshow
+- Auto-advances every 5 seconds
+- Progress bars at top
+- Tap left/right to navigate
+- Text overlays on each photo
 
 ### Login/Signup System
 - Name and age input
 - Age verification (18+)
 - User data saved to localStorage
-- User name displayed in header
 
 ### Tinder-Style Swipe System
-- Swipe cards with girl info (name, age, location, bio)
-- X button to pass, ♥ button to like
-- Variable match probabilities per girl (40-85%)
+- Variable match probabilities (30-90% depending on girl)
 - "C'est un Match!" animation with hearts
-- "Elle n'a pas matché avec toi" notification for failed matches
+- "Elle n'a pas matché avec toi" for failed matches
 
-### Tab Navigation
-- "Découvrir" tab: Swipe through profiles
-- "Matchs" tab: View matched profiles grid
-- Chat restricted to matched girls only
-
-### Affection System
-- 0-100 scale stored in localStorage
-- Affects AI personality and photo types
-- Increases based on interaction
-
-### Photo System
-- Low affection (<30): Elegant dressed photos
-- Medium affection (30-75): Lingerie/seductive photos  
-- High affection (75+): Nude/intimate photos
-- Auto-triggers on keywords: photo, nude, montre, voir, déshabille
-- 4 auto-generated photos per girl on profile visit
-
-### UI Features
-- Premium dark theme (#0a0a0c background, #e91e63 pink accents)
-- Clean design without emojis
-- Profile page with affection stats
-- Chat with timestamps (HH:MM), typing indicators, read receipts
-- Fullscreen photo viewing with navigation
+### Affection-Based Content
+- 0-30: Elegant, dressed photos
+- 30-50: Sexy, showing more skin
+- 50-75: Lingerie photos
+- 75+: Nude/intimate photos
 
 ## Architecture
 
@@ -72,9 +94,9 @@ Dream AI is a Flask-based adult dating application featuring 15 diverse AI-power
 - `main.py`: Complete Flask app with embedded HTML/CSS/JavaScript
 
 ### External APIs
-- **DeepInfra**: meta-llama/Meta-Llama-3.1-8B-Instruct for chat (30s timeout)
-- **Pollinations**: Fallback chat API (text.pollinations.ai)
-- **Promptchan**: Photo generation via PROMPTCHAN_KEY secret (30s timeout)
+- **DeepInfra**: meta-llama/Meta-Llama-3.1-8B-Instruct for chat
+- **Pollinations**: Fallback chat API
+- **Promptchan**: Photo generation via PROMPTCHAN_KEY secret
 
 ### Data Storage (localStorage)
 - `dreamUser`: User profile (name, age)
@@ -93,3 +115,5 @@ Dream AI is a Flask-based adult dating application featuring 15 diverse AI-power
 - No emojis in UI
 - Professional adult app aesthetic
 - Premium dating app style
+- Diverse body types and ethnicities
+- Realistic, not all perfect models
