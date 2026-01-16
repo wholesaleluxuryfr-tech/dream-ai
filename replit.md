@@ -2,7 +2,7 @@
 
 ## Overview
 
-Dream AI is a Flask-based adult dating/companion application featuring 6 AI-powered virtual girlfriends with distinct personalities. The app provides uncensored conversations in French with dynamic affection levels that influence AI behavior and photo content.
+Dream AI is a Flask-based adult dating application featuring 15 diverse AI-powered virtual girlfriends with uncensored French conversations. The app uses a Tinder-style swipe matching system with realistic match probabilities, dynamic affection levels, and AI-generated photos.
 
 ## Current State
 
@@ -12,34 +12,59 @@ Dream AI is a Flask-based adult dating/companion application featuring 6 AI-powe
 ## Features
 
 ### Core Features
-- 6 AI Companions: Anastasia (35, Russian CEO), Yuki (28, Japanese artist), Sofia (30, Spanish dancer), Emma (25, LA model), Léa (27, Paris nurse), Mia (32, Brazilian fitness coach)
-- Affection System: 0-100 scale stored in localStorage, affects AI personality and photo types
-- AI Chat: Llama-3.1-70B via DeepInfra for intelligent, uncensored French conversations
-- Photo Generation: Promptchan API with affection-based prompts
+- 15 AI Companions with diverse ethnicities:
+  - Anastasia (35, Russian CEO) - 60% match chance
+  - Yuki (28, Japanese artist) - 80% match chance
+  - Sofia (30, Spanish dancer) - 65% match chance
+  - Emma (25, LA model) - 50% match chance
+  - Léa (27, Paris nurse) - 85% match chance
+  - Mia (32, Brazilian fitness coach) - 75% match chance
+  - Zara (24, Moroccan student) - 40% match chance
+  - Ingrid (29, Swedish photographer) - 70% match chance
+  - Priya (26, Indian developer) - 80% match chance
+  - Mei (31, Chinese businesswoman) - 55% match chance
+  - Giulia (33, Italian chef) - 72% match chance
+  - Olivia (22, British actress) - 45% match chance
+  - Awa (28, Senegalese model) - 68% match chance
+  - Valentina (29, Colombian dancer) - 78% match chance
+  - Hana (25, Korean K-pop backup dancer) - 45% match chance
 
-### UI Features
-- Premium dark theme (#0a0a0c background, #e91e63 pink accents)
-- Clean design without emojis
-- Gallery with gradient cards and "NEW" badges
-- Profile page with affection stats
-- Chat with timestamps (HH:MM), typing indicators, read receipts
-- Fullscreen photo viewing
-- Online status with green dot
+### Login/Signup System
+- Name and age input
+- Age verification (18+)
+- User data saved to localStorage
+- User name displayed in header
+
+### Tinder-Style Swipe System
+- Swipe cards with girl info (name, age, location, bio)
+- X button to pass, ♥ button to like
+- Variable match probabilities per girl (40-85%)
+- "C'est un Match!" animation with hearts
+- "Elle n'a pas matché avec toi" notification for failed matches
+
+### Tab Navigation
+- "Découvrir" tab: Swipe through profiles
+- "Matchs" tab: View matched profiles grid
+- Chat restricted to matched girls only
+
+### Affection System
+- 0-100 scale stored in localStorage
+- Affects AI personality and photo types
+- Increases based on interaction
 
 ### Photo System
 - Low affection (<30): Elegant dressed photos
 - Medium affection (30-75): Lingerie/seductive photos  
 - High affection (75+): Nude/intimate photos
 - Auto-triggers on keywords: photo, nude, montre, voir, déshabille
-- Proactive sending after 5+ messages with high affection
+- 4 auto-generated photos per girl on profile visit
 
-### Profile Photo Gallery
-- 4 auto-generated photos per girl on first profile visit
-- Photo types: Portrait, Full body, Sexy pose, Lingerie
-- Photos saved to localStorage to avoid regeneration
-- Fullscreen viewing with prev/next navigation
-- Loading spinners during generation
-- "Appel Vidéo" button with "Bientôt disponible" toast
+### UI Features
+- Premium dark theme (#0a0a0c background, #e91e63 pink accents)
+- Clean design without emojis
+- Profile page with affection stats
+- Chat with timestamps (HH:MM), typing indicators, read receipts
+- Fullscreen photo viewing with navigation
 
 ## Architecture
 
@@ -51,17 +76,12 @@ Dream AI is a Flask-based adult dating/companion application featuring 6 AI-powe
 - **Pollinations**: Fallback chat API (text.pollinations.ai)
 - **Promptchan**: Photo generation via PROMPTCHAN_KEY secret (30s timeout)
 
-### Girl Appearances (Unique)
-- Anastasia (35): Platinum blonde, ice blue eyes, Russian
-- Yuki (28): Black hair, dark Asian eyes, Japanese
-- Sofia (30): Dark brown wavy hair, olive skin, Spanish
-- Emma (25): Golden blonde beach waves, green eyes, American
-- Léa (27): Brown wavy hair, hazel eyes, French
-- Mia (32): Dark curly hair, tan skin, Brazilian
-
-### Data Storage
-- localStorage for affection levels and read states
-- No database required
+### Data Storage (localStorage)
+- `dreamUser`: User profile (name, age)
+- `dreamMatches`: Array of matched girl IDs
+- `dreamPassed`: Array of passed girl IDs
+- `affectionLevels`: Object with affection per girl
+- `profilePhotos`: Object with photo arrays per girl
 
 ## Environment Variables
 
