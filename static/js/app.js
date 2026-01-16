@@ -1,6 +1,7 @@
 const messagesDiv = document.getElementById('chat-messages');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
+const testPhotoBtn = document.getElementById('test-photo-btn');
 
 let messageHistory = [];
 
@@ -95,6 +96,14 @@ async function generatePhoto(description, targetDiv) {
 sendBtn.addEventListener('click', sendMessage);
 userInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
+});
+
+testPhotoBtn.addEventListener('click', () => {
+    const testDiv = document.createElement('div');
+    testDiv.classList.add('message', 'ai');
+    testDiv.innerText = "[Test System] Génération d'une photo de test...";
+    messagesDiv.appendChild(testDiv);
+    generatePhoto("a beautiful sexy 35yo Russian woman, CEO, smiling at the camera", testDiv);
 });
 
 // Initial message
