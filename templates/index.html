@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat avec Anastasia</title>
+    <title>Dream AI - Galerie</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="dark-theme">
-    <div class="chat-container">
-        <header>
-            <h1>Anastasia</h1>
-            <p>CEO, 35 ans</p>
-            <button id="test-photo-btn" style="font-size: 0.7rem; padding: 4px 8px; margin-top: 5px;">Test Photo</button>
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="logo">Dream AI</h1>
         </header>
-        <div id="chat-messages" class="messages"></div>
-        <div class="input-area">
-            <input type="text" id="user-input" placeholder="Écrivez un message..." autocomplete="off">
-            <button id="send-btn">Envoyer</button>
-        </div>
+        <main class="gallery">
+            {% for girl in girls %}
+            <a href="{{ url_for('profile', girl_id=girl.id) }}" class="girl-card">
+                <div class="card-image" style="background-image: url('{{ girl.photo }}')"></div>
+                <div class="card-info">
+                    <h3>{{ girl.name }}, {{ girl.age }}</h3>
+                    <p>{{ girl.tagline }}</p>
+                </div>
+            </a>
+            {% endfor %}
+        </main>
     </div>
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>

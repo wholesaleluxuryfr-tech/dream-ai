@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ girl.name }} - Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+        <header class="app-header">
+            <a href="/" class="back-btn">←</a>
+            <h1>{{ girl.name }}</h1>
+        </header>
+        <main class="profile-view">
+            <img src="{{ girl.photo }}" alt="{{ girl.name }}" class="profile-photo">
+            <div class="profile-content">
+                <h2>{{ girl.name }}, {{ girl.age }}</h2>
+                <p class="tagline">{{ girl.tagline }}</p>
+                <div class="bio">
+                    <h3>Bio</h3>
+                    <p>{{ girl.bio }}</p>
+                </div>
+                <a href="{{ url_for('chat_view', girl_id=girl.id) }}" class="start-chat-btn">Démarrer le Chat</a>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
