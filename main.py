@@ -151,8 +151,30 @@ HTML = '''<!DOCTYPE html>
         .empty-chat { text-align: center; color: #444444; padding: 4rem 1rem; font-size: 0.9rem; letter-spacing: 1px; }
 
         /* Fullscreen Overlay */
-        #img-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 1rem; }
-        #img-overlay img { max-width: 100%; max-height: 100%; border-radius: 10px; }
+        #img-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 1rem; flex-direction: column; }
+        #img-overlay img { max-width: 100%; max-height: 85%; border-radius: 10px; object-fit: contain; }
+        .overlay-nav { display: flex; gap: 2rem; margin-top: 1rem; }
+        .overlay-nav button { background: rgba(255,255,255,0.1); border: none; color: white; padding: 0.8rem 1.5rem; border-radius: 25px; font-size: 1rem; cursor: pointer; }
+        .overlay-counter { color: #888; font-size: 0.8rem; margin-top: 0.5rem; }
+        
+        /* Profile Photo Gallery */
+        .profile-gallery { margin: 1rem 0; }
+        .profile-gallery h3 { font-size: 0.9rem; color: #888; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        .photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+        .photo-grid-item { aspect-ratio: 3/4; background: #12121a; border-radius: 12px; overflow: hidden; cursor: pointer; position: relative; border: 1px solid rgba(255,255,255,0.05); }
+        .photo-grid-item img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-grid-item:hover { opacity: 0.9; }
+        .photo-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #666; }
+        .photo-loading .spinner { width: 30px; height: 30px; border: 3px solid #333; border-top-color: #e91e63; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 0.5rem; }
+        .photo-loading span { font-size: 0.7rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Video Call Button */
+        .btn-video { background: #1a1a2e; color: #888; border: 1px solid #333; margin-top: 0.5rem; }
+        .btn-video:active { transform: none; }
+        
+        /* Toast Notification */
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1a1a2e; color: white; padding: 1rem 2rem; border-radius: 30px; z-index: 2000; display: none; border: 1px solid #e91e63; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -173,7 +195,7 @@ HTML = '''<!DOCTYPE html>
 <div class="page" id="pageProfile">
     <div class="profile">
         <div class="back-btn" onclick="showPage('gallery')">←</div>
-        <div class="profile-img" id="profileInitials"></div>
+        <div class="profile-img" id="profileMainPhoto"></div>
         <div class="profile-content">
             <h1 id="profileName"></h1>
             <div class="profile-tagline" id="profileTagline"></div>
@@ -189,15 +211,23 @@ HTML = '''<!DOCTYPE html>
                 </div>
             </div>
             
+            <div class="profile-gallery">
+                <h3>Photos</h3>
+                <div class="photo-grid" id="profilePhotoGrid"></div>
+            </div>
+            
             <div class="profile-bio" id="profileBio"></div>
             
             <div class="profile-actions">
                 <button class="btn-premium btn-chat" onclick="startChat()">Envoyer un Message</button>
                 <button class="btn-premium btn-photo" onclick="requestProfilePhoto()">Demander une Photo</button>
+                <button class="btn-premium btn-video" onclick="showVideoToast()">Appel Vidéo</button>
             </div>
         </div>
     </div>
 </div>
+
+<div class="toast" id="toast">Bientôt disponible</div>
 
 <!-- CHAT PAGE -->
 <div class="page chat-page" id="pageChat">
@@ -219,7 +249,15 @@ HTML = '''<!DOCTYPE html>
     </div>
 </div>
 
-<div id="img-overlay" onclick="this.style.display='none'"><img id="overlay-img" src=""></div>
+<div id="img-overlay">
+    <img id="overlay-img" src="">
+    <div class="overlay-counter" id="overlay-counter">1 / 4</div>
+    <div class="overlay-nav">
+        <button onclick="prevOverlayImg()">Précédent</button>
+        <button onclick="document.getElementById('img-overlay').style.display='none'">Fermer</button>
+        <button onclick="nextOverlayImg()">Suivant</button>
+    </div>
+</div>
 
 <script>
 const GIRLS = ''' + json.dumps(GIRLS, ensure_ascii=False) + ''';
@@ -229,6 +267,16 @@ let currentGirl = null;
 let chatHistory = {};
 let affectionLevels = JSON.parse(localStorage.getItem('affectionLevels') || '{}');
 let readConversations = JSON.parse(localStorage.getItem('readConversations') || '{}');
+let profilePhotos = JSON.parse(localStorage.getItem('profilePhotos') || '{}');
+let currentOverlayPhotos = [];
+let currentOverlayIndex = 0;
+
+const PHOTO_PROMPTS = {
+    portrait: "face closeup portrait, elegant makeup, soft lighting, beautiful smile, high quality",
+    fullbody: "standing pose, tight elegant dress, full body shot, professional lighting",
+    sexy: "seductive pose, showing cleavage, bedroom setting, sensual look",
+    lingerie: "wearing lace lingerie, on bed, sensual pose, intimate lighting"
+};
 
 function init() {
     const grid = document.getElementById('girlsGrid');
@@ -259,7 +307,6 @@ function showPage(page) {
 function showProfile(id) {
     currentGirl = id;
     const g = GIRLS[id];
-    document.getElementById('profileInitials').textContent = INITIALS[id];
     document.getElementById('profileName').textContent = g.name + ', ' + g.age;
     document.getElementById('profileTagline').textContent = g.tagline;
     document.getElementById('profileBio').textContent = g.bio;
@@ -268,7 +315,127 @@ function showProfile(id) {
     readConversations[id] = true;
     localStorage.setItem('readConversations', JSON.stringify(readConversations));
     
+    // Load or generate profile photos
+    loadProfilePhotos(id);
+    
     showPage('profile');
+}
+
+async function loadProfilePhotos(girlId) {
+    const grid = document.getElementById('profilePhotoGrid');
+    const mainPhoto = document.getElementById('profileMainPhoto');
+    const g = GIRLS[girlId];
+    
+    // Check if photos exist in localStorage
+    if (profilePhotos[girlId] && profilePhotos[girlId].length === 4) {
+        renderProfilePhotos(girlId);
+        return;
+    }
+    
+    // Show loading state
+    mainPhoto.innerHTML = '<div class="photo-loading"><div class="spinner"></div><span>Chargement...</span></div>';
+    mainPhoto.style.fontSize = '1rem';
+    
+    grid.innerHTML = ['Portrait', 'Silhouette', 'Sexy', 'Intime'].map((label, i) => `
+        <div class="photo-grid-item">
+            <div class="photo-loading"><div class="spinner"></div><span>${label}</span></div>
+        </div>
+    `).join('');
+    
+    // Generate 4 photos
+    const prompts = [
+        { type: 'portrait', prompt: PHOTO_PROMPTS.portrait },
+        { type: 'fullbody', prompt: PHOTO_PROMPTS.fullbody },
+        { type: 'sexy', prompt: PHOTO_PROMPTS.sexy },
+        { type: 'lingerie', prompt: PHOTO_PROMPTS.lingerie }
+    ];
+    
+    if (!profilePhotos[girlId]) profilePhotos[girlId] = [];
+    
+    for (let i = 0; i < prompts.length; i++) {
+        // Guard: stop if user navigated away
+        if (currentGirl !== girlId) return;
+        
+        try {
+            const res = await fetch('/photo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    girl: girlId,
+                    affection: 80,
+                    description: prompts[i].prompt
+                })
+            });
+            const data = await res.json();
+            
+            // Guard: check again after async response
+            if (currentGirl !== girlId) return;
+            
+            if (data.image_url) {
+                profilePhotos[girlId].push(data.image_url);
+                localStorage.setItem('profilePhotos', JSON.stringify(profilePhotos));
+                renderProfilePhotos(girlId);
+            }
+        } catch (e) {
+            console.error('Photo generation error:', e);
+        }
+    }
+}
+
+function renderProfilePhotos(girlId) {
+    // Guard: only render if this is still the active profile
+    if (currentGirl !== girlId) return;
+    
+    const grid = document.getElementById('profilePhotoGrid');
+    const mainPhoto = document.getElementById('profileMainPhoto');
+    const photos = profilePhotos[girlId] || [];
+    
+    if (photos.length > 0) {
+        mainPhoto.innerHTML = `<img src="${photos[0]}" style="width:100%;height:100%;object-fit:cover;">`;
+        mainPhoto.style.fontSize = '';
+    } else {
+        mainPhoto.textContent = INITIALS[girlId];
+    }
+    
+    const labels = ['Portrait', 'Silhouette', 'Sexy', 'Intime'];
+    grid.innerHTML = labels.map((label, i) => {
+        if (photos[i]) {
+            return `<div class="photo-grid-item" onclick="openGallery('${girlId}', ${i})"><img src="${photos[i]}" alt="${label}"></div>`;
+        } else {
+            return `<div class="photo-grid-item"><div class="photo-loading"><div class="spinner"></div><span>${label}</span></div></div>`;
+        }
+    }).join('');
+}
+
+function openGallery(girlId, index) {
+    currentOverlayPhotos = profilePhotos[girlId] || [];
+    currentOverlayIndex = index;
+    updateOverlay();
+    document.getElementById('img-overlay').style.display = 'flex';
+}
+
+function updateOverlay() {
+    if (currentOverlayPhotos.length === 0) return;
+    document.getElementById('overlay-img').src = currentOverlayPhotos[currentOverlayIndex];
+    document.getElementById('overlay-counter').textContent = (currentOverlayIndex + 1) + ' / ' + currentOverlayPhotos.length;
+}
+
+function prevOverlayImg() {
+    if (currentOverlayPhotos.length === 0) return;
+    currentOverlayIndex = (currentOverlayIndex - 1 + currentOverlayPhotos.length) % currentOverlayPhotos.length;
+    updateOverlay();
+}
+
+function nextOverlayImg() {
+    if (currentOverlayPhotos.length === 0) return;
+    currentOverlayIndex = (currentOverlayIndex + 1) % currentOverlayPhotos.length;
+    updateOverlay();
+}
+
+function showVideoToast() {
+    const toast = document.getElementById('toast');
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 2000);
 }
 
 function startChat() {
@@ -311,7 +478,10 @@ function renderMessages() {
 }
 
 function fullscreenImg(url) {
+    currentOverlayPhotos = [url];
+    currentOverlayIndex = 0;
     document.getElementById('overlay-img').src = url;
+    document.getElementById('overlay-counter').textContent = '1 / 1';
     document.getElementById('img-overlay').style.display = 'flex';
 }
 
