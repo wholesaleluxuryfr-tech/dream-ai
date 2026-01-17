@@ -6,6 +6,18 @@ from flask import Flask, request, jsonify, Response, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from datetime import datetime
+from openai import OpenAI
+
+# OpenRouter AI Integration - uses Replit AI Integrations (no API key needed, charges to credits)
+AI_INTEGRATIONS_OPENROUTER_API_KEY = os.environ.get("AI_INTEGRATIONS_OPENROUTER_API_KEY")
+AI_INTEGRATIONS_OPENROUTER_BASE_URL = os.environ.get("AI_INTEGRATIONS_OPENROUTER_BASE_URL")
+
+openrouter_client = None
+if AI_INTEGRATIONS_OPENROUTER_API_KEY and AI_INTEGRATIONS_OPENROUTER_BASE_URL:
+    openrouter_client = OpenAI(
+        api_key=AI_INTEGRATIONS_OPENROUTER_API_KEY,
+        base_url=AI_INTEGRATIONS_OPENROUTER_BASE_URL
+    )
 
 
 class Base(DeclarativeBase):
@@ -4883,6 +4895,31 @@ def chat():
     
     import urllib.parse
     
+    # PRIMARY: OpenRouter via Replit AI Integrations (uncensored Mistral model)
+    if openrouter_client:
+        try:
+            chat_messages = [{"role": "system", "content": system_content}]
+            for m in messages[-20:]:  # Last 20 messages for better context
+                chat_messages.append({"role": m['role'], "content": m['content']})
+            
+            response = openrouter_client.chat.completions.create(
+                model="mistralai/mistral-medium-3.1",  # Uncensored Mistral model
+                messages=chat_messages,
+                max_tokens=500,
+                temperature=0.85
+            )
+            
+            reply = response.choices[0].message.content
+            print(f"[CHAT] OpenRouter reply: {reply[:100]}...")
+            
+            if affection < 30:
+                smart_photo_desc = None
+            
+            return jsonify({"reply": reply, "smart_photo": smart_photo_desc})
+        except Exception as e:
+            print(f"OpenRouter error: {e}")
+    
+    # FALLBACK 1: Pollinations
     try:
         full_prompt = f"{system_content}\n\n"
         for m in messages[-10:]:
@@ -4907,6 +4944,7 @@ def chat():
     except Exception as e:
         print(f"Pollinations error: {e}")
     
+    # FALLBACK 2: DeepInfra
     try:
         response = requests.post(
             'https://api.deepinfra.com/v1/openai/chat/completions',
