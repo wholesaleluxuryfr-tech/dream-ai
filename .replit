@@ -12,7 +12,7 @@ language = "python3"
 requiredFiles = [".replit", "replit.nix"]
 
 [deployment]
-run = ["gunicorn", "--bind=0.0.0.0:5000", "--workers=1", "--threads=1", "--timeout=120", "--keep-alive=5", "--max-requests=200", "--max-requests-jitter=50", "--worker-tmp-dir=/dev/shm", "main:app"]
+run = ["gunicorn", "--bind=0.0.0.0:5000", "--workers=1", "--threads=2", "--timeout=120", "main:app"]
 deploymentTarget = "autoscale"
 
 [agent]
