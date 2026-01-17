@@ -2716,10 +2716,20 @@ HTML = '''<!DOCTYPE html>
         </div>
         <div class="filter-row">
             <button class="filter-btn active" onclick="setRegionFilter('all')" id="filterRegionAll">Tous</button>
-            <button class="filter-btn" onclick="setRegionFilter('europe')" id="filterEurope">Europe</button>
-            <button class="filter-btn" onclick="setRegionFilter('asie')" id="filterAsie">Asie</button>
+            <button class="filter-btn" onclick="setRegionFilter('france')" id="filterFrance">France</button>
+            <button class="filter-btn" onclick="setRegionFilter('usa')" id="filterUSA">USA</button>
+            <button class="filter-btn" onclick="setRegionFilter('bresil')" id="filterBresil">Bresil</button>
+            <button class="filter-btn" onclick="setRegionFilter('japon')" id="filterJapon">Japon</button>
+            <button class="filter-btn" onclick="setRegionFilter('chine')" id="filterChine">Chine</button>
+            <button class="filter-btn" onclick="setRegionFilter('thailande')" id="filterThailande">Thailande</button>
+            <button class="filter-btn" onclick="setRegionFilter('indonesie')" id="filterIndonesie">Indonesie</button>
+            <button class="filter-btn" onclick="setRegionFilter('russie')" id="filterRussie">Russie</button>
+            <button class="filter-btn" onclick="setRegionFilter('moyen_orient')" id="filterMoyenOrient">Moyen-Orient</button>
+            <button class="filter-btn" onclick="setRegionFilter('maghreb')" id="filterMaghreb">Maghreb</button>
             <button class="filter-btn" onclick="setRegionFilter('afrique')" id="filterAfrique">Afrique</button>
-            <button class="filter-btn" onclick="setRegionFilter('amerique')" id="filterAmerique">Amerique</button>
+            <button class="filter-btn" onclick="setRegionFilter('europe')" id="filterEurope">Europe</button>
+            <button class="filter-btn" onclick="setRegionFilter('amerique_latine')" id="filterAmeriqueLat">Amerique Lat.</button>
+            <button class="filter-btn" onclick="setRegionFilter('asie')" id="filterAsie">Asie</button>
         </div>
     </div>
     
@@ -3043,11 +3053,20 @@ const INITIALS = {};
 Object.keys(GIRLS).forEach(id => { INITIALS[id] = GIRLS[id].name.charAt(0).toUpperCase(); });
 
 const REGION_MAP = {
-    'europe': ['France', 'Germany', 'Sweden', 'Italy', 'Ukraine', 'Russia', 'Belarus', 'Belgium', 'UK', 'Spain', 'Netherlands', 'Czech', 'Prague', 'Amsterdam', 'Londres', 'Berlin', 'Paris'],
-    'asie': ['Japan', 'China', 'Korea', 'Thailand', 'India', 'Vietnam', 'Philippines', 'Indonesia', 'Addis', 'Asmara', 'Ethiopie', 'Erythree'],
-    'afrique': ['Nigeria', 'Ghana', 'Senegal', 'Morocco', 'Egypt', 'South Africa', 'Kenya', 'Congo', 'Mali', 'Kinshasa', 'Brazzaville', 'Johannesburg', 'Cape Town', 'Lagos', 'Dakar', 'Bamako', 'Casablanca', 'Alger', 'Tunis', 'Tunisie', 'Algerie', 'Maroc'],
-    'amerique': ['USA', 'Texas', 'California', 'LA', 'Vegas', 'Brazil', 'Mexico', 'Argentina', 'Colombia', 'Canada', 'Cuba', 'Jamaica', 'Peru', 'Miami', 'Chicago', 'Atlanta', 'Hawaii', 'NYC', 'Rio', 'Sao Paulo'],
-    'moyen_orient': ['Liban', 'Beirut', 'Egypte', 'Cairo', 'Dubai', 'Emirats', 'Arabie', 'Riyad', 'Qatar', 'Doha', 'Syrie', 'Damas', 'Alep', 'Jordanie', 'Amman', 'Aqaba']
+    'france': ['France', 'Paris', 'Lyon', 'Marseille', 'Nice', 'Bordeaux', 'Toulouse', 'Lille', 'Nantes', 'Strasbourg'],
+    'usa': ['USA', 'Texas', 'California', 'LA', 'Vegas', 'Miami', 'Chicago', 'Atlanta', 'Hawaii', 'NYC', 'New York', 'Los Angeles', 'San Francisco'],
+    'bresil': ['Brazil', 'Brasil', 'Rio', 'Sao Paulo', 'Salvador', 'Brasilia', 'Fortaleza'],
+    'japon': ['Japan', 'Tokyo', 'Osaka', 'Kyoto', 'Yokohama'],
+    'chine': ['China', 'Beijing', 'Shanghai', 'Shenzhen', 'Hong Kong', 'Guangzhou'],
+    'thailande': ['Thailand', 'Bangkok', 'Phuket', 'Chiang Mai', 'Pattaya'],
+    'indonesie': ['Indonesia', 'Jakarta', 'Bali', 'Surabaya'],
+    'russie': ['Russia', 'Moscow', 'St Petersburg', 'Novosibirsk', 'Kazan', 'Moscou', 'Russie'],
+    'moyen_orient': ['Lebanon', 'Liban', 'Egypt', 'Egypte', 'UAE', 'Dubai', 'Saudi Arabia', 'Arabie', 'Qatar', 'Doha', 'Syria', 'Syrie', 'Jordan', 'Jordanie', 'Beirut', 'Cairo', 'Damascus', 'Damas', 'Amman', 'Riyad', 'Abu Dhabi', 'Koweit', 'Kuwait', 'Oman', 'Bahrain'],
+    'maghreb': ['Morocco', 'Maroc', 'Algeria', 'Algerie', 'Tunisia', 'Tunisie', 'Casablanca', 'Algiers', 'Alger', 'Tunis', 'Rabat', 'Oran', 'Fes', 'Marrakech'],
+    'afrique': ['Nigeria', 'Ghana', 'Senegal', 'South Africa', 'Kenya', 'Congo', 'Mali', 'Kinshasa', 'Brazzaville', 'Johannesburg', 'Cape Town', 'Lagos', 'Dakar', 'Bamako', 'Addis', 'Ethiopie', 'Ethiopia', 'Cameroun', 'Cameroon', 'Cote Ivoire', 'Abidjan'],
+    'europe': ['France', 'Germany', 'Sweden', 'Italy', 'Ukraine', 'Belarus', 'Belgium', 'UK', 'Spain', 'Netherlands', 'Czech', 'Prague', 'Amsterdam', 'Londres', 'Berlin', 'Paris', 'Poland', 'Pologne', 'Roma', 'Milan', 'Barcelona', 'Madrid', 'Lisboa', 'Portugal'],
+    'amerique_latine': ['Brazil', 'Mexico', 'Colombia', 'Argentina', 'Peru', 'Cuba', 'Chile', 'Venezuela', 'Ecuador', 'Bolivia', 'Puerto Rico', 'Dominican', 'Havana', 'Buenos Aires', 'Lima', 'Bogota', 'Caracas', 'Rio', 'Sao Paulo'],
+    'asie': ['Japan', 'China', 'Korea', 'Thailand', 'India', 'Vietnam', 'Philippines', 'Indonesia', 'Taiwan', 'Singapore', 'Malaysia', 'Cambodia', 'Myanmar', 'Tokyo', 'Seoul', 'Bangkok', 'Mumbai', 'Delhi', 'Manila', 'Jakarta', 'Hanoi', 'Saigon']
 };
 
 let currentGirl = null;
@@ -3385,7 +3404,12 @@ function setAgeFilter(filter) {
 function setRegionFilter(filter) {
     currentRegionFilter = filter;
     document.querySelectorAll('.filter-row:last-child .filter-btn').forEach(btn => btn.classList.remove('active'));
-    const idMap = {all: 'filterRegionAll', europe: 'filterEurope', asie: 'filterAsie', afrique: 'filterAfrique', amerique: 'filterAmerique'};
+    const idMap = {
+        all: 'filterRegionAll', france: 'filterFrance', usa: 'filterUSA', bresil: 'filterBresil',
+        japon: 'filterJapon', chine: 'filterChine', thailande: 'filterThailande', indonesie: 'filterIndonesie',
+        russie: 'filterRussie', moyen_orient: 'filterMoyenOrient', maghreb: 'filterMaghreb',
+        afrique: 'filterAfrique', europe: 'filterEurope', amerique_latine: 'filterAmeriqueLat', asie: 'filterAsie'
+    };
     const el = document.getElementById(idMap[filter]);
     if (el) el.classList.add('active');
     initSwipe();
