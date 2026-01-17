@@ -3692,11 +3692,10 @@ function initSwipe() {
         return true;
     });
     swipeQueue = swipeQueue.sort(() => Math.random() - 0.5);
-    Object.keys(GIRLS).forEach(id => { 
-        chatHistory[id] = loadChatHistory(id);
+    matches.forEach(id => { 
+        if (!chatHistory[id]) chatHistory[id] = loadChatHistory(id);
         if (affectionLevels[id] === undefined) affectionLevels[id] = 20;
     });
-    localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
     initProfilePhotos();
     showNextCard();
     renderMatches();
@@ -3740,12 +3739,12 @@ function showNextCard() {
         document.getElementById('noMoreCards').style.display = 'none';
     });
     
-    const nextProfiles = swipeQueue.slice(1, 4);
-    nextProfiles.forEach(id => {
-        const photo = getProfilePhoto(id);
-        if (photo) preloadImages([photo]);
-        else queuePhotoGeneration(id);
-    });
+    if (swipeQueue.length > 1) {
+        const nextId = swipeQueue[1];
+        if (!profilePhotos[nextId] && !failedPhotos[nextId]) {
+            queuePhotoGeneration(nextId);
+        }
+    }
 }
 
 function swipeLeft() {
@@ -4813,61 +4812,70 @@ def profile_photo():
 
 @app.route('/api/register', methods=['POST'])
 def register():
-    data = request.json
-    username = data.get('username', '').strip()
-    email = data.get('email', '').strip().lower()
-    password = data.get('password', '')
-    age = data.get('age', 0)
-    
-    if not username or not email or not password or not age:
-        return jsonify({"error": "Tous les champs sont requis"}), 400
-    
-    if len(password) < 4:
-        return jsonify({"error": "Mot de passe trop court (min 4)"}), 400
-    
-    if age < 18:
-        return jsonify({"error": "Tu dois avoir 18 ans ou plus"}), 400
-    
-    existing = User.query.filter((User.username == username) | (User.email == email)).first()
-    if existing:
-        return jsonify({"error": "Pseudo ou email deja utilise"}), 400
-    
-    password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-    
-    user = User(username=username, email=email, password_hash=password_hash, age=age)
-    db.session.add(user)
-    db.session.commit()
-    
-    session['user_id'] = user.id
-    
-    return jsonify({
-        "success": True,
-        "user": {"id": user.id, "username": user.username, "age": user.age}
-    })
+    try:
+        data = request.json
+        username = data.get('username', '').strip()
+        email = data.get('email', '').strip().lower()
+        password = data.get('password', '')
+        age = data.get('age', 0)
+        
+        if not username or not email or not password or not age:
+            return jsonify({"error": "Tous les champs sont requis"}), 400
+        
+        if len(password) < 4:
+            return jsonify({"error": "Mot de passe trop court (min 4)"}), 400
+        
+        if age < 18:
+            return jsonify({"error": "Tu dois avoir 18 ans ou plus"}), 400
+        
+        existing = User.query.filter((User.username == username) | (User.email == email)).first()
+        if existing:
+            return jsonify({"error": "Pseudo ou email deja utilise"}), 400
+        
+        password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        user = User(username=username, email=email, password_hash=password_hash, age=age)
+        db.session.add(user)
+        db.session.commit()
+        
+        session['user_id'] = user.id
+        
+        return jsonify({
+            "success": True,
+            "user": {"id": user.id, "username": user.username, "age": user.age}
+        })
+    except Exception as e:
+        db.session.rollback()
+        print(f"Register error: {e}")
+        return jsonify({"error": "Erreur serveur"}), 500
 
 
 @app.route('/api/login', methods=['POST'])
 def api_login():
-    data = request.json
-    email = data.get('email', '').strip().lower()
-    password = data.get('password', '')
-    
-    if not email or not password:
-        return jsonify({"error": "Email et mot de passe requis"}), 400
-    
-    user = User.query.filter_by(email=email).first()
-    if not user:
-        return jsonify({"error": "Compte non trouve"}), 404
-    
-    if not bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):
-        return jsonify({"error": "Mot de passe incorrect"}), 401
-    
-    session['user_id'] = user.id
-    
-    return jsonify({
-        "success": True,
-        "user": {"id": user.id, "username": user.username, "age": user.age}
-    })
+    try:
+        data = request.json
+        email = data.get('email', '').strip().lower()
+        password = data.get('password', '')
+        
+        if not email or not password:
+            return jsonify({"error": "Email et mot de passe requis"}), 400
+        
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return jsonify({"error": "Compte non trouve"}), 404
+        
+        if not bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):
+            return jsonify({"error": "Mot de passe incorrect"}), 401
+        
+        session['user_id'] = user.id
+        
+        return jsonify({
+            "success": True,
+            "user": {"id": user.id, "username": user.username, "age": user.age}
+        })
+    except Exception as e:
+        print(f"Login error: {e}")
+        return jsonify({"error": "Erreur serveur"}), 500
 
 
 @app.route('/api/logout', methods=['POST'])
