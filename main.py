@@ -2196,10 +2196,15 @@ HTML = '''<!DOCTYPE html>
         .photo-initial { display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a1a2e 0%, #0d0d12 100%); font-weight: 700; color: rgba(233, 30, 99, 0.4); }
         .photo-bg { background-size: cover; background-position: center top; background-repeat: no-repeat; }
         .photo-retry { position: absolute; bottom: 10px; right: 10px; background: rgba(233, 30, 99, 0.8); color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 0.7rem; cursor: pointer; z-index: 10; }
+        .photo-fallback { display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4e 100%); color: rgba(233, 30, 99, 0.6); font-size: 3rem; font-weight: 700; }
         
-        .page { display: none; min-height: 100vh; overflow-x: hidden; animation: fadeIn 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: opacity, transform; }
+        .page { display: none; min-height: 100vh; overflow-x: hidden; will-change: opacity, transform; }
+        .page.page-enter { animation: pageSlideIn 0.3s ease forwards; }
+        .page.page-exit { animation: pageSlideOut 0.2s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translate3d(0, 8px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
         @keyframes slideIn { from { opacity: 0; transform: translate3d(15px, 0, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+        @keyframes pageSlideIn { from { opacity: 0; transform: translate3d(30px, 0, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+        @keyframes pageSlideOut { from { opacity: 1; transform: translate3d(0, 0, 0); } to { opacity: 0; transform: translate3d(-30px, 0, 0); } }
         * { transition: background-color 0.15s ease-out, border-color 0.15s ease-out, color 0.15s ease-out, transform 0.15s ease-out, opacity 0.15s ease-out; }
         button { transition: transform 0.1s ease-out, background-color 0.15s ease-out; }
         button:active { transform: scale(0.95) !important; }
@@ -3714,8 +3719,6 @@ async function doLogout() {
 
 function navigateTo(page) {
     lastNavTab = page;
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     
     const pageMap = {
         'discover': 'pageDiscover',
@@ -3725,18 +3728,45 @@ function navigateTo(page) {
         'settings': 'pageSettings'
     };
     
-    const pageEl = document.getElementById(pageMap[page]);
-    if (pageEl) pageEl.classList.add('active');
+    // Get current active page for exit animation
+    const currentPage = document.querySelector('.page.active');
+    const newPageEl = document.getElementById(pageMap[page]);
     
+    // Remove active from nav
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     const navEl = document.getElementById('nav' + page.charAt(0).toUpperCase() + page.slice(1));
     if (navEl) navEl.classList.add('active');
     
-    document.getElementById('bottomNav').style.display = 'flex';
+    // If same page, no animation needed
+    if (currentPage === newPageEl) return;
     
-    if (page === 'matches') renderMatches();
-    if (page === 'messages') renderMessagesList();
-    if (page === 'gallery') renderGallery();
-    if (page === 'settings') updateSettingsPage();
+    // Exit animation on current page, enter on new
+    if (currentPage && currentPage !== newPageEl) {
+        currentPage.classList.add('page-exit');
+        setTimeout(() => {
+            currentPage.classList.remove('active', 'page-exit', 'page-enter');
+        }, 200);
+    }
+    
+    // Add haptic feedback
+    if (navigator.vibrate) navigator.vibrate(10);
+    
+    // Show new page with entrance animation
+    setTimeout(() => {
+        document.querySelectorAll('.page').forEach(p => {
+            if (p !== newPageEl) p.classList.remove('active', 'page-enter');
+        });
+        if (newPageEl) {
+            newPageEl.classList.add('active', 'page-enter');
+        }
+        
+        document.getElementById('bottomNav').style.display = 'flex';
+        
+        if (page === 'matches') renderMatches();
+        if (page === 'messages') renderMessagesList();
+        if (page === 'gallery') renderGallery();
+        if (page === 'settings') updateSettingsPage();
+    }, currentPage && currentPage !== newPageEl ? 100 : 0);
 }
 
 function renderMessagesList() {
