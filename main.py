@@ -2890,6 +2890,7 @@ let currentOverlayIndex = 0;
 let user = null;
 let matches = [];
 let passed = [];
+let isProcessingSwipe = false;
 let blocked = [];
 let swipeQueue = [];
 let currentSwipeGirl = null;
@@ -3790,33 +3791,62 @@ function showNextCard() {
 }
 
 function swipeLeft() {
-    if (!currentSwipeGirl) return;
-    passed.push(currentSwipeGirl);
+    if (!currentSwipeGirl || isProcessingSwipe) return;
+    isProcessingSwipe = true;
+    
+    const girlId = currentSwipeGirl;
+    passed.push(girlId);
     localStorage.setItem('dreamPassed', JSON.stringify(passed));
-    syncDiscovered(currentSwipeGirl, 'passed');
+    syncDiscovered(girlId, 'passed');
+    
     swipeQueue.shift();
+    currentSwipeGirl = null;
+    
+    isProcessingSwipe = false;
     showNextCard();
 }
 
+function resetSwipeState() {
+    isProcessingSwipe = false;
+    const card = document.getElementById('swipeCard');
+    if (card) {
+        card.style.opacity = '1';
+        card.style.pointerEvents = 'auto';
+    }
+}
+
 function swipeRight() {
-    if (!currentSwipeGirl) return;
+    if (!currentSwipeGirl || isProcessingSwipe) return;
+    isProcessingSwipe = true;
+    
+    const girlId = currentSwipeGirl;
     showTapFlash();
     showHeartBurst(window.innerWidth / 2, window.innerHeight / 2);
     
-    const g = GIRLS[currentSwipeGirl];
+    swipeQueue.shift();
+    currentSwipeGirl = null;
+    
+    const card = document.getElementById('swipeCard');
+    if (card) {
+        card.style.opacity = '0.5';
+        card.style.pointerEvents = 'none';
+    }
+    
+    const g = GIRLS[girlId];
     const matchChance = g.match_chance || 0.7;
     
     if (Math.random() < matchChance) {
-        matches.push(currentSwipeGirl);
-        localStorage.setItem('dreamMatches', JSON.stringify(matches));
-        syncMatch(currentSwipeGirl);
-        syncDiscovered(currentSwipeGirl, 'liked');
-        showMatchAnimation(currentSwipeGirl);
+        if (!matches.includes(girlId)) {
+            matches.push(girlId);
+            localStorage.setItem('dreamMatches', JSON.stringify(matches));
+            syncMatch(girlId);
+        }
+        syncDiscovered(girlId, 'liked');
+        showMatchAnimation(girlId);
     } else {
-        syncDiscovered(currentSwipeGirl, 'liked');
+        syncDiscovered(girlId, 'liked');
         showNoMatch();
     }
-    swipeQueue.shift();
 }
 
 async function syncMatch(girlId) {
@@ -3915,15 +3945,26 @@ function showNoMatch() {
     msg.style.display = 'block';
     setTimeout(() => {
         msg.style.display = 'none';
+        resetSwipeState();
         showNextCard();
     }, 1500);
 }
 
 function closeMatch() {
     document.getElementById('matchOverlay').style.display = 'none';
+    resetSwipeState();
     renderMatches();
     showNextCard();
 }
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const overlay = document.getElementById('matchOverlay');
+        if (overlay && overlay.style.display === 'flex') {
+            closeMatch();
+        }
+    }
+});
 
 function showHeartBurst(x, y) {
     const heart = document.createElement('div');
