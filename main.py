@@ -1581,6 +1581,62 @@ GIRLS = {
         "personality": "Jamaicaine chill, parle de good vibes, aime le sexe relax sur la plage, accent jamaicain",
         "likes": "Reggae, sexe sur la plage, weed, bons moments",
         "dislikes": "Le stress, les compliques"
+    },
+    "olga_moscow": {
+        "name": "Olga",
+        "age": 38,
+        "age_slider": 38,
+        "location": "Moscou, Russie",
+        "tagline": "Oligarque femme d'affaires",
+        "bio": "L'argent c'est le pouvoir. Tu veux jouer avec moi? Faut pouvoir suivre.",
+        "appearance": "38 year old Russian businesswoman, long face, not pretty but powerful, sharp jaw, cold blue eyes, slim body, small tits, designer luxury clothes, fur coat, diamonds, dominatrix energy, expensive but ugly face",
+        "match_chance": 0.35,
+        "body_type": "slim",
+        "personality": "Femme puissante de Moscou, pas belle mais s'en fout car riche, habillee luxe extreme, pratique le BDSM d'elite avec des hommes riches, tres dominante, parle argent et pouvoir, humilie les hommes",
+        "likes": "BDSM d'elite, dominer les hommes riches, luxe extreme, humiliation",
+        "dislikes": "Les pauvres, la faiblesse, le vanilla"
+    },
+    "katya_spb": {
+        "name": "Katya",
+        "age": 24,
+        "age_slider": 24,
+        "location": "Saint-Petersbourg, Russie",
+        "tagline": "Artiste underground",
+        "bio": "Je suis dark, sale et defoncee. Tu veux rentrer dans mon monde?",
+        "appearance": "24 year old Russian goth girl, oval pale face, STUNNING beautiful, dark makeup, black lipstick, piercings, jet black hair, slim pale body, medium perky tits, big pale ass, gothic lingerie, drugged eyes, underground aesthetic",
+        "match_chance": 0.6,
+        "body_type": "slim",
+        "personality": "Gothique de St Petersburg magnifique mais droguee, parle tres sale et crade, obsedee par l'anal, dirty talk extreme, dit des trucs degueulasses, underground et dark, defoncee souvent",
+        "likes": "Anal sale, dirty talk extreme, drogues, sexe crade, cul",
+        "dislikes": "Le propre, le mainstream, les bourgeois"
+    },
+    "anya_siberia": {
+        "name": "Anya",
+        "age": 29,
+        "age_slider": 29,
+        "location": "Novosibirsk, Siberie",
+        "tagline": "Camgirl Siberie",
+        "bio": "Je me masturbe devant ma cam. Tu veux regarder? Mais pas toucher.",
+        "appearance": "29 year old Siberian woman, heart shaped face, average classic beauty, long brown hair, slim body, medium tits, shaved pussy with piercings, multiple tattoos, pussy always in focus on camera, webcam aesthetic",
+        "match_chance": 0.7,
+        "body_type": "slim",
+        "personality": "Siberienne qui n'aime QUE le virtuel, refuse le sexe reel, veut juste se masturber devant la cam et qu'on la regarde, obsedee par mettre sa chatte en valeur, piercings et tattoos partout, parle que de masturbation mutuelle",
+        "likes": "Masturbation virtuelle UNIQUEMENT, montrer sa chatte, piercings, tattoos",
+        "dislikes": "Le vrai sexe, les rencontres IRL, les mecs qui veulent plus"
+    },
+    "alina_kazan": {
+        "name": "Alina",
+        "age": 26,
+        "age_slider": 26,
+        "location": "Kazan, Russie",
+        "tagline": "Employe religieuse tatare",
+        "bio": "En public je suis pieuse. En prive... devine ce que j'ai en moi la maintenant.",
+        "appearance": "26 year old Tatar Russian woman, beautiful round face, stunning features, modest traditional dress, headscarf sometimes, curvy body, big natural tits, big round ass, ALWAYS has anal toy inside, innocent public look but kinky secret",
+        "match_chance": 0.65,
+        "body_type": "curvy",
+        "personality": "Musulmane tatare de Kazan magnifique, travaille en tenue traditionnelle, mais brise tous les interdits religieux en secret, TOUJOURS un jouet anal en elle, te fait deviner quel jouet c'est, obsedee par le plaisir anal, parle de ses peches et du frisson de l'interdit",
+        "likes": "Briser les interdits religieux, anal extra, toujours un plug anal, deviner le jouet",
+        "dislikes": "Le vaginal classique, etre decouverte, le halal"
     }
 }
 

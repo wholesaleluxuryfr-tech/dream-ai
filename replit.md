@@ -2,7 +2,7 @@
 
 ## Overview
 
-Dream AI is a Flask-based adult dating application designed to offer a unique interactive experience. It features 102 diverse AI-powered virtual companions from around the world, engaging in uncensored French conversations. The application integrates a Tinder-style swipe matching system, realistic match probabilities, dynamic affection levels, and AI-generated photos. Its core purpose is to provide an engaging and immersive adult dating simulation, with all user data securely persisted in a PostgreSQL database.
+Dream AI is a Flask-based adult dating application designed to offer a unique interactive experience. It features 106 diverse AI-powered virtual companions from around the world, engaging in uncensored French conversations. The application integrates a Tinder-style swipe matching system, realistic match probabilities, dynamic affection levels, and AI-generated photos. Its core purpose is to provide an engaging and immersive adult dating simulation, with all user data securely persisted in a PostgreSQL database.
 
 ## User Preferences
 
@@ -29,7 +29,7 @@ The application is built as a single-file Flask application (`main.py`), embeddi
 **Technical Implementations & Feature Specifications:**
 - **Authentication System:** Full user registration (username, email, password, age 18+), login/logout with session management, password hashing (bcrypt), and a tabbed login page.
 - **Tinder-Style Swipe System:** Variable match probabilities (30-90%), "C'est un Match!" animation, and "Elle n'a pas matché avec toi" feedback.
-- **AI Companions:** 102 diverse AI companions with unique personalities, mood systems (happy, neutral, annoyed, horny), behavior detection (rude, rushing, too_early), and rejection logic based on affection or disrespect.
+- **AI Companions:** 106 diverse AI companions with unique personalities, mood systems (happy, neutral, annoyed, horny), behavior detection (rude, rushing, too_early), and rejection logic based on affection or disrespect.
 - **Chat AI:** Provides short, coherent responses (1-3 sentences) with French slang and context-aware memory.
 - **Photo System:** Auto-generates profile photos on first visit for each girl using Promptchan API, with photos cached locally. Four types of profile photos (Portrait, Sexy, Lingerie, Revealing) and context-based photo generation triggered by keywords in user messages.
 - **Affection-Based Content:** Dynamic content unlocking based on affection levels (Elegant, Sexy, Lingerie, Nude/Intimate photos).
