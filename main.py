@@ -3968,18 +3968,27 @@ function resetAllData() {
 }
 
 function initSwipe() {
+    const seenIds = new Set([...matches, ...passed, ...blocked]);
+    
     swipeQueue = Object.keys(GIRLS).filter(id => {
-        if (matches.includes(id) || passed.includes(id) || blocked.includes(id)) return false;
+        if (seenIds.has(id)) return false;
         const g = GIRLS[id];
         if (!matchesAgeFilter(g)) return false;
         if (!matchesRegionFilter(g)) return false;
         return true;
     });
+    
+    swipeQueue = [...new Set(swipeQueue)];
     swipeQueue = swipeQueue.sort(() => Math.random() - 0.5);
+    
     matches.forEach(id => { 
         if (!chatHistory[id]) chatHistory[id] = loadChatHistory(id);
         if (affectionLevels[id] === undefined) affectionLevels[id] = 20;
     });
+    
+    isProcessingSwipe = false;
+    currentSwipeGirl = null;
+    
     initProfilePhotos();
     showNextCard();
     renderMatches();
@@ -3988,13 +3997,24 @@ function initSwipe() {
 }
 
 function showNextCard() {
+    swipeQueue = swipeQueue.filter(id => !matches.includes(id) && !passed.includes(id) && !blocked.includes(id));
+    
     if (swipeQueue.length === 0) {
         document.getElementById('swipeCard').style.display = 'none';
         document.getElementById('swipeButtons').style.display = 'none';
         document.getElementById('noMoreCards').style.display = 'block';
+        currentSwipeGirl = null;
         return;
     }
+    
     currentSwipeGirl = swipeQueue[0];
+    
+    if (!currentSwipeGirl || !GIRLS[currentSwipeGirl]) {
+        swipeQueue.shift();
+        showNextCard();
+        return;
+    }
+    
     const g = GIRLS[currentSwipeGirl];
     const photo = getProfilePhoto(currentSwipeGirl);
     
@@ -4036,11 +4056,21 @@ function swipeLeft() {
     isProcessingSwipe = true;
     
     const girlId = currentSwipeGirl;
-    passed.push(girlId);
-    localStorage.setItem('dreamPassed', JSON.stringify(passed));
-    syncDiscovered(girlId, 'passed');
     
-    swipeQueue.shift();
+    if (!girlId || !GIRLS[girlId]) {
+        isProcessingSwipe = false;
+        showNextCard();
+        return;
+    }
+    
+    if (!passed.includes(girlId)) {
+        passed.push(girlId);
+        localStorage.setItem('dreamPassed', JSON.stringify(passed));
+        syncDiscovered(girlId, 'passed');
+    }
+    
+    const idx = swipeQueue.indexOf(girlId);
+    if (idx > -1) swipeQueue.splice(idx, 1);
     currentSwipeGirl = null;
     
     isProcessingSwipe = false;
@@ -4061,11 +4091,24 @@ function swipeRight() {
     isProcessingSwipe = true;
     
     const girlId = currentSwipeGirl;
+    
+    if (!girlId || !GIRLS[girlId]) {
+        isProcessingSwipe = false;
+        showNextCard();
+        return;
+    }
+    
     showTapFlash();
     showHeartBurst(window.innerWidth / 2, window.innerHeight / 2);
     
-    swipeQueue.shift();
+    const idx = swipeQueue.indexOf(girlId);
+    if (idx > -1) swipeQueue.splice(idx, 1);
     currentSwipeGirl = null;
+    
+    if (!passed.includes(girlId)) {
+        passed.push(girlId);
+        localStorage.setItem('dreamPassed', JSON.stringify(passed));
+    }
     
     const card = document.getElementById('swipeCard');
     if (card) {
@@ -4081,9 +4124,12 @@ function swipeRight() {
             matches.push(girlId);
             localStorage.setItem('dreamMatches', JSON.stringify(matches));
             syncMatch(girlId);
+            syncDiscovered(girlId, 'liked');
+            showMatchAnimation(girlId);
+        } else {
+            isProcessingSwipe = false;
+            showNextCard();
         }
-        syncDiscovered(girlId, 'liked');
-        showMatchAnimation(girlId);
     } else {
         syncDiscovered(girlId, 'liked');
         showNoMatch();
