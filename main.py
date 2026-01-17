@@ -2,11 +2,21 @@ import os
 import json
 import requests
 import bcrypt
+import base64
+import hashlib
 from flask import Flask, request, jsonify, Response, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from datetime import datetime
 from openai import OpenAI
+from supabase import create_client, Client
+
+# Supabase client initialization
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+supabase: Client = None
+if SUPABASE_URL and SUPABASE_KEY:
+    supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # OpenRouter AI Integration - uses Replit AI Integrations (no API key needed, charges to credits)
 AI_INTEGRATIONS_OPENROUTER_API_KEY = os.environ.get("AI_INTEGRATIONS_OPENROUTER_API_KEY")
@@ -117,6 +127,48 @@ def init_db():
         print(f"Database initialization: {e}")
 
 init_db()
+
+SUPABASE_BUCKET = "profile-photos"
+
+def upload_to_supabase(image_url, girl_id, photo_type):
+    """Download image from Promptchan and upload to Supabase Storage for permanent hosting"""
+    if not supabase:
+        print("[SUPABASE] Client not initialized")
+        return image_url
+    
+    try:
+        response = requests.get(image_url, timeout=30)
+        if not response.ok:
+            print(f"[SUPABASE] Failed to download image: {response.status_code}")
+            return image_url
+        
+        image_data = response.content
+        content_type = response.headers.get('Content-Type', 'image/png')
+        
+        ext = 'png' if 'png' in content_type else 'jpg'
+        file_hash = hashlib.md5(image_data).hexdigest()[:8]
+        file_path = f"{girl_id}/{photo_type}_{file_hash}.{ext}"
+        
+        try:
+            supabase.storage.from_(SUPABASE_BUCKET).upload(
+                file_path,
+                image_data,
+                {"content-type": content_type, "upsert": "true"}
+            )
+        except Exception as upload_err:
+            if "already exists" in str(upload_err).lower() or "duplicate" in str(upload_err).lower():
+                pass
+            else:
+                print(f"[SUPABASE] Upload error: {upload_err}")
+                return image_url
+        
+        public_url = supabase.storage.from_(SUPABASE_BUCKET).get_public_url(file_path)
+        print(f"[SUPABASE] Uploaded {file_path} -> {public_url}")
+        return public_url
+        
+    except Exception as e:
+        print(f"[SUPABASE] Error: {e}")
+        return image_url
 
 MANIFEST = {
     "name": "Dream AI",
@@ -3052,6 +3104,21 @@ async function generateProfilePhoto(girlId) {
     if (profilePhotos[girlId]) return true;
     
     try {
+        const storedRes = await fetch('/api/stored_photos/' + girlId);
+        const storedData = await storedRes.json();
+        if (storedData.photos && storedData.photos['0']) {
+            profilePhotos[girlId] = storedData.photos['0'];
+            localStorage.setItem('profilePhotos', JSON.stringify(profilePhotos));
+            delete failedPhotos[girlId];
+            localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
+            refreshAllPhotos();
+            return true;
+        }
+    } catch (e) {
+        console.log('Stored photo check failed:', e);
+    }
+    
+    try {
         const res = await fetch('/profile_photo', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -5189,13 +5256,40 @@ def profile_photo():
             if image_val:
                 if isinstance(image_val, str) and not image_val.startswith('http') and not image_val.startswith('data:'):
                     image_val = 'https://cdn.promptchan.ai/' + image_val
-                return jsonify({"image_url": image_val, "girl_id": girl_id, "photo_type": photo_config['type']})
+                
+                permanent_url = upload_to_supabase(image_val, girl_id, photo_type)
+                
+                try:
+                    existing = ProfilePhoto.query.filter_by(girl_id=girl_id, photo_type=photo_type).first()
+                    if existing:
+                        existing.photo_url = permanent_url
+                    else:
+                        new_photo = ProfilePhoto(girl_id=girl_id, photo_type=photo_type, photo_url=permanent_url)
+                        db.session.add(new_photo)
+                    db.session.commit()
+                except Exception as db_err:
+                    print(f"DB save error: {db_err}")
+                    db.session.rollback()
+                
+                return jsonify({"image_url": permanent_url, "girl_id": girl_id, "photo_type": photo_config['type']})
             
         return jsonify({"error": "No image in response"})
             
     except Exception as e:
         print(f"Profile photo error: {e}")
         return jsonify({"error": str(e)})
+
+
+@app.route('/api/stored_photos/<girl_id>', methods=['GET'])
+def get_stored_photos(girl_id):
+    """Get all stored photos for a girl from database"""
+    try:
+        photos = ProfilePhoto.query.filter_by(girl_id=girl_id).all()
+        photo_dict = {str(p.photo_type): p.photo_url for p in photos}
+        return jsonify({"photos": photo_dict, "girl_id": girl_id})
+    except Exception as e:
+        print(f"Get stored photos error: {e}")
+        return jsonify({"photos": {}, "girl_id": girl_id})
 
 
 @app.route('/api/register', methods=['POST'])
