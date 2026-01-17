@@ -53,6 +53,16 @@ The application is built as a single-file Flask application (`main.py`), embeddi
 ## External Dependencies
 
 - **PostgreSQL Database:** Primary data persistence layer.
-- **Pollinations API:** Primary API for AI chat interactions.
-- **DeepInfra:** Fallback API for AI chat, utilizing the Sao10K/L3.1-70B-Euryale-v2.3 model.
+- **Supabase Storage:** Permanent cloud storage for AI-generated photos (bucket: `profile-photos`).
+- **OpenRouter AI (Replit Integration):** Primary uncensored AI chat using Mistral Medium 3.1 model.
+- **Pollinations API:** Fallback API for AI chat interactions.
+- **DeepInfra:** Secondary fallback API for AI chat, utilizing the Sao10K/L3.1-70B-Euryale-v2.3 model.
 - **Promptchan API:** Used for AI photo generation.
+
+## Recent Changes (January 2026)
+
+- **Supabase Storage Integration:** Photos are now uploaded to Supabase Storage for permanent hosting. The `upload_to_supabase()` function downloads from Promptchan and re-uploads to the `profile-photos` bucket.
+- **Stored Photos Endpoint:** `/api/stored_photos/<girl_id>` returns previously generated photos from database.
+- **Photo Persistence:** Frontend checks for stored photos before generating new ones.
+- **Page Transitions:** Smooth CSS animations (pageSlideIn/pageSlideOut) with haptic feedback on navigation.
+- **OpenRouter Integration:** Uncensored NSFW chat via Replit AI Integrations with Mistral model.

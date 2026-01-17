@@ -4,6 +4,7 @@ import requests
 import bcrypt
 import base64
 import hashlib
+import io
 from flask import Flask, request, jsonify, Response, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
@@ -134,13 +135,13 @@ def upload_to_supabase(image_url, girl_id, photo_type):
     """Download image from Promptchan and upload to Supabase Storage for permanent hosting"""
     if not supabase:
         print("[SUPABASE] Client not initialized")
-        return image_url
+        return None
     
     try:
         response = requests.get(image_url, timeout=30)
         if not response.ok:
             print(f"[SUPABASE] Failed to download image: {response.status_code}")
-            return image_url
+            return None
         
         image_data = response.content
         content_type = response.headers.get('Content-Type', 'image/png')
@@ -150,17 +151,19 @@ def upload_to_supabase(image_url, girl_id, photo_type):
         file_path = f"{girl_id}/{photo_type}_{file_hash}.{ext}"
         
         try:
-            supabase.storage.from_(SUPABASE_BUCKET).upload(
-                file_path,
-                image_data,
-                {"content-type": content_type, "upsert": "true"}
+            result = supabase.storage.from_(SUPABASE_BUCKET).upload(
+                path=file_path,
+                file=image_data,
+                file_options={"content-type": content_type, "upsert": "true"}
             )
+            print(f"[SUPABASE] Upload result: {result}")
         except Exception as upload_err:
-            if "already exists" in str(upload_err).lower() or "duplicate" in str(upload_err).lower():
-                pass
+            err_str = str(upload_err).lower()
+            if "already exists" in err_str or "duplicate" in err_str:
+                print(f"[SUPABASE] File already exists, getting URL")
             else:
                 print(f"[SUPABASE] Upload error: {upload_err}")
-                return image_url
+                return None
         
         public_url = supabase.storage.from_(SUPABASE_BUCKET).get_public_url(file_path)
         print(f"[SUPABASE] Uploaded {file_path} -> {public_url}")
@@ -168,7 +171,7 @@ def upload_to_supabase(image_url, girl_id, photo_type):
         
     except Exception as e:
         print(f"[SUPABASE] Error: {e}")
-        return image_url
+        return None
 
 MANIFEST = {
     "name": "Dream AI",
@@ -5258,20 +5261,22 @@ def profile_photo():
                     image_val = 'https://cdn.promptchan.ai/' + image_val
                 
                 permanent_url = upload_to_supabase(image_val, girl_id, photo_type)
+                final_url = permanent_url if permanent_url else image_val
                 
                 try:
                     existing = ProfilePhoto.query.filter_by(girl_id=girl_id, photo_type=photo_type).first()
                     if existing:
-                        existing.photo_url = permanent_url
+                        existing.photo_url = final_url
                     else:
-                        new_photo = ProfilePhoto(girl_id=girl_id, photo_type=photo_type, photo_url=permanent_url)
+                        new_photo = ProfilePhoto(girl_id=girl_id, photo_type=photo_type, photo_url=final_url)
                         db.session.add(new_photo)
                     db.session.commit()
+                    print(f"[DB] Saved photo for {girl_id} type {photo_type}: {final_url[:50]}...")
                 except Exception as db_err:
                     print(f"DB save error: {db_err}")
                     db.session.rollback()
                 
-                return jsonify({"image_url": permanent_url, "girl_id": girl_id, "photo_type": photo_config['type']})
+                return jsonify({"image_url": final_url, "girl_id": girl_id, "photo_type": photo_config['type']})
             
         return jsonify({"error": "No image in response"})
             
