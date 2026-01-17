@@ -2117,6 +2117,13 @@ HTML = '''<!DOCTYPE html>
         .auth-tab { flex: 1; padding: 0.8rem; background: transparent; border: none; color: #666; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
         .auth-tab.active { background: #e91e63; color: white; }
         .auth-error { color: #ff4757; font-size: 0.85rem; margin-top: 0.8rem; min-height: 1.2rem; }
+        .forgot-password { color: #888; font-size: 0.85rem; margin-top: 1rem; cursor: pointer; text-align: center; }
+        .forgot-password:hover { color: #e91e63; text-decoration: underline; }
+        .photo-upload-section { margin-top: 0.5rem; }
+        .photo-upload-label { display: flex; align-items: center; gap: 1rem; cursor: pointer; padding: 0.8rem; background: #1e1e2a; border-radius: 12px; }
+        .photo-preview { width: 50px; height: 50px; border-radius: 50%; background: #2a2a3a; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #888; overflow: hidden; }
+        .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-upload-label span { color: #888; font-size: 0.9rem; }
         
         /* HEADER */
         .header { padding: 1rem; text-align: center; background: rgba(10, 10, 12, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(233, 30, 99, 0.1); }
@@ -2490,13 +2497,21 @@ HTML = '''<!DOCTYPE html>
             <input type="password" class="login-input" id="loginPassword" placeholder="Mot de passe" required autocomplete="current-password">
             <button type="submit" class="login-btn">Se connecter</button>
             <div class="auth-error" id="loginError"></div>
+            <div class="forgot-password" onclick="showForgotPassword()">Mot de passe oublie?</div>
         </form>
         
         <form class="login-form" id="formRegister" style="display:none;" onsubmit="event.preventDefault(); doRegister();">
-            <input type="text" class="login-input" id="regUsername" placeholder="Pseudo" required autocomplete="username">
-            <input type="email" class="login-input" id="regEmail" placeholder="Email" required autocomplete="email">
-            <input type="password" class="login-input" id="regPassword" placeholder="Mot de passe" required autocomplete="new-password">
-            <input type="number" class="login-input" id="regAge" placeholder="Age (18+)" min="18" max="99" required>
+            <input type="text" class="login-input" id="regUsername" placeholder="Ton prenom" required autocomplete="given-name">
+            <input type="email" class="login-input" id="regEmail" placeholder="Ton email" required autocomplete="email">
+            <input type="password" class="login-input" id="regPassword" placeholder="Mot de passe (min 6 caracteres)" minlength="6" required autocomplete="new-password">
+            <input type="number" class="login-input" id="regAge" placeholder="Ton age (18+ requis)" min="18" max="99" required>
+            <div class="photo-upload-section">
+                <label class="photo-upload-label" for="regPhoto">
+                    <div class="photo-preview" id="photoPreview">+</div>
+                    <span>Photo de profil (optionnel)</span>
+                </label>
+                <input type="file" id="regPhoto" accept="image/*" style="display:none;" onchange="previewPhoto(this)">
+            </div>
             <button type="submit" class="login-btn">Creer mon compte</button>
             <div class="auth-error" id="registerError"></div>
         </form>
@@ -3410,6 +3425,20 @@ async function doLogin() {
     }
 }
 
+function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('photoPreview').innerHTML = `<img src="${e.target.result}" alt="Photo">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function showForgotPassword() {
+    alert('Pour reinitialiser ton mot de passe, contacte le support.');
+}
+
 async function doRegister() {
     const username = document.getElementById('regUsername').value.trim();
     const email = document.getElementById('regEmail').value.trim();
@@ -3418,6 +3447,11 @@ async function doRegister() {
     
     if (!username || !email || !password || !age) {
         document.getElementById('registerError').textContent = 'Remplis tous les champs';
+        return;
+    }
+    
+    if (password.length < 6) {
+        document.getElementById('registerError').textContent = 'Mot de passe trop court (min 6 caracteres)';
         return;
     }
     
@@ -4822,8 +4856,8 @@ def register():
         if not username or not email or not password or not age:
             return jsonify({"error": "Tous les champs sont requis"}), 400
         
-        if len(password) < 4:
-            return jsonify({"error": "Mot de passe trop court (min 4)"}), 400
+        if len(password) < 6:
+            return jsonify({"error": "Mot de passe trop court (min 6 caracteres)"}), 400
         
         if age < 18:
             return jsonify({"error": "Tu dois avoir 18 ans ou plus"}), 400
