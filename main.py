@@ -2113,9 +2113,9 @@ HTML = '''<!DOCTYPE html>
         .login-input:focus { border-color: #e91e63; }
         .login-btn { padding: 1.1rem; background: #e91e63; border: none; border-radius: 15px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 1rem; transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.15s ease; }
         .login-btn:active { transform: scale(0.97); box-shadow: 0 2px 10px rgba(233, 30, 99, 0.3); }
-        .auth-tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border-radius: 12px; overflow: hidden; background: #12121a; }
-        .auth-tab { flex: 1; padding: 0.8rem; background: transparent; border: none; color: #666; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-        .auth-tab.active { background: #e91e63; color: white; }
+        .auth-tabs { display: flex !important; margin-bottom: 20px; border-radius: 12px; overflow: hidden; background: #2a2a4e; }
+        .auth-tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; background: #2a2a4e; color: #ffffff; border: none; font-size: 1rem; font-weight: 600; transition: all 0.2s; }
+        .auth-tab.active { background: #e91e63; color: #ffffff; }
         .auth-error { color: #ff4757; font-size: 0.85rem; margin-top: 0.8rem; min-height: 1.2rem; }
         .forgot-password { color: #888; font-size: 0.85rem; margin-top: 1rem; cursor: pointer; text-align: center; }
         .forgot-password:hover { color: #e91e63; text-decoration: underline; }
@@ -2481,7 +2481,7 @@ HTML = '''<!DOCTYPE html>
 </head>
 <body>
 
-<!-- LOGIN PAGE -->
+<!-- LOGIN PAGE v2.1 -->
 <div class="page login-page active" id="pageLogin">
     <div class="login-box">
         <div class="login-logo">DREAM AI</div>
