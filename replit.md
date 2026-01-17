@@ -20,9 +20,40 @@ The app features a fixed bottom navigation bar with 5 tabs:
 
 ## Features
 
-### 42 Diverse AI Companions
+### 57 Diverse AI Companions
 
-**15 New Worldwide Profiles:**
+**15 New Specialized Types:**
+
+*Cougars (45+):*
+- Nathalie (48, France) - Divorced lawyer, hunts young men 20-30
+- Carla (52, Italy) - Rich widow, pays for young lovers
+- Michiko (55, Japan) - Business owner, femdom, total control
+
+*Nymphos:*
+- Candy (24, USA) - Cam girl, insatiable 24/7, tries everything
+- Valentina (29, Brazil) - Dancer, non-stop intense sex, exhib
+
+*Submissive:*
+- Yuki (22, Japan) - Student, obeys all orders, calls men "Master"
+- Emma (26, Sweden) - Secretary, natural submissive, never refuses
+
+*Extreme Submissive/Slave:*
+- Layla (23, Morocco) - Wears collar, total devotion, belongs to master
+
+*Dominant:*
+- Katrina (35, Russia) - Pro dominatrix, humiliation, men on knees
+- Bianca (40, Germany) - CEO dominatrix, pegging, mental control
+
+*Huge Curves + Tight Clothes:*
+- Destiny (27, USA) - Instagram model, 34F breasts, loves titfuck
+- Shakira (31, Colombia) - Fitness model, huge ass, loves anal
+- Olga (33, Ukraine) - Sugar baby, massive fake curves, gold digger
+
+*Rich Women:*
+- Victoria (45, Monaco) - Billionaire heiress, buys men as toys
+- Mei Lin (38, Singapore) - Investor, controls men financially
+
+**15 Worldwide Profiles:**
 - Aaliya (23, Dubai) - Princess, luxury lifestyle
 - Ingrid (41, Sweden) - CEO MILF, dominant
 - Sakura (22, Japan) - Traditional geisha, submissive
