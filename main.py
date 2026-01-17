@@ -2841,37 +2841,38 @@ const INITIALS = {};
 Object.keys(GIRLS).forEach(id => { INITIALS[id] = GIRLS[id].name.charAt(0).toUpperCase(); });
 
 const REGION_MAP = {
-    'europe': ['France', 'Germany', 'Sweden', 'Italy', 'Ukraine', 'Russia', 'Belarus', 'Belgium', 'UK', 'Spain'],
-    'asie': ['Japan', 'China', 'Korea', 'Thailand', 'India', 'Vietnam', 'Philippines', 'Indonesia'],
-    'afrique': ['Nigeria', 'Ghana', 'Senegal', 'Morocco', 'Egypt', 'South Africa', 'Kenya'],
-    'amerique': ['USA', 'Texas', 'California', 'LA', 'Vegas', 'Brazil', 'Mexico', 'Argentina', 'Colombia', 'Canada']
+    'europe': ['France', 'Germany', 'Sweden', 'Italy', 'Ukraine', 'Russia', 'Belarus', 'Belgium', 'UK', 'Spain', 'Netherlands', 'Czech', 'Prague', 'Amsterdam', 'Londres', 'Berlin', 'Paris'],
+    'asie': ['Japan', 'China', 'Korea', 'Thailand', 'India', 'Vietnam', 'Philippines', 'Indonesia', 'Addis', 'Asmara', 'Ethiopie', 'Erythree'],
+    'afrique': ['Nigeria', 'Ghana', 'Senegal', 'Morocco', 'Egypt', 'South Africa', 'Kenya', 'Congo', 'Mali', 'Kinshasa', 'Brazzaville', 'Johannesburg', 'Cape Town', 'Lagos', 'Dakar', 'Bamako', 'Casablanca', 'Alger', 'Tunis', 'Tunisie', 'Algerie', 'Maroc'],
+    'amerique': ['USA', 'Texas', 'California', 'LA', 'Vegas', 'Brazil', 'Mexico', 'Argentina', 'Colombia', 'Canada', 'Cuba', 'Jamaica', 'Peru', 'Miami', 'Chicago', 'Atlanta', 'Hawaii', 'NYC', 'Rio', 'Sao Paulo'],
+    'moyen_orient': ['Liban', 'Beirut', 'Egypte', 'Cairo', 'Dubai', 'Emirats', 'Arabie', 'Riyad', 'Qatar', 'Doha', 'Syrie', 'Damas', 'Alep', 'Jordanie', 'Amman', 'Aqaba']
 };
 
 let currentGirl = null;
 let chatHistory = {};
-let affectionLevels = JSON.parse(localStorage.getItem('affectionLevels') || '{}');
+let affectionLevels = {};
 let profilePhotos = JSON.parse(localStorage.getItem('profilePhotos') || '{}');
-let receivedPhotos = JSON.parse(localStorage.getItem('receivedPhotos') || '{}');
+let receivedPhotos = {};
 let currentOverlayPhotos = [];
 let currentOverlayIndex = 0;
 
-let user = JSON.parse(localStorage.getItem('dreamUser') || 'null');
-let matches = JSON.parse(localStorage.getItem('dreamMatches') || '[]');
-let passed = JSON.parse(localStorage.getItem('dreamPassed') || '[]');
-let blocked = JSON.parse(localStorage.getItem('dreamBlocked') || '[]');
+let user = null;
+let matches = [];
+let passed = [];
+let blocked = [];
 let swipeQueue = [];
 let currentSwipeGirl = null;
 
 let currentAgeFilter = 'all';
 let currentRegionFilter = 'all';
-let unreadMessages = JSON.parse(localStorage.getItem('unreadMessages') || '{}');
+let unreadMessages = {};
 let pendingConfirmAction = null;
 let deferredPrompt = null;
 let darkMode = localStorage.getItem('darkMode') !== 'false';
 
 let photoGenerationQueue = [];
 let isGeneratingPhotos = false;
-let failedPhotos = JSON.parse(localStorage.getItem('failedPhotos') || '{}');
+let failedPhotos = {};
 
 function getProfilePhoto(girlId) {
     return profilePhotos[girlId] || null;
@@ -3439,6 +3440,7 @@ async function doRegister() {
             localStorage.setItem('dreamUser', JSON.stringify(user));
             document.getElementById('headerUserName').textContent = user.name;
             document.getElementById('bottomNav').style.display = 'flex';
+            await loadUserData();
             navigateTo('discover');
             initSwipe();
             updateSettingsPage();
@@ -3452,6 +3454,20 @@ async function doRegister() {
 
 async function loadUserData() {
     try {
+        matches = [];
+        passed = [];
+        blocked = [];
+        chatHistory = {};
+        affectionLevels = {};
+        receivedPhotos = {};
+        failedPhotos = {};
+        profilePhotos = {};
+        
+        const savedProfilePhotos = localStorage.getItem('profilePhotos');
+        if (savedProfilePhotos) {
+            try { profilePhotos = JSON.parse(savedProfilePhotos); } catch(e) {}
+        }
+        
         const [matchesRes, photosRes, discoveredRes] = await Promise.all([
             fetch('/api/matches'),
             fetch('/api/received_photos'),
@@ -3477,7 +3493,9 @@ async function loadUserData() {
         const discoveredData = await discoveredRes.json();
         if (discoveredData.discovered) {
             discoveredData.discovered.forEach(d => {
-                if (d.action === 'passed') passed.push(d.girl_id);
+                if (d.action === 'passed' && !passed.includes(d.girl_id)) {
+                    passed.push(d.girl_id);
+                }
             });
             localStorage.setItem('dreamPassed', JSON.stringify(passed));
         }
@@ -3485,11 +3503,13 @@ async function loadUserData() {
         for (const girlId of matches) {
             const chatRes = await fetch('/api/chat/' + girlId);
             const chatData = await chatRes.json();
-            if (chatData.messages) {
+            if (chatData.messages && chatData.messages.length > 0) {
                 chatHistory[girlId] = chatData.messages;
                 localStorage.setItem('chat_' + girlId, JSON.stringify(chatData.messages));
             }
         }
+        
+        localStorage.setItem('failedPhotos', JSON.stringify({}));
     } catch(e) {
         console.log('Load user data error:', e);
     }
