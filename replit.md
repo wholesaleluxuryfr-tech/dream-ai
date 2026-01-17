@@ -2,7 +2,7 @@
 
 ## Overview
 
-Dream AI is a Flask-based adult dating application featuring 42 diverse AI-powered virtual girlfriends from around the world with uncensored French conversations. The app uses a Tinder-style swipe matching system with realistic match probabilities, dynamic affection levels, and AI-generated photos.
+Dream AI is a Flask-based adult dating application featuring 82 diverse AI-powered virtual girlfriends from around the world with uncensored French conversations. The app uses a Tinder-style swipe matching system with realistic match probabilities, dynamic affection levels, and AI-generated photos. All user data is persisted to PostgreSQL database.
 
 ## Navigation
 
@@ -11,12 +11,64 @@ The app features a fixed bottom navigation bar with 5 tabs:
 - **Messages**: View all chat conversations
 - **Matches**: Grid view of all matched girls
 - **Gallery**: All received photos organized by girl
-- **Profile**: User settings and statistics
+- **Profile**: User settings, stats and logout
 
 ## Current State
 
-**Status**: Fully functional
-**Last Updated**: January 2026
+**Status**: Fully functional with PostgreSQL backend
+**Last Updated**: January 17, 2026
+
+## Recent Changes (January 17, 2026)
+
+### Authentication System
+- Full user registration with username, email, password, age (18+)
+- Login/logout functionality with session management
+- Password hashing with bcrypt
+- Tabbed login page (Connexion/Inscription)
+
+### PostgreSQL Database
+- User model: id, username, email, password_hash, age
+- Match model: user_id, girl_id, affection
+- ChatMessage model: user_id, girl_id, sender, content, time
+- ReceivedPhoto model: user_id, girl_id, photo_url
+- DiscoveredProfile model: user_id, girl_id, action (passed/liked)
+
+### API Endpoints
+- POST /api/register - Create new account
+- POST /api/login - Login with email/password
+- POST /api/logout - End session
+- GET /api/me - Check login status
+- GET/POST /api/matches - Manage matches
+- POST /api/affection - Update affection levels
+- GET/POST /api/chat/:girl_id - Chat history
+- GET/POST /api/received_photos - Photo gallery
+- GET/POST /api/discovered - Swipe history
+
+### Improved Chat AI
+- Shorter, more coherent responses (1-3 sentences)
+- French slang: mdr, tkt, jsp, bg, nn, pk, cv, wsh, ptdr, oklm
+- Personality-based responses with likes/dislikes
+- Context-aware memory of conversation
+
+### Profile Photos (5 Types)
+1. Portrait - Face closeup, dating app style
+2. Casual - Full body, outdoor, relaxed
+3. Sexy - Tight clothes, showing curves
+4. Lingerie - Bedroom setting, seductive
+5. Secret - Explicit POV (unlocked after match)
+
+### CSS Animations
+- Global transitions on all elements
+- Button scale animations on tap
+- Image fade-in loading
+- Shimmer skeleton loading effect
+- slideIn, fadeIn, scaleIn, bounceIn animations
+
+### Data Sync
+- All swipes, matches, messages sync to server
+- Affection changes sync in real-time
+- Received photos persist to database
+- Chat history loads from server on login
 
 ## Features
 

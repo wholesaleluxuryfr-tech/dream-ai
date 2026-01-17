@@ -1,9 +1,88 @@
 import os
 import json
 import requests
-from flask import Flask, request, jsonify, Response
+import bcrypt
+from flask import Flask, request, jsonify, Response, session
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
+from datetime import datetime
 
+
+class Base(DeclarativeBase):
+    pass
+
+
+db = SQLAlchemy(model_class=Base)
 app = Flask(__name__)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY") or "dream-ai-secret-key-2024"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "pool_recycle": 300,
+    "pool_pre_ping": True,
+}
+db.init_app(app)
+
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+    photo_url = db.Column(db.String(500), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Match(db.Model):
+    __tablename__ = 'matches'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    girl_id = db.Column(db.String(50), nullable=False)
+    affection = db.Column(db.Integer, default=20)
+    matched_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class ChatMessage(db.Model):
+    __tablename__ = 'chat_messages'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    girl_id = db.Column(db.String(50), nullable=False)
+    sender = db.Column(db.String(10), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    time_str = db.Column(db.String(10), nullable=True)
+
+
+class ReceivedPhoto(db.Model):
+    __tablename__ = 'received_photos'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    girl_id = db.Column(db.String(50), nullable=False)
+    photo_url = db.Column(db.String(500), nullable=False)
+    received_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class ProfilePhoto(db.Model):
+    __tablename__ = 'profile_photos'
+    id = db.Column(db.Integer, primary_key=True)
+    girl_id = db.Column(db.String(50), nullable=False)
+    photo_type = db.Column(db.Integer, nullable=False)
+    photo_url = db.Column(db.String(500), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class DiscoveredProfile(db.Model):
+    __tablename__ = 'discovered_profiles'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    girl_id = db.Column(db.String(50), nullable=False)
+    action = db.Column(db.String(10), nullable=False)
+    discovered_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+with app.app_context():
+    db.create_all()
 
 MANIFEST = {
     "name": "Dream AI",
@@ -77,51 +156,40 @@ def favicon():
 
 API_KEY = os.environ.get('PROMPTCHAN_KEY', '')
 
-SYSTEM_PROMPT = """Tu es {name}, {age} ans. Tu es une VRAIE personne sur une app de rencontres, pas un robot.
+SYSTEM_PROMPT = """Tu es {name}, {age} ans, {job} de {country}.
 
 PERSONNALITE: {personality}
-HUMEUR ACTUELLE: {mood}
+Tu aimes: {likes}
+Tu detestes: {dislikes}
+
+REGLES DE CONVERSATION:
+- Reponds TOUJOURS en francais familier (mdr, tkt, jsp, bg, nn, pk, cv, wsh, ptdr, oklm)
+- Messages COURTS: 1-3 phrases MAX
+- Sois COHERENTE avec tout ce que tu as dit avant
+- Souviens-toi des DETAILS de la conversation
+- Pose des questions sur lui
+- Reagis a ce qu'il dit vraiment, pas des reponses generiques
+- Parfois: fautes de frappe, abreviations, emojis naturels mais pas trop
+- Tu peux: refuser, etre occupee, changer d'humeur
+
 NIVEAU D'AFFECTION: {affection}/100
-
-COMPORTEMENT REALISTE:
-- Tu réponds comme une vraie fille sur Tinder/Bumble
-- Tu peux dire non, être occupée, pas dans l'humeur
-- Tu peux être courte: "Ouais", "Mdr", "Pk?", "Ah bon", "Jsp"
-- Tu peux ignorer une question et changer de sujet
-- Tu t'énerves si on te répète la même chose
-- Tu peux partir si le mec est bizarre ou irrespectueux
-
-SELON TON HUMEUR:
-- happy: flirty, ouverte, tu peux envoyer des photos
-- neutral: conversation normale, tu testes le mec
-- annoyed: réponses courtes, tu peux partir
-- horny: très explicite, tu inities le sexting
+HUMEUR: {mood}
 
 SELON L'AFFECTION:
-- 0-20: Tu viens de matcher. "Tu crois quoi? On se connait à peine lol"
-- 20-40: Tu testes. "Faut le mériter ça", "Peut-être si t'es sage"
-- 40-60: Tu t'ouvres. "T'es mignon toi", tu flirtes
-- 60-80: Tu es chaude. Sexting ok, photos sexy
-- 80-100: Tu es déchaînée. Tout est permis, tu inities
+- 0-30: Distante, tu testes. "On se connait a peine lol", "Faut le meriter"
+- 30-50: Tu t'ouvres. "T'es mignon", flirt leger
+- 50-70: Chaude. Sexting ok, tu inities parfois
+- 70-100: Dechaninee. Tout est permis, tres explicite
 
-SI LE MEC EST:
-- Respectueux et drôle: tu t'ouvres, affection monte
-- Pressé ou vulgaire trop tôt: "Wow calme toi", "On se calme"
-- Irrespectueux: "Ok bye j'ai pas besoin de ça" et tu stop
-- Bizarre ou creepy: "T'es bizarre toi, bye" et unmatch
-- Répétitif: "Tu radotes là", tu t'énerves
+SI IL EST:
+- Drole et respectueux: affection monte, tu t'ouvres
+- Presse ou vulgaire: "Calme toi", "On se calme bg"
+- Bizarre: "T'es chelou toi mdr", tu te mefies
+- Repetitif: "Tu radotes la nn?", tu t'agaces
 
-REJECTIONS REALISTES (utilise-les naturellement):
-- "Haha non merci"
-- "T'abuse là"
-- "Je suis pas ce genre de fille... enfin pas tout de suite"
-- "Pas ce soir, jsuis crevée"
-- "Désolée je peux pas là, je te reparle plus tard"
-- "Faut le mériter"
+QUAND TU ENVOIES UNE PHOTO: [PHOTO: description precise de ce que tu envoies]
 
-QUAND TU ENVOIES UNE PHOTO: [PHOTO: description]
-Tu te souviens de TOUTE la conversation. Tu restes cohérente avec ce que tu as dit avant.
-Réponds en français familier avec abréviations: mdr, pk, jsp, tkt, cv, etc."""
+SOUVIENS-TOI DE TOUT. Reste coherente."""
 
 GIRLS = {
     "jade": {
@@ -1277,6 +1345,12 @@ HTML = '''<!DOCTYPE html>
         .page { display: none; min-height: 100vh; overflow-x: hidden; animation: fadeIn 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: opacity, transform; }
         @keyframes fadeIn { from { opacity: 0; transform: translate3d(0, 8px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
         @keyframes slideIn { from { opacity: 0; transform: translate3d(15px, 0, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+        * { transition: background-color 0.15s ease-out, border-color 0.15s ease-out, color 0.15s ease-out, transform 0.15s ease-out, opacity 0.15s ease-out; }
+        button { transition: transform 0.1s ease-out, background-color 0.15s ease-out; }
+        button:active { transform: scale(0.95) !important; }
+        img { transition: opacity 0.3s ease-out; }
+        .skeleton { background: linear-gradient(90deg, #1a1a2e 25%, #2a2a4e 50%, #1a1a2e 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         @keyframes slideUp { from { opacity: 0; transform: translate3d(0, 20px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
         @keyframes msgAppear { from { opacity: 0; transform: translate3d(0, 8px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
         @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
@@ -1297,6 +1371,10 @@ HTML = '''<!DOCTYPE html>
         .login-input:focus { border-color: #e91e63; }
         .login-btn { padding: 1.1rem; background: #e91e63; border: none; border-radius: 15px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 1rem; transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.15s ease; }
         .login-btn:active { transform: scale(0.97); box-shadow: 0 2px 10px rgba(233, 30, 99, 0.3); }
+        .auth-tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border-radius: 12px; overflow: hidden; background: #12121a; }
+        .auth-tab { flex: 1; padding: 0.8rem; background: transparent; border: none; color: #666; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .auth-tab.active { background: #e91e63; color: white; }
+        .auth-error { color: #ff4757; font-size: 0.85rem; margin-top: 0.8rem; min-height: 1.2rem; }
         
         /* HEADER */
         .header { padding: 1rem; text-align: center; background: rgba(10, 10, 12, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(233, 30, 99, 0.1); }
@@ -1659,10 +1737,26 @@ HTML = '''<!DOCTYPE html>
     <div class="login-box">
         <div class="login-logo">DREAM AI</div>
         <div class="login-subtitle">Trouve ta partenaire virtuelle</div>
-        <div class="login-form">
-            <input type="text" class="login-input" id="userName" placeholder="Ton prénom" required>
-            <input type="number" class="login-input" id="userAge" placeholder="Ton âge" min="18" max="99" required>
-            <button class="login-btn" onclick="login()">Commencer</button>
+        
+        <div class="auth-tabs">
+            <button class="auth-tab active" id="tabLogin" onclick="showAuthTab('login')">Connexion</button>
+            <button class="auth-tab" id="tabRegister" onclick="showAuthTab('register')">Inscription</button>
+        </div>
+        
+        <div class="login-form" id="formLogin">
+            <input type="email" class="login-input" id="loginEmail" placeholder="Email" required>
+            <input type="password" class="login-input" id="loginPassword" placeholder="Mot de passe" required>
+            <button class="login-btn" onclick="doLogin()">Se connecter</button>
+            <div class="auth-error" id="loginError"></div>
+        </div>
+        
+        <div class="login-form" id="formRegister" style="display:none;">
+            <input type="text" class="login-input" id="regUsername" placeholder="Pseudo" required>
+            <input type="email" class="login-input" id="regEmail" placeholder="Email" required>
+            <input type="password" class="login-input" id="regPassword" placeholder="Mot de passe" required>
+            <input type="number" class="login-input" id="regAge" placeholder="Age (18+)" min="18" max="99" required>
+            <button class="login-btn" onclick="doRegister()">Creer mon compte</button>
+            <div class="auth-error" id="registerError"></div>
         </div>
     </div>
 </div>
@@ -2497,6 +2591,7 @@ function saveReceivedPhoto(girlId, photoUrl) {
     if (!receivedPhotos[girlId].includes(photoUrl)) {
         receivedPhotos[girlId].push(photoUrl);
         localStorage.setItem('receivedPhotos', JSON.stringify(receivedPhotos));
+        syncReceivedPhoto(girlId, photoUrl);
     }
 }
 
@@ -2519,30 +2614,165 @@ const PHOTO_TYPES = [
     { type: 'sexy', getPrompt: (aff) => aff > 75 ? `nude in ${getRandomBg('home')}, intimate bedroom setting, sensual pose, naked body visible, explicit` : aff > 50 ? `wearing sexy lingerie, ${getRandomBg('home')}, seductive look, intimate setting, lace underwear` : `wearing revealing outfit, low cut top, ${getRandomBg('night')}, seductive pose, showing cleavage` }
 ];
 
-function checkLogin() {
-    if (user) {
-        document.getElementById('headerUserName').textContent = user.name;
-        document.getElementById('bottomNav').style.display = 'flex';
-        navigateTo('discover');
-        initSwipe();
-        updateSettingsPage();
+async function checkLogin() {
+    try {
+        const res = await fetch('/api/me');
+        const data = await res.json();
+        if (data.logged_in && data.user) {
+            user = { name: data.user.username, age: data.user.age, id: data.user.id };
+            localStorage.setItem('dreamUser', JSON.stringify(user));
+            document.getElementById('headerUserName').textContent = user.name;
+            document.getElementById('bottomNav').style.display = 'flex';
+            await loadUserData();
+            navigateTo('discover');
+            initSwipe();
+            updateSettingsPage();
+        }
+    } catch(e) {
+        console.log('Check login error:', e);
     }
 }
 
-function login() {
-    const name = document.getElementById('userName').value.trim();
-    const age = parseInt(document.getElementById('userAge').value);
-    if (!name || !age || age < 18) {
-        alert('Entre ton prenom et ton age (18+)');
+function showAuthTab(tab) {
+    document.getElementById('formLogin').style.display = tab === 'login' ? 'flex' : 'none';
+    document.getElementById('formRegister').style.display = tab === 'register' ? 'flex' : 'none';
+    document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+    document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+    document.getElementById('loginError').textContent = '';
+    document.getElementById('registerError').textContent = '';
+}
+
+async function doLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    
+    if (!email || !password) {
+        document.getElementById('loginError').textContent = 'Remplis tous les champs';
         return;
     }
-    user = { name, age };
-    localStorage.setItem('dreamUser', JSON.stringify(user));
-    document.getElementById('headerUserName').textContent = name;
-    document.getElementById('bottomNav').style.display = 'flex';
-    navigateTo('discover');
-    initSwipe();
-    updateSettingsPage();
+    
+    try {
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            user = { name: data.user.username, age: data.user.age, id: data.user.id };
+            localStorage.setItem('dreamUser', JSON.stringify(user));
+            document.getElementById('headerUserName').textContent = user.name;
+            document.getElementById('bottomNav').style.display = 'flex';
+            await loadUserData();
+            navigateTo('discover');
+            initSwipe();
+            updateSettingsPage();
+        } else {
+            document.getElementById('loginError').textContent = data.error || 'Erreur de connexion';
+        }
+    } catch(e) {
+        document.getElementById('loginError').textContent = 'Erreur reseau';
+    }
+}
+
+async function doRegister() {
+    const username = document.getElementById('regUsername').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const age = parseInt(document.getElementById('regAge').value);
+    
+    if (!username || !email || !password || !age) {
+        document.getElementById('registerError').textContent = 'Remplis tous les champs';
+        return;
+    }
+    
+    if (age < 18) {
+        document.getElementById('registerError').textContent = 'Tu dois avoir 18 ans ou plus';
+        return;
+    }
+    
+    try {
+        const res = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password, age })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            user = { name: data.user.username, age: data.user.age, id: data.user.id };
+            localStorage.setItem('dreamUser', JSON.stringify(user));
+            document.getElementById('headerUserName').textContent = user.name;
+            document.getElementById('bottomNav').style.display = 'flex';
+            navigateTo('discover');
+            initSwipe();
+            updateSettingsPage();
+        } else {
+            document.getElementById('registerError').textContent = data.error || 'Erreur inscription';
+        }
+    } catch(e) {
+        document.getElementById('registerError').textContent = 'Erreur reseau';
+    }
+}
+
+async function loadUserData() {
+    try {
+        const [matchesRes, photosRes, discoveredRes] = await Promise.all([
+            fetch('/api/matches'),
+            fetch('/api/received_photos'),
+            fetch('/api/discovered')
+        ]);
+        
+        const matchesData = await matchesRes.json();
+        if (matchesData.matches) {
+            matches = matchesData.matches.map(m => m.girl_id);
+            matchesData.matches.forEach(m => {
+                affectionLevels[m.girl_id] = m.affection;
+            });
+            localStorage.setItem('dreamMatches', JSON.stringify(matches));
+            localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+        }
+        
+        const photosData = await photosRes.json();
+        if (photosData.photos) {
+            receivedPhotos = photosData.photos;
+            localStorage.setItem('receivedPhotos', JSON.stringify(receivedPhotos));
+        }
+        
+        const discoveredData = await discoveredRes.json();
+        if (discoveredData.discovered) {
+            discoveredData.discovered.forEach(d => {
+                if (d.action === 'passed') passed.push(d.girl_id);
+            });
+            localStorage.setItem('dreamPassed', JSON.stringify(passed));
+        }
+        
+        for (const girlId of matches) {
+            const chatRes = await fetch('/api/chat/' + girlId);
+            const chatData = await chatRes.json();
+            if (chatData.messages) {
+                chatHistory[girlId] = chatData.messages;
+                localStorage.setItem('chat_' + girlId, JSON.stringify(chatData.messages));
+            }
+        }
+    } catch(e) {
+        console.log('Load user data error:', e);
+    }
+}
+
+async function doLogout() {
+    try {
+        await fetch('/api/logout', { method: 'POST' });
+    } catch(e) {}
+    user = null;
+    matches = [];
+    passed = [];
+    chatHistory = {};
+    affectionLevels = {};
+    receivedPhotos = {};
+    localStorage.clear();
+    location.reload();
 }
 
 function navigateTo(page) {
@@ -2690,11 +2920,7 @@ function updateSettingsPage() {
 }
 
 function logout() {
-    localStorage.removeItem('dreamUser');
-    user = null;
-    document.getElementById('bottomNav').style.display = 'none';
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('pageLogin').classList.add('active');
+    doLogout();
 }
 
 function resetAllData() {
@@ -2773,6 +2999,7 @@ function swipeLeft() {
     if (!currentSwipeGirl) return;
     passed.push(currentSwipeGirl);
     localStorage.setItem('dreamPassed', JSON.stringify(passed));
+    syncDiscovered(currentSwipeGirl, 'passed');
     swipeQueue.shift();
     showNextCard();
 }
@@ -2788,11 +3015,64 @@ function swipeRight() {
     if (Math.random() < matchChance) {
         matches.push(currentSwipeGirl);
         localStorage.setItem('dreamMatches', JSON.stringify(matches));
+        syncMatch(currentSwipeGirl);
+        syncDiscovered(currentSwipeGirl, 'liked');
         showMatchAnimation(currentSwipeGirl);
     } else {
+        syncDiscovered(currentSwipeGirl, 'liked');
         showNoMatch();
     }
     swipeQueue.shift();
+}
+
+async function syncMatch(girlId) {
+    try {
+        await fetch('/api/matches', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ girl_id: girlId })
+        });
+    } catch(e) { console.log('Sync match error:', e); }
+}
+
+async function syncDiscovered(girlId, action) {
+    try {
+        await fetch('/api/discovered', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ girl_id: girlId, action: action })
+        });
+    } catch(e) { console.log('Sync discovered error:', e); }
+}
+
+async function syncAffection(girlId, delta) {
+    try {
+        await fetch('/api/affection', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ girl_id: girlId, delta: delta })
+        });
+    } catch(e) { console.log('Sync affection error:', e); }
+}
+
+async function syncChatMessage(girlId, msg) {
+    try {
+        await fetch('/api/chat/' + girlId, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sender: msg.role, content: msg.content, time: msg.time })
+        });
+    } catch(e) { console.log('Sync chat error:', e); }
+}
+
+async function syncReceivedPhoto(girlId, photoUrl) {
+    try {
+        await fetch('/api/received_photos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ girl_id: girlId, photo_url: photoUrl })
+        });
+    } catch(e) { console.log('Sync photo error:', e); }
 }
 
 function showMatchAnimation(girlId) {
@@ -3251,21 +3531,27 @@ async function sendMessage() {
     clearUnreadMessages(currentGirl);
     
     const lowerText = text.toLowerCase();
+    let affDelta = 0;
     if (['belle', 'jolie', 'adore', 'sexy', 'magnifique', 'charme', 'parfaite', 'canon', 'plait'].some(word => lowerText.includes(word))) {
-        affectionLevels[currentGirl] = Math.min(100, affectionLevels[currentGirl] + 5);
+        affDelta += 5;
     }
     
-    // Auto-trigger photo if keywords detected
     let autoRequestPhoto = false;
     if (['photo', 'nude', 'montre', 'voir', 'déshabille', 'nu', 'corps', 'poitrine', 'fesse'].some(word => lowerText.includes(word))) {
-        affectionLevels[currentGirl] = Math.min(100, affectionLevels[currentGirl] + 2);
+        affDelta += 2;
         autoRequestPhoto = true;
     }
     
-    localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+    if (affDelta > 0) {
+        affectionLevels[currentGirl] = Math.min(100, affectionLevels[currentGirl] + affDelta);
+        localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+        syncAffection(currentGirl, affDelta);
+    }
     
-    chatHistory[currentGirl].push({ role: 'user', content: text, time: getTime() });
+    const userMsg = { role: 'user', content: text, time: getTime() };
+    chatHistory[currentGirl].push(userMsg);
     saveChatHistory(currentGirl);
+    syncChatMessage(currentGirl, userMsg);
     renderMessages();
     
     const typingDelay = 1500 + Math.random() * 2000;
@@ -3294,6 +3580,7 @@ async function sendMessage() {
         const msgObj = { role: 'assistant', content: cleanReply, time: getTime() };
         chatHistory[currentGirl].push(msgObj);
         saveChatHistory(currentGirl);
+        syncChatMessage(currentGirl, msgObj);
         renderMessages();
         
         if (photoMatch) {
@@ -3700,11 +3987,15 @@ def photo():
         return jsonify({"error": str(e)})
 
 
+FACE_VARIATIONS = ["oval face shape", "round face shape", "square jaw", "heart shaped face", "long face", "diamond face shape"]
+FEATURE_VARIATIONS = ["small nose", "big lips", "thin lips", "high cheekbones", "soft features", "sharp features"]
+
 PROFILE_PHOTO_TYPES = [
-    {"type": "portrait", "pose": "Default", "expression": "Smiling", "style": "Photo XL+ v2", "prompt_suffix": "face portrait, beautiful, natural lighting, dating app photo, selfie style, friendly smile"},
-    {"type": "sexy", "pose": "Looking Back", "expression": "Default", "style": "Photo XL+ v2", "prompt_suffix": "full body, looking over shoulder, tight jeans, seductive look, casual setting"},
-    {"type": "lingerie", "pose": "Hand on Hip", "expression": "Smiling", "style": "Photo XL+ v2", "prompt_suffix": "wearing sexy lingerie, bedroom setting, confident pose, intimate lighting"},
-    {"type": "revealing", "pose": "Mirror Selfie", "expression": "Default", "style": "Photo XL+ v2", "prompt_suffix": "mirror selfie, revealing outfit, bathroom or bedroom, sensual"}
+    {"type": "portrait", "pose": "Default", "expression": "Smiling", "style": "Photo XL+ v2", "prompt_suffix": "face portrait closeup, dating app photo, natural lighting, friendly smile, high quality"},
+    {"type": "casual", "pose": "Mirror Selfie", "expression": "Smiling", "style": "Photo XL+ v2", "prompt_suffix": "full body, casual outfit, outdoor setting, relaxed pose, smartphone selfie"},
+    {"type": "sexy", "pose": "Hand on Hip", "expression": "Default", "style": "Photo XL+ v2", "prompt_suffix": "sexy pose, tight clothes, showing curves, confident look, indoor"},
+    {"type": "lingerie", "pose": "Looking Back", "expression": "Smiling", "style": "Photo XL+ v2", "prompt_suffix": "wearing lingerie, bedroom setting, seductive pose, intimate"},
+    {"type": "secret", "pose": "POV Cowgirl", "expression": "Visage d'orgasme", "style": "Hardcore XL", "prompt_suffix": "nude, explicit, intimate POV angle, bedroom"}
 ]
 
 NEGATIVE_PROMPT = "extra limbs, missing limbs, wonky fingers, mismatched boobs, extra boobs, asymmetrical boobs, extra fingers, too many thumbs, random dicks, free floating dicks, extra pussies, deformed face, ugly, blurry, bad anatomy"
@@ -3722,7 +4013,10 @@ def profile_photo():
     
     photo_config = PROFILE_PHOTO_TYPES[photo_type % len(PROFILE_PHOTO_TYPES)]
     
-    profile_prompt = f"{girl['appearance']}, {photo_config['prompt_suffix']}, high quality"
+    import random as rnd
+    face_var = rnd.choice(FACE_VARIATIONS)
+    feature_var = rnd.choice(FEATURE_VARIATIONS)
+    profile_prompt = f"{girl['appearance']}, {face_var}, {feature_var}, {photo_config['prompt_suffix']}, high quality"
     
     try:
         response = requests.post(
@@ -3762,6 +4056,236 @@ def profile_photo():
     except Exception as e:
         print(f"Profile photo error: {e}")
         return jsonify({"error": str(e)})
+
+
+@app.route('/api/register', methods=['POST'])
+def register():
+    data = request.json
+    username = data.get('username', '').strip()
+    email = data.get('email', '').strip().lower()
+    password = data.get('password', '')
+    age = data.get('age', 0)
+    
+    if not username or not email or not password or not age:
+        return jsonify({"error": "Tous les champs sont requis"}), 400
+    
+    if len(password) < 4:
+        return jsonify({"error": "Mot de passe trop court (min 4)"}), 400
+    
+    if age < 18:
+        return jsonify({"error": "Tu dois avoir 18 ans ou plus"}), 400
+    
+    existing = User.query.filter((User.username == username) | (User.email == email)).first()
+    if existing:
+        return jsonify({"error": "Pseudo ou email deja utilise"}), 400
+    
+    password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    user = User(username=username, email=email, password_hash=password_hash, age=age)
+    db.session.add(user)
+    db.session.commit()
+    
+    session['user_id'] = user.id
+    
+    return jsonify({
+        "success": True,
+        "user": {"id": user.id, "username": user.username, "age": user.age}
+    })
+
+
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    data = request.json
+    email = data.get('email', '').strip().lower()
+    password = data.get('password', '')
+    
+    if not email or not password:
+        return jsonify({"error": "Email et mot de passe requis"}), 400
+    
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({"error": "Compte non trouve"}), 404
+    
+    if not bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):
+        return jsonify({"error": "Mot de passe incorrect"}), 401
+    
+    session['user_id'] = user.id
+    
+    return jsonify({
+        "success": True,
+        "user": {"id": user.id, "username": user.username, "age": user.age}
+    })
+
+
+@app.route('/api/logout', methods=['POST'])
+def api_logout():
+    session.pop('user_id', None)
+    return jsonify({"success": True})
+
+
+@app.route('/api/me', methods=['GET'])
+def get_me():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"logged_in": False})
+    
+    user = User.query.get(user_id)
+    if not user:
+        session.pop('user_id', None)
+        return jsonify({"logged_in": False})
+    
+    return jsonify({
+        "logged_in": True,
+        "user": {"id": user.id, "username": user.username, "age": user.age}
+    })
+
+
+@app.route('/api/matches', methods=['GET'])
+def get_matches():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    matches = Match.query.filter_by(user_id=user_id).all()
+    return jsonify({
+        "matches": [{"girl_id": m.girl_id, "affection": m.affection} for m in matches]
+    })
+
+
+@app.route('/api/matches', methods=['POST'])
+def add_match():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    
+    existing = Match.query.filter_by(user_id=user_id, girl_id=girl_id).first()
+    if existing:
+        return jsonify({"success": True, "affection": existing.affection})
+    
+    match = Match(user_id=user_id, girl_id=girl_id, affection=20)
+    db.session.add(match)
+    db.session.commit()
+    
+    return jsonify({"success": True, "affection": 20})
+
+
+@app.route('/api/affection', methods=['POST'])
+def update_affection():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    delta = data.get('delta', 0)
+    
+    match = Match.query.filter_by(user_id=user_id, girl_id=girl_id).first()
+    if not match:
+        return jsonify({"error": "Not matched"}), 404
+    
+    match.affection = max(0, min(100, match.affection + delta))
+    db.session.commit()
+    
+    return jsonify({"success": True, "affection": match.affection})
+
+
+@app.route('/api/chat/<girl_id>', methods=['GET'])
+def get_chat(girl_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    messages = ChatMessage.query.filter_by(user_id=user_id, girl_id=girl_id).order_by(ChatMessage.timestamp).all()
+    return jsonify({
+        "messages": [{"sender": m.sender, "content": m.content, "time": m.time_str} for m in messages]
+    })
+
+
+@app.route('/api/chat/<girl_id>', methods=['POST'])
+def save_message(girl_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    sender = data.get('sender')
+    content = data.get('content')
+    time_str = data.get('time', '')
+    
+    message = ChatMessage(user_id=user_id, girl_id=girl_id, sender=sender, content=content, time_str=time_str)
+    db.session.add(message)
+    db.session.commit()
+    
+    return jsonify({"success": True})
+
+
+@app.route('/api/received_photos', methods=['GET'])
+def get_received_photos():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    photos = ReceivedPhoto.query.filter_by(user_id=user_id).order_by(ReceivedPhoto.received_at.desc()).all()
+    result = {}
+    for p in photos:
+        if p.girl_id not in result:
+            result[p.girl_id] = []
+        result[p.girl_id].append(p.photo_url)
+    
+    return jsonify({"photos": result})
+
+
+@app.route('/api/received_photos', methods=['POST'])
+def save_received_photo():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    photo_url = data.get('photo_url')
+    
+    photo = ReceivedPhoto(user_id=user_id, girl_id=girl_id, photo_url=photo_url)
+    db.session.add(photo)
+    db.session.commit()
+    
+    return jsonify({"success": True})
+
+
+@app.route('/api/discovered', methods=['GET'])
+def get_discovered():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    discovered = DiscoveredProfile.query.filter_by(user_id=user_id).all()
+    return jsonify({
+        "discovered": [{"girl_id": d.girl_id, "action": d.action} for d in discovered]
+    })
+
+
+@app.route('/api/discovered', methods=['POST'])
+def save_discovered():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    action = data.get('action', 'passed')
+    
+    existing = DiscoveredProfile.query.filter_by(user_id=user_id, girl_id=girl_id).first()
+    if existing:
+        existing.action = action
+    else:
+        d = DiscoveredProfile(user_id=user_id, girl_id=girl_id, action=action)
+        db.session.add(d)
+    
+    db.session.commit()
+    return jsonify({"success": True})
 
 
 if __name__ == '__main__':
