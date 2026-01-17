@@ -1,0 +1,2828 @@
+    <div class="premium-content">
+        <div class="premium-crown">👑</div>
+        <div class="premium-title">Dream AI Girl Premium</div>
+        <div class="premium-features">
+            <div class="premium-feature">Super Likes illimites</div>
+            <div class="premium-feature">Voir qui t'a like</div>
+            <div class="premium-feature">Boost de visibilite</div>
+            <div class="premium-feature">Photos exclusives</div>
+            <div class="premium-feature">Messages prioritaires</div>
+        </div>
+        <div class="premium-price">9.99EUR <span>/mois</span></div>
+        <button class="premium-btn" onclick="closePremiumPopup()">Debloquer Premium</button>
+        <button class="premium-close" onclick="closePremiumPopup()">Plus tard</button>
+    </div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div class="install-banner" id="installBanner">
+    <span class="install-banner-text">Installer l'app</span>
+    <div>
+        <button class="install-banner-btn" onclick="installPWA()">Installer</button>
+        <button class="install-banner-close" onclick="hideInstallBanner()">×</button>
+    </div>
+</div>
+
+<div id="img-overlay">
+    <img id="overlay-img" src="">
+    <div class="overlay-counter" id="overlay-counter">1 / 4</div>
+    <div class="overlay-nav">
+        <button onclick="prevOverlayImg()">Précédent</button>
+        <button onclick="document.getElementById('img-overlay').style.display='none'">Fermer</button>
+        <button onclick="nextOverlayImg()">Suivant</button>
+    </div>
+</div>
+
+<!-- MATCH OVERLAY -->
+<div id="matchOverlay">
+    <div class="hearts" id="hearts"></div>
+    <div class="match-title">C'est un Match!</div>
+    <div class="match-girl-photo" id="matchGirlPhoto"></div>
+    <div class="match-girl-name" id="matchGirlName"></div>
+    <div class="match-photos">
+        <div class="match-photo match-photo-small" id="matchPhotoUser">?</div>
+        <div class="match-heart-icon">+</div>
+        <div class="match-photo match-photo-small" id="matchPhotoGirl"></div>
+    </div>
+    <button class="match-btn" onclick="goToMatchChat()">Envoyer un message</button>
+    <button class="match-close" onclick="closeMatch()">Continuer a swiper</button>
+</div>
+
+<!-- NO MATCH MESSAGE -->
+<div class="no-match-msg" id="noMatchMsg">
+    <h3>Elle n'a pas matché avec toi</h3>
+    <p>Passe au profil suivant</p>
+</div>
+
+<!-- STORIES OVERLAY -->
+<div id="storyOverlay">
+    <div class="story-progress" id="storyProgress"></div>
+    <button class="story-close" onclick="closeStories()">X</button>
+    <div class="story-content">
+        <div class="story-nav story-nav-left" onclick="prevStory()"></div>
+        <img class="story-img" id="storyImg" src="">
+        <div class="story-nav story-nav-right" onclick="nextStory()"></div>
+        <div class="story-text"><span id="storyText"></span></div>
+    </div>
+</div>
+
+<script>
+const GIRLS = ''' + json.dumps(GIRLS, ensure_ascii=False) + ''';
+const INITIALS = {};
+Object.keys(GIRLS).forEach(id => { INITIALS[id] = GIRLS[id].name.charAt(0).toUpperCase(); });
+
+const REGION_MAP = {
+    'france': ['France', 'Paris', 'Lyon', 'Marseille', 'Nice', 'Bordeaux', 'Toulouse', 'Lille', 'Nantes', 'Strasbourg'],
+    'usa': ['USA', 'Texas', 'California', 'LA', 'Vegas', 'Miami', 'Chicago', 'Atlanta', 'Hawaii', 'NYC', 'New York', 'Los Angeles', 'San Francisco'],
+    'bresil': ['Brazil', 'Brasil', 'Rio', 'Sao Paulo', 'Salvador', 'Brasilia', 'Fortaleza'],
+    'japon': ['Japan', 'Tokyo', 'Osaka', 'Kyoto', 'Yokohama'],
+    'chine': ['China', 'Beijing', 'Shanghai', 'Shenzhen', 'Hong Kong', 'Guangzhou'],
+    'thailande': ['Thailand', 'Bangkok', 'Phuket', 'Chiang Mai', 'Pattaya'],
+    'indonesie': ['Indonesia', 'Jakarta', 'Bali', 'Surabaya'],
+    'russie': ['Russia', 'Moscow', 'St Petersburg', 'Novosibirsk', 'Kazan', 'Moscou', 'Russie'],
+    'moyen_orient': ['Lebanon', 'Liban', 'Egypt', 'Egypte', 'UAE', 'Dubai', 'Saudi Arabia', 'Arabie', 'Qatar', 'Doha', 'Syria', 'Syrie', 'Jordan', 'Jordanie', 'Beirut', 'Cairo', 'Damascus', 'Damas', 'Amman', 'Riyad', 'Abu Dhabi', 'Koweit', 'Kuwait', 'Oman', 'Bahrain'],
+    'maghreb': ['Morocco', 'Maroc', 'Algeria', 'Algerie', 'Tunisia', 'Tunisie', 'Casablanca', 'Algiers', 'Alger', 'Tunis', 'Rabat', 'Oran', 'Fes', 'Marrakech'],
+    'afrique': ['Nigeria', 'Ghana', 'Senegal', 'South Africa', 'Kenya', 'Congo', 'Mali', 'Kinshasa', 'Brazzaville', 'Johannesburg', 'Cape Town', 'Lagos', 'Dakar', 'Bamako', 'Addis', 'Ethiopie', 'Ethiopia', 'Cameroun', 'Cameroon', 'Cote Ivoire', 'Abidjan'],
+    'europe': ['France', 'Germany', 'Sweden', 'Italy', 'Ukraine', 'Belarus', 'Belgium', 'UK', 'Spain', 'Netherlands', 'Czech', 'Prague', 'Amsterdam', 'Londres', 'Berlin', 'Paris', 'Poland', 'Pologne', 'Roma', 'Milan', 'Barcelona', 'Madrid', 'Lisboa', 'Portugal'],
+    'amerique_latine': ['Brazil', 'Mexico', 'Colombia', 'Argentina', 'Peru', 'Cuba', 'Chile', 'Venezuela', 'Ecuador', 'Bolivia', 'Puerto Rico', 'Dominican', 'Havana', 'Buenos Aires', 'Lima', 'Bogota', 'Caracas', 'Rio', 'Sao Paulo'],
+    'asie': ['Japan', 'China', 'Korea', 'Thailand', 'India', 'Vietnam', 'Philippines', 'Indonesia', 'Taiwan', 'Singapore', 'Malaysia', 'Cambodia', 'Myanmar', 'Tokyo', 'Seoul', 'Bangkok', 'Mumbai', 'Delhi', 'Manila', 'Jakarta', 'Hanoi', 'Saigon']
+};
+
+let currentGirl = null;
+let chatHistory = {};
+let affectionLevels = {};
+let profilePhotos = JSON.parse(localStorage.getItem('profilePhotos') || '{}');
+let receivedPhotos = {};
+let currentOverlayPhotos = [];
+let currentOverlayIndex = 0;
+
+let user = null;
+let matches = [];
+let passed = [];
+let isProcessingSwipe = false;
+let blocked = [];
+let swipeQueue = [];
+let currentSwipeGirl = null;
+
+let currentAgeFilter = 'all';
+let currentRegionFilter = 'all';
+let unreadMessages = {};
+let pendingConfirmAction = null;
+let deferredPrompt = null;
+let darkMode = localStorage.getItem('darkMode') !== 'false';
+
+let photoGenerationQueue = [];
+let isGeneratingPhotos = false;
+let failedPhotos = {};
+
+// INSTANT SWIPE SYSTEM - Preload queue
+let preloadedImages = {};
+let touchStartX = 0;
+let touchStartY = 0;
+let touchDeltaX = 0;
+let isDragging = false;
+const SWIPE_THRESHOLD = 80;
+
+// Image Preloader - Cache images for instant display
+function preloadImage(url) {
+    return new Promise((resolve, reject) => {
+        if (!url) { resolve(null); return; }
+        if (preloadedImages[url]) { resolve(preloadedImages[url]); return; }
+        const img = new Image();
+        img.onload = () => { preloadedImages[url] = img; resolve(img); };
+        img.onerror = () => resolve(null);
+        img.src = url;
+    });
+}
+
+// Preload next 5 profiles
+async function preloadNextProfiles() {
+    const toPreload = swipeQueue.slice(0, 5);
+    for (const girlId of toPreload) {
+        const photo = getProfilePhoto(girlId);
+        if (photo) await preloadImage(photo);
+    }
+}
+
+// Setup touch gestures for swipe card
+function setupTouchGestures() {
+    const card = document.getElementById('swipeCard');
+    if (!card) return;
+    
+    card.addEventListener('touchstart', handleTouchStart, { passive: true });
+    card.addEventListener('touchmove', handleTouchMove, { passive: false });
+    card.addEventListener('touchend', handleTouchEnd, { passive: true });
+    card.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+}
+
+function handleTouchStart(e) {
+    if (isProcessingSwipe) return;
+    const touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    touchDeltaX = 0;
+    isDragging = true;
+    const card = document.getElementById('swipeCard');
+    if (card) card.classList.remove('animating');
+}
+
+function handleTouchMove(e) {
+    if (!isDragging || isProcessingSwipe) return;
+    const touch = e.touches[0];
+    touchDeltaX = touch.clientX - touchStartX;
+    const deltaY = touch.clientY - touchStartY;
+    
+    if (Math.abs(touchDeltaX) > Math.abs(deltaY)) {
+        e.preventDefault();
+        updateCardPosition(touchDeltaX);
+    }
+}
+
+function handleTouchEnd(e) {
+    if (!isDragging) return;
+    isDragging = false;
+    
+    if (Math.abs(touchDeltaX) > SWIPE_THRESHOLD) {
+        if (touchDeltaX > 0) {
+            animateSwipe('right');
+        } else {
+            animateSwipe('left');
+        }
+    } else {
+        resetCardPosition();
+    }
+}
+
+function handleMouseDown(e) {
+    if (isProcessingSwipe) return;
+    touchStartX = e.clientX;
+    touchDeltaX = 0;
+    isDragging = true;
+    const card = document.getElementById('swipeCard');
+    if (card) card.classList.remove('animating');
+}
+
+function handleMouseMove(e) {
+    if (!isDragging || isProcessingSwipe) return;
+    touchDeltaX = e.clientX - touchStartX;
+    updateCardPosition(touchDeltaX);
+}
+
+function handleMouseUp(e) {
+    if (!isDragging) return;
+    isDragging = false;
+    
+    if (Math.abs(touchDeltaX) > SWIPE_THRESHOLD) {
+        if (touchDeltaX > 0) {
+            animateSwipe('right');
+        } else {
+            animateSwipe('left');
+        }
+    } else {
+        resetCardPosition();
+    }
+}
+
+function updateCardPosition(deltaX) {
+    const card = document.getElementById('swipeCard');
+    const likeOverlay = document.getElementById('swipeLikeOverlay');
+    const nopeOverlay = document.getElementById('swipeNopeOverlay');
+    if (!card) return;
+    
+    const rotation = deltaX * 0.05;
+    const opacity = Math.min(Math.abs(deltaX) / 100, 1);
+    
+    requestAnimationFrame(() => {
+        card.style.transform = `translate3d(${deltaX}px, 0, 0) rotate(${rotation}deg)`;
+        if (likeOverlay) likeOverlay.style.opacity = deltaX > 0 ? opacity : 0;
+        if (nopeOverlay) nopeOverlay.style.opacity = deltaX < 0 ? opacity : 0;
+    });
+}
+
+function resetCardPosition() {
+    const card = document.getElementById('swipeCard');
+    const likeOverlay = document.getElementById('swipeLikeOverlay');
+    const nopeOverlay = document.getElementById('swipeNopeOverlay');
+    if (!card) return;
+    
+    card.classList.add('animating');
+    requestAnimationFrame(() => {
+        card.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
+        if (likeOverlay) likeOverlay.style.opacity = 0;
+        if (nopeOverlay) nopeOverlay.style.opacity = 0;
+    });
+}
+
+function animateSwipe(direction) {
+    if (isProcessingSwipe) return;
+    isProcessingSwipe = true;
+    
+    const card = document.getElementById('swipeCard');
+    const likeOverlay = document.getElementById('swipeLikeOverlay');
+    const nopeOverlay = document.getElementById('swipeNopeOverlay');
+    if (!card) { isProcessingSwipe = false; return; }
+    
+    card.classList.add('animating');
+    
+    // Show overlay during animation
+    if (direction === 'right') {
+        if (likeOverlay) likeOverlay.style.opacity = 1;
+        card.classList.add('swipe-right');
+        setTimeout(() => processSwipeRight(), 250);
+    } else {
+        if (nopeOverlay) nopeOverlay.style.opacity = 1;
+        card.classList.add('swipe-left');
+        setTimeout(() => processSwipeLeft(), 250);
+    }
+}
+
+function processSwipeLeft() {
+    if (!currentSwipeGirl) { isProcessingSwipe = false; return; }
+    
+    const girlId = currentSwipeGirl;
+    if (!passed.includes(girlId)) {
+        passed.push(girlId);
+        localStorage.setItem('dreamPassed', JSON.stringify(passed));
+        syncDiscovered(girlId, 'passed');
+    }
+    
+    const idx = swipeQueue.indexOf(girlId);
+    if (idx > -1) swipeQueue.splice(idx, 1);
+    currentSwipeGirl = null;
+    
+    isProcessingSwipe = false;
+    showNextCardInstant();
+}
+
+function processSwipeRight() {
+    if (!currentSwipeGirl) { isProcessingSwipe = false; return; }
+    
+    const girlId = currentSwipeGirl;
+    showTapFlash();
+    showHeartBurst(window.innerWidth / 2, window.innerHeight / 2);
+    
+    const idx = swipeQueue.indexOf(girlId);
+    if (idx > -1) swipeQueue.splice(idx, 1);
+    currentSwipeGirl = null;
+    
+    if (!passed.includes(girlId)) {
+        passed.push(girlId);
+        localStorage.setItem('dreamPassed', JSON.stringify(passed));
+    }
+    
+    const g = GIRLS[girlId];
+    const matchChance = g.match_chance || 0.7;
+    
+    if (Math.random() < matchChance) {
+        if (!matches.includes(girlId)) {
+            matches.push(girlId);
+            localStorage.setItem('dreamMatches', JSON.stringify(matches));
+            syncMatch(girlId);
+            syncDiscovered(girlId, 'liked');
+            showMatchAnimation(girlId);
+        } else {
+            isProcessingSwipe = false;
+            showNextCardInstant();
+        }
+    } else {
+        syncDiscovered(girlId, 'liked');
+        showNoMatch();
+    }
+}
+
+function showNextCardInstant() {
+    swipeQueue = swipeQueue.filter(id => !matches.includes(id) && !passed.includes(id) && !blocked.includes(id));
+    
+    const card = document.getElementById('swipeCard');
+    const nextCard = document.getElementById('swipeCardNext');
+    
+    if (swipeQueue.length === 0) {
+        if (card) card.style.display = 'none';
+        if (nextCard) nextCard.style.display = 'none';
+        document.getElementById('swipeButtons').style.display = 'none';
+        document.getElementById('noMoreCards').style.display = 'block';
+        currentSwipeGirl = null;
+        return;
+    }
+    
+    // Swap next card data to current card
+    currentSwipeGirl = swipeQueue[0];
+    const g = GIRLS[currentSwipeGirl];
+    if (!g) { swipeQueue.shift(); showNextCardInstant(); return; }
+    
+    const photo = getProfilePhoto(currentSwipeGirl);
+    
+    requestAnimationFrame(() => {
+        // Reset current card position
+        if (card) {
+            card.classList.remove('swipe-left', 'swipe-right', 'animating');
+            card.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
+            card.style.display = 'block';
+            
+            const swipeImg = document.getElementById('swipeCardImg');
+            if (photo) {
+                swipeImg.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover;" loading="eager">`;
+                swipeImg.classList.remove('photo-loading');
+            } else {
+                swipeImg.innerHTML = `<span class="swipe-initial">${INITIALS[currentSwipeGirl]}</span>`;
+                swipeImg.classList.add('photo-loading');
+                queuePhotoGeneration(currentSwipeGirl);
+            }
+            
+            document.getElementById('swipeCardName').textContent = g.name + ', ' + g.age;
+            document.getElementById('swipeCardLocation').textContent = g.location;
+            document.getElementById('swipeCardBio').textContent = g.bio;
+            
+            const likeOverlay = document.getElementById('swipeLikeOverlay');
+            const nopeOverlay = document.getElementById('swipeNopeOverlay');
+            if (likeOverlay) likeOverlay.style.opacity = 0;
+            if (nopeOverlay) nopeOverlay.style.opacity = 0;
+        }
+        
+        // Prepare next card
+        if (swipeQueue.length > 1 && nextCard) {
+            const nextId = swipeQueue[1];
+            const nextG = GIRLS[nextId];
+            if (nextG) {
+                const nextPhoto = getProfilePhoto(nextId);
+                const nextImg = document.getElementById('swipeCardImgNext');
+                if (nextPhoto) {
+                    nextImg.innerHTML = `<img src="${nextPhoto}" alt="${nextG.name}" style="width:100%; height:100%; object-fit:cover;" loading="eager">`;
+                } else {
+                    nextImg.innerHTML = `<span class="swipe-initial">${INITIALS[nextId]}</span>`;
+                    queuePhotoGeneration(nextId);
+                }
+                document.getElementById('swipeCardNameNext').textContent = nextG.name + ', ' + nextG.age;
+                document.getElementById('swipeCardLocationNext').textContent = nextG.location;
+                document.getElementById('swipeCardBioNext').textContent = nextG.bio;
+                nextCard.style.display = 'block';
+            }
+        }
+        
+        document.getElementById('swipeButtons').style.display = 'flex';
+        document.getElementById('noMoreCards').style.display = 'none';
+    });
+    
+    // Preload more profiles in background
+    preloadNextProfiles();
+}
+
+function getProfilePhoto(girlId) {
+    return profilePhotos[girlId] || null;
+}
+
+function getPhotoHtml(girlId, sizeClass = '') {
+    const photo = getProfilePhoto(girlId);
+    const initial = INITIALS[girlId];
+    
+    if (photo) {
+        return `<div class="photo-bg ${sizeClass}" style="background-image: url('${photo}')"></div>`;
+    } else if (failedPhotos[girlId]) {
+        return `<div class="photo-initial ${sizeClass}">${initial}<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${girlId}')">Reessayer</button></div>`;
+    } else {
+        return `<div class="photo-initial photo-loading ${sizeClass}">${initial}</div>`;
+    }
+}
+
+function getAvatarHtml(girlId, size = 40) {
+    const photo = getProfilePhoto(girlId);
+    const initial = INITIALS[girlId];
+    const style = photo ? 
+        `background-image: url('${photo}'); background-size: cover; background-position: center;` : 
+        `background: linear-gradient(135deg, #1a1a2e 0%, #0d0d12 100%);`;
+    return `<div style="width: ${size}px; height: ${size}px; border-radius: 50%; ${style} display: flex; align-items: center; justify-content: center; font-weight: 600; color: rgba(233, 30, 99, 0.5); font-size: ${size * 0.4}px;">${photo ? '' : initial}</div>`;
+}
+
+async function generateProfilePhoto(girlId) {
+    if (profilePhotos[girlId]) return true;
+    
+    try {
+        const storedRes = await fetch('/api/stored_photos/' + girlId);
+        const storedData = await storedRes.json();
+        if (storedData.photos && storedData.photos['0']) {
+            profilePhotos[girlId] = storedData.photos['0'];
+            localStorage.setItem('profilePhotos', JSON.stringify(profilePhotos));
+            delete failedPhotos[girlId];
+            localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
+            refreshAllPhotos();
+            return true;
+        }
+    } catch (e) {
+        console.log('Stored photo check failed:', e);
+    }
+    
+    try {
+        const res = await fetch('/profile_photo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ girl: girlId })
+        });
+        
+        const data = await res.json();
+        
+        if (data.image_url) {
+            profilePhotos[girlId] = data.image_url;
+            localStorage.setItem('profilePhotos', JSON.stringify(profilePhotos));
+            delete failedPhotos[girlId];
+            localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
+            refreshAllPhotos();
+            return true;
+        } else {
+            failedPhotos[girlId] = true;
+            localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
+            refreshAllPhotos();
+            return false;
+        }
+    } catch (e) {
+        console.log('Photo gen error:', girlId, e);
+        failedPhotos[girlId] = true;
+        localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
+        refreshAllPhotos();
+        return false;
+    }
+}
+
+async function processPhotoQueue() {
+    if (isGeneratingPhotos || photoGenerationQueue.length === 0) return;
+    isGeneratingPhotos = true;
+    
+    while (photoGenerationQueue.length > 0) {
+        const girlId = photoGenerationQueue.shift();
+        if (!profilePhotos[girlId] && !failedPhotos[girlId]) {
+            await generateProfilePhoto(girlId);
+            await new Promise(r => setTimeout(r, 500));
+        }
+    }
+    
+    isGeneratingPhotos = false;
+}
+
+function queuePhotoGeneration(girlId) {
+    if (!profilePhotos[girlId] && !failedPhotos[girlId] && !photoGenerationQueue.includes(girlId)) {
+        photoGenerationQueue.push(girlId);
+        processPhotoQueue();
+    }
+}
+
+function retryPhoto(girlId) {
+    delete failedPhotos[girlId];
+    localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
+    queuePhotoGeneration(girlId);
+    refreshAllPhotos();
+}
+
+function refreshAllPhotos() {
+    if (currentSwipeGirl) {
+        const swipeImg = document.getElementById('swipeCardImg');
+        if (swipeImg) {
+            const g = GIRLS[currentSwipeGirl];
+            const photo = getProfilePhoto(currentSwipeGirl);
+            if (photo) {
+                swipeImg.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover;">`;
+                swipeImg.classList.remove('photo-loading');
+            } else if (failedPhotos[currentSwipeGirl]) {
+                const retryBtn = `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${currentSwipeGirl}')">Reessayer</button>`;
+                swipeImg.innerHTML = `<span class="swipe-initial">${INITIALS[currentSwipeGirl]}</span>${retryBtn}`;
+                swipeImg.classList.remove('photo-loading');
+            }
+        }
+    }
+    
+    if (currentGirl) {
+        const g = GIRLS[currentGirl];
+        const profilePhoto = document.getElementById('profileMainPhoto');
+        if (profilePhoto) {
+            const photo = getProfilePhoto(currentGirl);
+            if (photo) {
+                profilePhoto.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`;
+                profilePhoto.classList.remove('photo-loading');
+            } else if (failedPhotos[currentGirl]) {
+                const retryBtn = `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${currentGirl}')">Reessayer</button>`;
+                profilePhoto.innerHTML = `<span class="profile-initial">${INITIALS[currentGirl]}</span>${retryBtn}`;
+                profilePhoto.classList.remove('photo-loading');
+            }
+        }
+        
+        const chatAvatar = document.getElementById('chatInitials');
+        if (chatAvatar) {
+            const photo = getProfilePhoto(currentGirl);
+            if (photo) {
+                chatAvatar.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+            }
+        }
+    }
+    
+    renderMatches();
+    renderMessagesList();
+}
+
+function initProfilePhotos() {
+    if (swipeQueue.length > 0 && !profilePhotos[swipeQueue[0]]) {
+        queuePhotoGeneration(swipeQueue[0]);
+    }
+}
+
+let audioContext = null;
+
+function initAudio() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+}
+
+document.addEventListener('click', initAudio, { once: true });
+document.addEventListener('touchstart', initAudio, { once: true });
+
+function playSound(type) {
+    if (!audioContext) return;
+    try {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        
+        if (type === 'match') {
+            osc.frequency.setValueAtTime(523.25, audioContext.currentTime);
+            osc.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+            osc.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+            osc.start(); osc.stop(audioContext.currentTime + 0.4);
+        } else if (type === 'message') {
+            osc.frequency.setValueAtTime(880, audioContext.currentTime);
+            osc.frequency.setValueAtTime(1046.5, audioContext.currentTime + 0.05);
+            gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+            osc.start(); osc.stop(audioContext.currentTime + 0.15);
+        } else if (type === 'send') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioContext.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.15, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            osc.start(); osc.stop(audioContext.currentTime + 0.1);
+        }
+    } catch(e) { console.log('Sound error:', e); }
+}
+
+function applyTheme() {
+    if (darkMode) {
+        document.body.classList.remove('light-theme');
+    } else {
+        document.body.classList.add('light-theme');
+    }
+    const toggle = document.getElementById('themeToggle');
+    if (toggle) toggle.classList.toggle('active', darkMode);
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => { clearTimeout(timeout); func(...args); };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+const lazyImageObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset.src) {
+                img.src = img.dataset.src;
+                img.onload = () => img.classList.add('loaded');
+                img.onerror = () => img.classList.add('loaded');
+                lazyImageObserver.unobserve(img);
+            }
+        }
+    });
+}, { rootMargin: '100px' });
+
+function lazyLoadImage(img) {
+    if (img.dataset.src) {
+        img.classList.add('lazy-load');
+        lazyImageObserver.observe(img);
+    }
+}
+
+function preloadImages(urls) {
+    urls.forEach(url => {
+        if (url) {
+            const img = new Image();
+            img.src = url;
+        }
+    });
+}
+
+function toggleTheme() {
+    darkMode = !darkMode;
+    localStorage.setItem('darkMode', darkMode);
+    applyTheme();
+}
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW error:', err));
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (!localStorage.getItem('pwaInstallDismissed')) {
+        document.getElementById('installBanner').style.display = 'flex';
+    }
+});
+
+function installPWA() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(result => {
+            deferredPrompt = null;
+            hideInstallBanner();
+        });
+    }
+}
+
+function hideInstallBanner() {
+    document.getElementById('installBanner').style.display = 'none';
+    localStorage.setItem('pwaInstallDismissed', 'true');
+}
+
+function setAgeFilter(filter) {
+    currentAgeFilter = filter;
+    document.querySelectorAll('.filter-row:first-child .filter-btn').forEach(btn => btn.classList.remove('active'));
+    if (filter === 'all') document.getElementById('filterAgeAll').classList.add('active');
+    else if (filter === '18-25') document.getElementById('filterAge1825').classList.add('active');
+    else if (filter === '25-35') document.getElementById('filterAge2535').classList.add('active');
+    else if (filter === '35-45') document.getElementById('filterAge3545').classList.add('active');
+    else if (filter === '45+') document.getElementById('filterAge45').classList.add('active');
+    initSwipe();
+}
+
+function setRegionFilter(filter) {
+    currentRegionFilter = filter;
+    document.querySelectorAll('.filter-row:last-child .filter-btn').forEach(btn => btn.classList.remove('active'));
+    const idMap = {
+        all: 'filterRegionAll', france: 'filterFrance', usa: 'filterUSA', bresil: 'filterBresil',
+        japon: 'filterJapon', chine: 'filterChine', thailande: 'filterThailande', indonesie: 'filterIndonesie',
+        russie: 'filterRussie', moyen_orient: 'filterMoyenOrient', maghreb: 'filterMaghreb',
+        afrique: 'filterAfrique', europe: 'filterEurope', amerique_latine: 'filterAmeriqueLat', asie: 'filterAsie'
+    };
+    const el = document.getElementById(idMap[filter]);
+    if (el) el.classList.add('active');
+    initSwipe();
+}
+
+function matchesAgeFilter(girl) {
+    if (currentAgeFilter === 'all') return true;
+    const age = girl.age;
+    if (currentAgeFilter === '18-25') return age >= 18 && age <= 25;
+    if (currentAgeFilter === '25-35') return age > 25 && age <= 35;
+    if (currentAgeFilter === '35-45') return age > 35 && age <= 45;
+    if (currentAgeFilter === '45+') return age > 45;
+    return true;
+}
+
+function matchesRegionFilter(girl) {
+    if (currentRegionFilter === 'all') return true;
+    const loc = girl.location || '';
+    const regions = REGION_MAP[currentRegionFilter] || [];
+    return regions.some(r => loc.toLowerCase().includes(r.toLowerCase()));
+}
+
+function updateMessageBadge() {
+    let count = Object.values(unreadMessages).reduce((a, b) => a + b, 0);
+    const badge = document.getElementById('msgBadge');
+    if (count > 0) {
+        badge.textContent = count > 9 ? '9+' : count;
+        badge.classList.add('show');
+    } else {
+        badge.classList.remove('show');
+    }
+}
+
+function addUnreadMessage(girlId) {
+    unreadMessages[girlId] = (unreadMessages[girlId] || 0) + 1;
+    localStorage.setItem('unreadMessages', JSON.stringify(unreadMessages));
+    updateMessageBadge();
+}
+
+function clearUnreadMessages(girlId) {
+    delete unreadMessages[girlId];
+    localStorage.setItem('unreadMessages', JSON.stringify(unreadMessages));
+    updateMessageBadge();
+}
+
+function openChatMenu() {
+    document.getElementById('chatMenu').classList.add('show');
+}
+
+function closeChatMenu() {
+    document.getElementById('chatMenu').classList.remove('show');
+}
+
+function showConfirmPopup(action) {
+    closeChatMenu();
+    pendingConfirmAction = action;
+    const titles = { unmatch: 'Unmatch', block: 'Bloquer', report: 'Signaler' };
+    const texts = {
+        unmatch: 'Tu ne pourras plus lui parler. Continuer?',
+        block: 'Elle ne pourra plus te contacter. Continuer?',
+        report: 'Signaler ce profil pour comportement inapproprie?'
+    };
+    document.getElementById('confirmTitle').textContent = titles[action];
+    document.getElementById('confirmText').textContent = texts[action];
+    document.getElementById('confirmPopup').classList.add('show');
+}
+
+function closeConfirmPopup() {
+    document.getElementById('confirmPopup').classList.remove('show');
+    pendingConfirmAction = null;
+}
+
+function confirmAction() {
+    if (!pendingConfirmAction || !currentGirl) return;
+    
+    if (pendingConfirmAction === 'unmatch' || pendingConfirmAction === 'block') {
+        matches = matches.filter(id => id !== currentGirl);
+        localStorage.setItem('dreamMatches', JSON.stringify(matches));
+        delete chatHistory[currentGirl];
+        localStorage.removeItem('chat_' + currentGirl);
+        
+        if (pendingConfirmAction === 'block') {
+            blocked.push(currentGirl);
+            localStorage.setItem('dreamBlocked', JSON.stringify(blocked));
+        }
+        
+        showToast(pendingConfirmAction === 'block' ? 'Profil bloque' : 'Unmatch effectue');
+        closeConfirmPopup();
+        navigateTo('matches');
+    } else if (pendingConfirmAction === 'report') {
+        showToast('Merci pour ton signalement');
+        closeConfirmPopup();
+    }
+}
+
+function showPremiumPopup() {
+    document.getElementById('premiumPopup').classList.add('show');
+}
+
+function closePremiumPopup() {
+    document.getElementById('premiumPopup').classList.remove('show');
+}
+
+function sendIcebreaker(text) {
+    document.getElementById('chatInput').value = text;
+    sendMessage();
+    document.getElementById('icebreakers').style.display = 'none';
+}
+
+function girlMessagesFirst(girlId) {
+    if (Math.random() < 0.3) {
+        const g = GIRLS[girlId];
+        const greetings = [
+            "Hey! Tu me plais bien toi",
+            "Salut beau gosse",
+            "Coucou! J'ai vu qu'on a matche",
+            "Hey toi! Ca va?",
+            "Mmm t'es mignon, on discute?"
+        ];
+        const msg = greetings[Math.floor(Math.random() * greetings.length)];
+        
+        setTimeout(() => {
+            if (!chatHistory[girlId]) chatHistory[girlId] = [];
+            const time = new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+            chatHistory[girlId].push({ role: 'assistant', content: msg, time });
+            saveChatHistory(girlId);
+            addUnreadMessage(girlId);
+            playSound('message');
+        }, 3000 + Math.random() * 5000);
+    }
+}
+
+function loadChatHistory(girlId) {
+    const saved = localStorage.getItem('chat_' + girlId);
+    if (saved) {
+        try { return JSON.parse(saved); } catch(e) { return []; }
+    }
+    return [];
+}
+
+function saveChatHistory(girlId) {
+    localStorage.setItem('chat_' + girlId, JSON.stringify(chatHistory[girlId] || []));
+}
+
+function saveReceivedPhoto(girlId, photoUrl) {
+    if (!receivedPhotos[girlId]) receivedPhotos[girlId] = [];
+    if (!receivedPhotos[girlId].includes(photoUrl)) {
+        receivedPhotos[girlId].push(photoUrl);
+        localStorage.setItem('receivedPhotos', JSON.stringify(receivedPhotos));
+        syncReceivedPhoto(girlId, photoUrl);
+    }
+}
+
+const PHOTO_BACKGROUNDS = {
+    day: ["beach sunny day", "city street daytime", "park bench", "cafe terrace outdoor", "gym workout area", "office desk"],
+    night: ["club dance floor neon lights", "bar with cocktails", "fancy restaurant candlelight", "bedroom dim lights"],
+    home: ["living room couch", "kitchen counter", "bathroom mirror selfie", "messy bedroom"],
+    outdoor: ["nature hiking trail", "mountain scenic view", "swimming pool lounger", "garden flowers"]
+};
+
+function getRandomBg(category) {
+    const bgs = PHOTO_BACKGROUNDS[category];
+    return bgs[Math.floor(Math.random() * bgs.length)];
+}
+
+const FACE_SHAPES = ['oval face shape', 'round face shape', 'square jawline', 'heart shaped face', 'diamond face'];
+const POSES = ['default pose', 'looking back over shoulder', 'mirror selfie', 'hand on hip confident'];
+const EXPRESSIONS = ['smiling warmly', 'sultry look', 'playful expression', 'seductive gaze', 'natural expression'];
+
+function getRandomFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+const PHOTO_TYPES = [
+    { type: 'portrait', locked: false, getPrompt: () => `portrait photo, face closeup, ${getRandomFrom(EXPRESSIONS)}, ${getRandomFrom(FACE_SHAPES)}, natural makeup, ${getRandomBg('day')}, high quality selfie, looking at camera` },
+    { type: 'fullbody', locked: false, getPrompt: () => `full body shot, ${getRandomFrom(POSES)}, casual stylish outfit, ${getRandomBg('outdoor')}, fashion photography style, ${getRandomFrom(EXPRESSIONS)}` },
+    { type: 'sexy', locked: false, getPrompt: () => `sexy pose, ${getRandomFrom(POSES)}, tight dress or revealing top, ${getRandomBg('night')}, seductive ${getRandomFrom(EXPRESSIONS)}, showing curves, cleavage visible` },
+    { type: 'lingerie', locked: false, getPrompt: () => `wearing sexy lingerie, lace bra and panties, ${getRandomBg('home')}, bedroom setting, ${getRandomFrom(POSES)}, intimate atmosphere, seductive look` },
+    { type: 'secret', locked: true, getPrompt: () => `nude explicit, naked body fully visible, ${getRandomBg('home')}, intimate bedroom, sensual pose, orgasmic expression, erotic photography` }
+];
+
+async function checkLogin() {
+    try {
+        const res = await fetch('/api/me');
+        const data = await res.json();
+        if (data.logged_in && data.user) {
+            user = { name: data.user.username, age: data.user.age, id: data.user.id };
+            localStorage.setItem('dreamUser', JSON.stringify(user));
+            document.getElementById('headerUserName').textContent = user.name;
+            document.getElementById('bottomNav').style.display = 'flex';
+            await loadUserData();
+            navigateTo('discover');
+            initSwipe();
+            updateSettingsPage();
+        }
+    } catch(e) {
+        console.log('Check login error:', e);
+    }
+}
+
+function showAuthTab(tab) {
+    document.getElementById('formLogin').style.display = tab === 'login' ? 'flex' : 'none';
+    document.getElementById('formRegister').style.display = tab === 'register' ? 'flex' : 'none';
+    document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+    document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+    document.getElementById('loginError').textContent = '';
+    document.getElementById('registerError').textContent = '';
+}
+
+async function doLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    
+    if (!email || !password) {
+        document.getElementById('loginError').textContent = 'Remplis tous les champs';
+        return;
+    }
+    
+    try {
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            user = { name: data.user.username, age: data.user.age, id: data.user.id };
+            localStorage.setItem('dreamUser', JSON.stringify(user));
+            document.getElementById('headerUserName').textContent = user.name;
+            document.getElementById('bottomNav').style.display = 'flex';
+            await loadUserData();
+            navigateTo('discover');
+            initSwipe();
+            updateSettingsPage();
+        } else {
+            document.getElementById('loginError').textContent = data.error || 'Erreur de connexion';
+        }
+    } catch(e) {
+        document.getElementById('loginError').textContent = 'Erreur reseau';
+    }
+}
+
+function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('photoPreview').innerHTML = `<img src="${e.target.result}" alt="Photo">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function showForgotPassword() {
+    alert('Pour reinitialiser ton mot de passe, contacte le support.');
+}
+
+async function doRegister() {
+    const username = document.getElementById('regUsername').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const age = parseInt(document.getElementById('regAge').value);
+    
+    if (!username || !email || !password || !age) {
+        document.getElementById('registerError').textContent = 'Remplis tous les champs';
+        return;
+    }
+    
+    if (password.length < 6) {
+        document.getElementById('registerError').textContent = 'Mot de passe trop court (min 6 caracteres)';
+        return;
+    }
+    
+    if (age < 18) {
+        document.getElementById('registerError').textContent = 'Tu dois avoir 18 ans ou plus';
+        return;
+    }
+    
+    try {
+        const res = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password, age })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            user = { name: data.user.username, age: data.user.age, id: data.user.id };
+            localStorage.setItem('dreamUser', JSON.stringify(user));
+            document.getElementById('headerUserName').textContent = user.name;
+            document.getElementById('bottomNav').style.display = 'flex';
+            await loadUserData();
+            navigateTo('discover');
+            initSwipe();
+            updateSettingsPage();
+        } else {
+            document.getElementById('registerError').textContent = data.error || 'Erreur inscription';
+        }
+    } catch(e) {
+        document.getElementById('registerError').textContent = 'Erreur reseau';
+    }
+}
+
+async function loadUserData() {
+    try {
+        matches = [];
+        passed = [];
+        blocked = [];
+        chatHistory = {};
+        affectionLevels = {};
+        receivedPhotos = {};
+        failedPhotos = {};
+        profilePhotos = {};
+        
+        const savedProfilePhotos = localStorage.getItem('profilePhotos');
+        const cacheVersion = localStorage.getItem('cacheVersion');
+        const CURRENT_CACHE_VERSION = '2.0'; // 5-photo system
+        
+        if (cacheVersion !== CURRENT_CACHE_VERSION) {
+            // Force refresh old cache - migrate from single photo to 5-photo system
+            console.log('Cache migration: clearing old profilePhotos for 5-photo system');
+            localStorage.removeItem('profilePhotos');
+            localStorage.setItem('cacheVersion', CURRENT_CACHE_VERSION);
+            profilePhotos = {};
+        } else if (savedProfilePhotos) {
+            try { 
+                profilePhotos = JSON.parse(savedProfilePhotos);
+                // Validate format - each entry should be an array of 5
+                for (const girlId in profilePhotos) {
+                    if (!Array.isArray(profilePhotos[girlId])) {
+                        // Old format detected, reset
+                        console.log('Old photo format detected, resetting');
+                        profilePhotos = {};
+                        localStorage.removeItem('profilePhotos');
+                        break;
+                    }
+                }
+            } catch(e) {
+                profilePhotos = {};
+            }
+        }
+        
+        const [matchesRes, photosRes, discoveredRes] = await Promise.all([
+            fetch('/api/matches'),
+            fetch('/api/received_photos'),
+            fetch('/api/discovered')
+        ]);
+        
+        const matchesData = await matchesRes.json();
+        if (matchesData.matches) {
+            matches = matchesData.matches.map(m => m.girl_id);
+            matchesData.matches.forEach(m => {
+                affectionLevels[m.girl_id] = m.affection;
+            });
+            localStorage.setItem('dreamMatches', JSON.stringify(matches));
+            localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+        }
+        
+        const photosData = await photosRes.json();
+        if (photosData.photos) {
+            receivedPhotos = photosData.photos;
+            localStorage.setItem('receivedPhotos', JSON.stringify(receivedPhotos));
+        }
+        
+        const discoveredData = await discoveredRes.json();
+        if (discoveredData.discovered) {
+            discoveredData.discovered.forEach(d => {
+                if (d.action === 'passed' && !passed.includes(d.girl_id)) {
+                    passed.push(d.girl_id);
+                }
+            });
+            localStorage.setItem('dreamPassed', JSON.stringify(passed));
+        }
+        
+        for (const girlId of matches) {
+            const chatRes = await fetch('/api/chat/' + girlId);
+            const chatData = await chatRes.json();
+            if (chatData.messages && chatData.messages.length > 0) {
+                chatHistory[girlId] = chatData.messages;
+                localStorage.setItem('chat_' + girlId, JSON.stringify(chatData.messages));
+            }
+        }
+        
+        localStorage.setItem('failedPhotos', JSON.stringify({}));
+    } catch(e) {
+        console.log('Load user data error:', e);
+    }
+}
+
+async function doLogout() {
+    try {
+        await fetch('/api/logout', { method: 'POST' });
+    } catch(e) {}
+    user = null;
+    matches = [];
+    passed = [];
+    chatHistory = {};
+    affectionLevels = {};
+    receivedPhotos = {};
+    localStorage.clear();
+    location.reload();
+}
+
+function navigateTo(page) {
+    lastNavTab = page;
+    
+    const pageMap = {
+        'discover': 'pageDiscover',
+        'messages': 'pageMessages',
+        'matches': 'pageMatches',
+        'gallery': 'pageGallery',
+        'settings': 'pageSettings'
+    };
+    
+    // Get current active page for exit animation
+    const currentPage = document.querySelector('.page.active');
+    const newPageEl = document.getElementById(pageMap[page]);
+    
+    // Remove active from nav
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const navEl = document.getElementById('nav' + page.charAt(0).toUpperCase() + page.slice(1));
+    if (navEl) navEl.classList.add('active');
+    
+    // If same page, no animation needed
+    if (currentPage === newPageEl) return;
+    
+    // Exit animation on current page, enter on new
+    if (currentPage && currentPage !== newPageEl) {
+        currentPage.classList.add('page-exit');
+        setTimeout(() => {
+            currentPage.classList.remove('active', 'page-exit', 'page-enter');
+        }, 200);
+    }
+    
+    // Add haptic feedback
+    if (navigator.vibrate) navigator.vibrate(10);
+    
+    // Show new page with entrance animation
+    setTimeout(() => {
+        document.querySelectorAll('.page').forEach(p => {
+            if (p !== newPageEl) p.classList.remove('active', 'page-enter');
+        });
+        if (newPageEl) {
+            newPageEl.classList.add('active', 'page-enter');
+        }
+        
+        document.getElementById('bottomNav').style.display = 'flex';
+        
+        if (page === 'matches') renderMatches();
+        if (page === 'messages') renderMessagesList();
+        if (page === 'gallery') renderGallery();
+        if (page === 'settings') updateSettingsPage();
+    }, currentPage && currentPage !== newPageEl ? 100 : 0);
+}
+
+function renderMessagesList() {
+    const list = document.getElementById('messagesList');
+    const noMsg = document.getElementById('noMessagesText');
+    
+    const chatsWithMessages = matches.filter(id => {
+        const chat = chatHistory[id] || loadChatHistory(id);
+        return chat && chat.length > 0;
+    });
+    
+    if (chatsWithMessages.length === 0) {
+        list.innerHTML = '';
+        noMsg.style.display = 'block';
+        return;
+    }
+    
+    noMsg.style.display = 'none';
+    list.innerHTML = chatsWithMessages.map(id => {
+        const g = GIRLS[id];
+        const chat = chatHistory[id] || [];
+        const lastMsg = chat[chat.length - 1];
+        const preview = lastMsg ? (lastMsg.content.substring(0, 40) + (lastMsg.content.length > 40 ? '...' : '')) : 'Nouvelle conversation';
+        const time = lastMsg ? lastMsg.time : '';
+        const photo = getProfilePhoto(id);
+        const avatarContent = photo ? 
+            `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : 
+            `<span class="msg-initial">${INITIALS[id]}</span>`;
+        return `
+            <div class="message-item" onclick="openChatDirectly('${id}')">
+                <div class="message-avatar">${avatarContent}</div>
+                <div class="message-info">
+                    <div class="message-name">${g.name}</div>
+                    <div class="message-preview">${preview}</div>
+                </div>
+                <div class="message-time">${time}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function openChatDirectly(girlId) {
+    currentGirl = girlId;
+    if (!chatHistory[girlId]) chatHistory[girlId] = loadChatHistory(girlId);
+    const g = GIRLS[girlId];
+    document.getElementById('chatName').textContent = g.name;
+    const chatAvatar = document.getElementById('chatInitials');
+    const photo = getProfilePhoto(girlId);
+    if (photo) {
+        chatAvatar.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+    } else {
+        chatAvatar.innerHTML = `<span>${INITIALS[girlId]}</span>`;
+    }
+    renderMessages();
+    showPage('chat');
+}
+
+function renderGallery() {
+    const gallery = document.getElementById('photosGallery');
+    const noPhotos = document.getElementById('noPhotosText');
+    
+    let totalPhotos = 0;
+    let html = '<h2>Photos Recues</h2>';
+    
+    Object.keys(receivedPhotos).forEach(girlId => {
+        const photos = receivedPhotos[girlId];
+        if (photos && photos.length > 0) {
+            totalPhotos += photos.length;
+            const g = GIRLS[girlId];
+            html += `
+                <div class="gallery-section">
+                    <div class="gallery-section-title">${g.name} - ${photos.length} photo${photos.length > 1 ? 's' : ''}</div>
+                    <div class="photos-grid">
+                        ${photos.map((url, i) => `
+                            <div class="gallery-photo" onclick="openGalleryPhoto('${girlId}', ${i})">
+                                <img src="${url}" alt="" loading="lazy">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+    });
+    
+    if (totalPhotos === 0) {
+        gallery.innerHTML = '';
+        noPhotos.style.display = 'block';
+    } else {
+        noPhotos.style.display = 'none';
+        gallery.innerHTML = html;
+    }
+}
+
+function openGalleryPhoto(girlId, index) {
+    currentOverlayPhotos = receivedPhotos[girlId] || [];
+    currentOverlayIndex = index;
+    updateOverlay();
+    document.getElementById('img-overlay').style.display = 'flex';
+}
+
+function updateSettingsPage() {
+    if (!user) return;
+    document.getElementById('settingsAvatar').textContent = user.name.charAt(0).toUpperCase();
+    document.getElementById('settingsName').textContent = user.name;
+    document.getElementById('settingsAge').textContent = user.age + ' ans';
+    document.getElementById('statsMatches').textContent = matches.length;
+    
+    let photoCount = 0;
+    Object.values(receivedPhotos).forEach(arr => { photoCount += (arr || []).length; });
+    document.getElementById('statsPhotos').textContent = photoCount;
+    
+    let chatCount = 0;
+    matches.forEach(id => {
+        const chat = chatHistory[id] || loadChatHistory(id);
+        if (chat && chat.length > 0) chatCount++;
+    });
+    document.getElementById('statsChats').textContent = chatCount;
+}
+
+function logout() {
+    doLogout();
+}
+
+function resetAllData() {
+    if (confirm('Effacer toutes les donnees? Cette action est irreversible.')) {
+        localStorage.clear();
+        location.reload();
+    }
+}
+
+function initSwipe() {
+    const seenIds = new Set([...matches, ...passed, ...blocked]);
+    
+    swipeQueue = Object.keys(GIRLS).filter(id => {
+        if (seenIds.has(id)) return false;
+        const g = GIRLS[id];
+        if (!matchesAgeFilter(g)) return false;
+        if (!matchesRegionFilter(g)) return false;
+        return true;
+    });
+    
+    swipeQueue = [...new Set(swipeQueue)];
+    swipeQueue = swipeQueue.sort(() => Math.random() - 0.5);
+    
+    matches.forEach(id => { 
+        if (!chatHistory[id]) chatHistory[id] = loadChatHistory(id);
+        if (affectionLevels[id] === undefined) affectionLevels[id] = 20;
+    });
+    
+    isProcessingSwipe = false;
+    currentSwipeGirl = null;
+    isDragging = false;
+    
+    initProfilePhotos();
+    setupTouchGestures();
+    showNextCardInstant();
+    preloadNextProfiles();
+    renderMatches();
+    updateMessageBadge();
+    applyTheme();
+}
+
+function showNextCard() {
+    showNextCardInstant();
+}
+
+function swipeLeft() {
+    if (!currentSwipeGirl || isProcessingSwipe) return;
+    animateSwipe('left');
+}
+
+function resetSwipeState() {
+    isProcessingSwipe = false;
+    const card = document.getElementById('swipeCard');
+    if (card) {
+        card.style.opacity = '1';
+        card.style.pointerEvents = 'auto';
+    }
+}
+
+function swipeRight() {
+    if (!currentSwipeGirl || isProcessingSwipe) return;
+    animateSwipe('right');
+}
+
+async function syncMatch(girlId) {
+    try {
+        await fetch('/api/matches', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ girl_id: girlId })
+        });
+        // Trigger secret photo generation after match
+        generateSecretPhoto(girlId);
+    } catch(e) { console.log('Sync match error:', e); }
+}
+
+async function generateSecretPhoto(girlId) {
+    // Ensure array exists with 5 slots
+    if (!profilePhotos[girlId]) profilePhotos[girlId] = [null, null, null, null, null];
+    if (profilePhotos[girlId].length < 5) {
+        while (profilePhotos[girlId].length < 5) profilePhotos[girlId].push(null);
+    }
+    
+    // Skip if secret photo already exists
+    if (profilePhotos[girlId][4]) return;
+    
+    try {
+        const aff = affectionLevels[girlId] || 20;
+        const photoPrompt = PHOTO_TYPES[4].getPrompt(aff);
+        const res = await fetch('/photo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                girl: girlId,
+                affection: aff,
+                description: photoPrompt,
+                photo_type: 4
+            })
+        });
+        const data = await res.json();
+        
+        if (data.image_url) {
+            profilePhotos[girlId][4] = data.image_url;
+            localStorage.setItem('profilePhotos', JSON.stringify(profilePhotos));
+            console.log('Secret photo unlocked for', girlId);
+        }
+    } catch (e) {
+        console.error('Secret photo generation error:', e);
+    }
+}
+
+async function syncDiscovered(girlId, action) {
+    try {
+        await fetch('/api/discovered', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ girl_id: girlId, action: action })
+        });
+    } catch(e) { console.log('Sync discovered error:', e); }
+}
+
+async function syncAffection(girlId, delta) {
+    try {
+        await fetch('/api/affection', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ girl_id: girlId, delta: delta })
+        });
+    } catch(e) { console.log('Sync affection error:', e); }
+}
+
+async function syncChatMessage(girlId, msg) {
+    try {
+        await fetch('/api/chat/' + girlId, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sender: msg.role, content: msg.content, time: msg.time })
+        });
+    } catch(e) { console.log('Sync chat error:', e); }
+}
+
+async function syncReceivedPhoto(girlId, photoUrl) {
+    try {
+        await fetch('/api/received_photos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ girl_id: girlId, photo_url: photoUrl })
+        });
+    } catch(e) { console.log('Sync photo error:', e); }
+}
+
+function showMatchAnimation(girlId) {
+    playSound('match');
+    const g = GIRLS[girlId];
+    const photo = getProfilePhoto(girlId);
+    
+    const mainPhoto = document.getElementById('matchGirlPhoto');
+    if (photo) {
+        mainPhoto.innerHTML = `<img src="${photo}" alt="${g.name}">`;
+    } else {
+        mainPhoto.innerHTML = `<span class="match-initial">${INITIALS[girlId]}</span>`;
+    }
+    
+    document.getElementById('matchGirlName').textContent = g.name + ', ' + g.age;
+    
+    document.getElementById('matchPhotoUser').textContent = user.name.charAt(0).toUpperCase();
+    
+    const girlPhotoSmall = document.getElementById('matchPhotoGirl');
+    if (photo) {
+        girlPhotoSmall.innerHTML = `<img src="${photo}" alt="${g.name}">`;
+    } else {
+        girlPhotoSmall.textContent = INITIALS[girlId];
+    }
+    
+    document.getElementById('matchNames').textContent = user.name + ' + ' + g.name;
+    
+    const heartsDiv = document.getElementById('hearts');
+    heartsDiv.innerHTML = '';
+    for (let i = 0; i < 20; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.textContent = '♥';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDelay = Math.random() * 2 + 's';
+        heart.style.color = '#e91e63';
+        heartsDiv.appendChild(heart);
+    }
+    
+    document.getElementById('matchOverlay').style.display = 'flex';
+    girlMessagesFirst(girlId);
+}
+
+function showNoMatch() {
+    const msg = document.getElementById('noMatchMsg');
+    msg.style.display = 'block';
+    setTimeout(() => {
+        msg.style.display = 'none';
+        resetSwipeState();
+        isProcessingSwipe = false;
+        showNextCardInstant();
+    }, 1500);
+}
+
+function closeMatch() {
+    document.getElementById('matchOverlay').style.display = 'none';
+    resetSwipeState();
+    renderMatches();
+    isProcessingSwipe = false;
+    showNextCardInstant();
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const overlay = document.getElementById('matchOverlay');
+        if (overlay && overlay.style.display === 'flex') {
+            closeMatch();
+        }
+    }
+});
+
+function showHeartBurst(x, y) {
+    const heart = document.createElement('div');
+    heart.className = 'heart-burst';
+    heart.textContent = '❤️';
+    heart.style.left = x + 'px';
+    heart.style.top = y + 'px';
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 600);
+}
+
+function showTapFlash() {
+    const flash = document.createElement('div');
+    flash.className = 'tap-flash';
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 150);
+}
+
+let lastTapTime = 0;
+function handleDoubleTap(e, callback) {
+    const currentTime = Date.now();
+    const tapLength = currentTime - lastTapTime;
+    if (tapLength < 300 && tapLength > 0) {
+        callback(e);
+    }
+    lastTapTime = currentTime;
+}
+
+function doubleTapLike(e) {
+    showHeartBurst(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
+    swipeRight();
+}
+
+function goToMatchChat() {
+    document.getElementById('matchOverlay').style.display = 'none';
+    const lastMatch = matches[matches.length - 1];
+    showProfile(lastMatch);
+    renderMatches();
+}
+
+function renderMatches() {
+    const grid = document.getElementById('matchesGrid');
+    if (matches.length === 0) {
+        grid.style.display = 'none';
+        document.getElementById('noMatches').style.display = 'block';
+        return;
+    }
+    grid.style.display = 'grid';
+    document.getElementById('noMatches').style.display = 'none';
+    grid.innerHTML = matches.map(id => {
+        const g = GIRLS[id];
+        const photo = getProfilePhoto(id);
+        const loadingClass = (!photo && !failedPhotos[id]) ? 'photo-loading' : '';
+        const retryBtn = failedPhotos[id] ? `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${id}')">Reessayer</button>` : '';
+        const photoContent = photo ? 
+            `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">` : 
+            `<span class="card-initial">${INITIALS[id]}</span>${retryBtn}`;
+        return `
+            <div class="girl-card" onclick="showProfile('${id}')">
+                <div class="girl-card-img ${loadingClass}">${photoContent}</div>
+                <div class="girl-card-info">
+                    <div class="girl-card-name">${g.name}, ${g.age}</div>
+                    <div class="girl-card-tagline">${g.tagline}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function init() {
+    checkLogin();
+}
+
+let lastNavTab = 'discover';
+
+function showPage(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const pageId = 'page' + page.charAt(0).toUpperCase() + page.slice(1);
+    const pageEl = document.getElementById(pageId);
+    if (pageEl) pageEl.classList.add('active');
+    
+    if (['profile', 'chat'].includes(page)) {
+        document.getElementById('bottomNav').style.display = 'none';
+    } else {
+        document.getElementById('bottomNav').style.display = 'flex';
+    }
+}
+
+function goBackFromProfile() {
+    navigateTo(lastNavTab);
+}
+
+function goBackFromChat() {
+    showPage('profile');
+}
+
+function showProfile(id) {
+    if (!matches.includes(id)) {
+        showToast("Tu dois d'abord matcher avec elle!");
+        return;
+    }
+    currentGirl = id;
+    const g = GIRLS[id];
+    document.getElementById('profileName').textContent = g.name + ', ' + g.age;
+    document.getElementById('profileTagline').textContent = g.tagline;
+    document.getElementById('profileBio').textContent = g.bio;
+    document.getElementById('profileAffection').textContent = affectionLevels[id] + '%';
+    
+    const profilePhoto = document.getElementById('profileMainPhoto');
+    const photo = getProfilePhoto(id);
+    if (photo) {
+        profilePhoto.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`;
+        profilePhoto.classList.remove('photo-loading');
+    } else {
+        const retryBtn = failedPhotos[id] ? `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${id}')">Reessayer</button>` : '';
+        profilePhoto.innerHTML = `<span class="profile-initial">${INITIALS[id]}</span>${retryBtn}`;
+        if (!failedPhotos[id]) {
+            profilePhoto.classList.add('photo-loading');
+        } else {
+            profilePhoto.classList.remove('photo-loading');
+        }
+    }
+    loadProfilePhotos(id);
+    
+    showPage('profile');
+}
+
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 2000);
+}
+
+async function loadProfilePhotos(girlId) {
+    const grid = document.getElementById('profilePhotoGrid');
+    const mainPhoto = document.getElementById('profileMainPhoto');
+    const g = GIRLS[girlId];
+    const isMatched = matches.includes(girlId);
+    
+    // Ensure array exists with 5 slots
+    if (!profilePhotos[girlId]) profilePhotos[girlId] = [null, null, null, null, null];
+    while (profilePhotos[girlId].length < 5) profilePhotos[girlId].push(null);
+    
+    // First check for stored photos from server
+    try {
+        const storedRes = await fetch('/api/stored_photos/' + girlId);
+        const storedData = await storedRes.json();
+        if (storedData.photos && Object.keys(storedData.photos).length > 0) {
+            for (const [typeStr, url] of Object.entries(storedData.photos)) {
+                const idx = parseInt(typeStr);
+                if (idx >= 0 && idx < 5 && url) {
+                    profilePhotos[girlId][idx] = url;
+                }
+            }
+            localStorage.setItem('profilePhotos', JSON.stringify(profilePhotos));
+        }
+    } catch (e) {
+        console.log('Stored photos check failed:', e);
+    }
+    
+    // Check if first 4 photos exist (secret is separate)
+    const regularPhotosReady = profilePhotos[girlId].slice(0, 4).filter(p => p).length === 4;
+    if (regularPhotosReady) {
+        // If matched and secret photo missing, generate it
+        if (isMatched && !profilePhotos[girlId][4]) {
+            generateSecretPhoto(girlId);
+        }
+        renderProfilePhotos(girlId);
+        return;
+    }
+    
+    // Show loading state
+    const photoLabels = ['Portrait', 'Exterieur', 'Sexy', 'Lingerie', 'Secret'];
+    mainPhoto.innerHTML = '<div class="photo-loading"><div class="spinner"></div><span>Chargement...</span></div>';
+    mainPhoto.style.fontSize = '1rem';
+    
+    grid.innerHTML = photoLabels.map((label, i) => {
+        if (i === 4 && !isMatched) {
+            return `<div class="photo-grid-item photo-locked"><span class="lock-icon">🔒</span><span>Photo privee</span></div>`;
+        }
+        return `<div class="photo-grid-item"><div class="photo-loading"><div class="spinner"></div><span>${label}</span></div></div>`;
+    }).join('');
+    
+    const aff = affectionLevels[girlId] || 20;
+    
+    // Generate only first 4 photos (secret is handled separately)
+    for (let i = 0; i < 4; i++) {
+        if (profilePhotos[girlId][i]) {
+            renderProfilePhotos(girlId);
+            continue;
+        }
+        
+        if (currentGirl !== girlId) return;
+        
+        try {
+            const photoPrompt = PHOTO_TYPES[i].getPrompt(aff);
+            const res = await fetch('/photo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    girl: girlId,
+                    affection: aff,
+                    description: photoPrompt,
+                    photo_type: i
+                })
+            });
+            const data = await res.json();
+            
+            if (currentGirl !== girlId) return;
+            
+            if (data.image_url) {
+                profilePhotos[girlId][i] = data.image_url;
+                localStorage.setItem('profilePhotos', JSON.stringify(profilePhotos));
+                renderProfilePhotos(girlId);
+            }
+        } catch (e) {
+            console.error('Photo generation error:', e);
+        }
+    }
+    
+    // If matched, generate secret photo
+    if (isMatched && !profilePhotos[girlId][4]) {
+        generateSecretPhoto(girlId);
+    }
+}
+
+function renderProfilePhotos(girlId) {
+    // Guard: only render if this is still the active profile
+    if (currentGirl !== girlId) return;
+    
+    const grid = document.getElementById('profilePhotoGrid');
+    const mainPhoto = document.getElementById('profileMainPhoto');
+    const photos = profilePhotos[girlId] || [];
+    const isMatched = matches.includes(girlId);
+    
+    if (photos[0]) {
+        mainPhoto.innerHTML = `<img src="${photos[0]}" style="width:100%;height:100%;object-fit:cover;">`;
+        mainPhoto.style.fontSize = '';
+    } else {
+        mainPhoto.textContent = INITIALS[girlId];
+    }
+    
+    const labels = ['Portrait', 'Exterieur', 'Sexy', 'Lingerie', 'Secret'];
+    grid.innerHTML = labels.map((label, i) => {
+        // Photo 5 (index 4) is locked until match
+        if (i === 4) {
+            if (!isMatched) {
+                return `<div class="photo-grid-item photo-locked"><span class="lock-icon">🔒</span><span>Photo privee</span></div>`;
+            } else if (photos[i]) {
+                return `<div class="photo-grid-item secret-unlocked" onclick="openGallery('${girlId}', ${i})"><img src="${photos[i]}" alt="${label}"><span class="unlock-badge">🔓🔥</span></div>`;
+            } else {
+                return `<div class="photo-grid-item"><div class="photo-loading"><div class="spinner"></div><span>Deverrouillage...</span></div></div>`;
+            }
+        }
+        
+        if (photos[i]) {
+            return `<div class="photo-grid-item" onclick="openGallery('${girlId}', ${i})"><img src="${photos[i]}" alt="${label}"></div>`;
+        } else {
+            return `<div class="photo-grid-item"><div class="photo-loading"><div class="spinner"></div><span>${label}</span></div></div>`;
+        }
+    }).join('');
+}
+
+function openGallery(girlId, index) {
+    currentOverlayPhotos = profilePhotos[girlId] || [];
+    currentOverlayIndex = index;
+    updateOverlay();
+    document.getElementById('img-overlay').style.display = 'flex';
+}
+
+function updateOverlay() {
+    if (currentOverlayPhotos.length === 0) return;
+    document.getElementById('overlay-img').src = currentOverlayPhotos[currentOverlayIndex];
+    document.getElementById('overlay-counter').textContent = (currentOverlayIndex + 1) + ' / ' + currentOverlayPhotos.length;
+}
+
+function prevOverlayImg() {
+    if (currentOverlayPhotos.length === 0) return;
+    currentOverlayIndex = (currentOverlayIndex - 1 + currentOverlayPhotos.length) % currentOverlayPhotos.length;
+    updateOverlay();
+}
+
+function nextOverlayImg() {
+    if (currentOverlayPhotos.length === 0) return;
+    currentOverlayIndex = (currentOverlayIndex + 1) % currentOverlayPhotos.length;
+    updateOverlay();
+}
+
+function showVideoToast() {
+    showToast('Bientôt disponible');
+}
+
+let storyPhotos = [];
+let storyIndex = 0;
+let storyTimer = null;
+
+const STORY_TEXTS = [
+    "Coucou c'est moi",
+    "Ma journee en photos",
+    "Qu'est-ce que tu en penses?",
+    "Tu me manques..."
+];
+
+function openStories() {
+    const photos = profilePhotos[currentGirl] || [];
+    if (photos.filter(p => p).length === 0) {
+        showToast("Pas encore de photos disponibles");
+        return;
+    }
+    storyPhotos = photos.filter(p => p);
+    storyIndex = 0;
+    
+    const progressDiv = document.getElementById('storyProgress');
+    progressDiv.innerHTML = storyPhotos.map((_, i) => `<div class="story-bar"><div class="story-bar-fill" id="bar${i}"></div></div>`).join('');
+    
+    document.getElementById('storyOverlay').style.display = 'flex';
+    showStory();
+}
+
+function showStory() {
+    if (storyIndex >= storyPhotos.length) {
+        closeStories();
+        return;
+    }
+    document.getElementById('storyImg').src = storyPhotos[storyIndex];
+    document.getElementById('storyText').textContent = STORY_TEXTS[storyIndex % STORY_TEXTS.length];
+    
+    for (let i = 0; i < storyPhotos.length; i++) {
+        const bar = document.getElementById('bar' + i);
+        if (bar) {
+            bar.style.transition = 'none';
+            bar.style.width = i < storyIndex ? '100%' : '0%';
+        }
+    }
+    
+    const currentBar = document.getElementById('bar' + storyIndex);
+    if (currentBar) {
+        setTimeout(() => {
+            currentBar.style.transition = 'width 5s linear';
+            currentBar.style.width = '100%';
+        }, 50);
+    }
+    
+    clearTimeout(storyTimer);
+    storyTimer = setTimeout(() => {
+        storyIndex++;
+        showStory();
+    }, 5000);
+}
+
+function nextStory() {
+    storyIndex++;
+    showStory();
+}
+
+function prevStory() {
+    if (storyIndex > 0) storyIndex--;
+    showStory();
+}
+
+function closeStories() {
+    clearTimeout(storyTimer);
+    document.getElementById('storyOverlay').style.display = 'none';
+}
+
+function startChat() {
+    const g = GIRLS[currentGirl];
+    const chatAvatar = document.getElementById('chatInitials');
+    const photo = getProfilePhoto(currentGirl);
+    if (photo) {
+        chatAvatar.textContent = '';
+        chatAvatar.style.backgroundImage = `url('${photo}')`;
+        chatAvatar.style.backgroundSize = 'cover';
+        chatAvatar.style.backgroundPosition = 'center';
+    } else {
+        chatAvatar.textContent = INITIALS[currentGirl];
+        chatAvatar.style.backgroundImage = '';
+    }
+    document.getElementById('chatName').textContent = g.name;
+    renderMessages();
+    showPage('chat');
+    document.getElementById('chatInput').focus();
+}
+
+function getTime() {
+    const now = new Date();
+    return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+}
+
+function renderMessages() {
+    const msgs = chatHistory[currentGirl];
+    const container = document.getElementById('messages');
+    
+    if (msgs.length === 0) {
+        container.innerHTML = '<div class="empty-chat">DÉBUT DE LA CONVERSATION</div>';
+        return;
+    }
+    
+    container.innerHTML = msgs.map(m => {
+        const cls = m.role === 'user' ? 'user' : 'her';
+        const text = (m.content || '').replace(/\\[PHOTO:[^\\]]+\\]/g, '').trim();
+        const imgHtml = m.image ? `<div class="msg-img" onclick="fullscreenImg('${m.image}')"><img class="lazy-load" data-src="${m.image}" src="${m.image}" alt="Photo" onload="this.classList.add('loaded')"></div>` : '';
+        const receipt = m.role === 'user' ? '<span class="read-receipt">✓✓</span>' : '';
+        
+        return `<div class="msg ${cls}">
+            ${text ? `<div class="msg-bubble">${text}</div>` : ''}
+            ${imgHtml}
+            <div class="msg-meta">${m.time} ${receipt}</div>
+        </div>`;
+    }).join('');
+    
+    container.scrollTop = container.scrollHeight;
+}
+
+function fullscreenImg(url) {
+    currentOverlayPhotos = [url];
+    currentOverlayIndex = 0;
+    document.getElementById('overlay-img').src = url;
+    document.getElementById('overlay-counter').textContent = '1 / 1';
+    document.getElementById('img-overlay').style.display = 'flex';
+}
+
+function setTyping(isTyping) {
+    const el = document.getElementById('typing-indicator');
+    if (isTyping) {
+        el.innerHTML = GIRLS[currentGirl].name + ' <span class="typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>';
+        el.style.display = 'flex';
+        el.style.alignItems = 'center';
+        el.style.gap = '8px';
+    } else {
+        el.style.display = 'none';
+    }
+}
+
+async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    
+    playSound('send');
+    input.value = '';
+    document.getElementById('sendBtn').disabled = true;
+    document.getElementById('icebreakers').style.display = 'none';
+    clearUnreadMessages(currentGirl);
+    
+    const lowerText = text.toLowerCase();
+    let affDelta = 0;
+    if (['belle', 'jolie', 'adore', 'sexy', 'magnifique', 'charme', 'parfaite', 'canon', 'plait'].some(word => lowerText.includes(word))) {
+        affDelta += 5;
+    }
+    
+    let autoRequestPhoto = false;
+    if (['photo', 'nude', 'montre', 'voir', 'déshabille', 'nu', 'corps', 'poitrine', 'fesse'].some(word => lowerText.includes(word))) {
+        affDelta += 2;
+        autoRequestPhoto = true;
+    }
+    
+    if (affDelta > 0) {
+        affectionLevels[currentGirl] = Math.min(100, affectionLevels[currentGirl] + affDelta);
+        localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+        syncAffection(currentGirl, affDelta);
+    }
+    
+    const userMsg = { role: 'user', content: text, time: getTime() };
+    chatHistory[currentGirl].push(userMsg);
+    saveChatHistory(currentGirl);
+    syncChatMessage(currentGirl, userMsg);
+    renderMessages();
+    
+    const typingDelay = 1500 + Math.random() * 2000;
+    setTimeout(() => setTyping(true), typingDelay);
+    
+    try {
+        const res = await fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                girl: currentGirl,
+                affection: affectionLevels[currentGirl],
+                auto_photo: autoRequestPhoto,
+                messages: chatHistory[currentGirl].slice(-15).map(m => ({ role: m.role, content: m.content }))
+            })
+        });
+        
+        const data = await res.json();
+        setTyping(false);
+        playSound('message');
+        
+        let reply = data.reply || "Désolée, j'ai un souci technique...";
+        const photoMatch = reply.match(/\\[PHOTO:\\s*([^\\]]+)\\]/i);
+        const cleanReply = reply.replace(/\\[PHOTO:[^\\]]+\\]/gi, '').trim();
+        
+        const msgObj = { role: 'assistant', content: cleanReply, time: getTime() };
+        chatHistory[currentGirl].push(msgObj);
+        saveChatHistory(currentGirl);
+        syncChatMessage(currentGirl, msgObj);
+        renderMessages();
+        
+        if (photoMatch) {
+            await generatePhoto(photoMatch[1], msgObj);
+        } else if (data.smart_photo) {
+            await generatePhoto(data.smart_photo, msgObj);
+        }
+    } catch (e) {
+        setTyping(false);
+        chatHistory[currentGirl].push({ role: 'assistant', content: "Désolée, erreur réseau.", time: getTime() });
+        saveChatHistory(currentGirl);
+        renderMessages();
+    }
+    
+    document.getElementById('sendBtn').disabled = false;
+}
+
+async function requestProfilePhoto() {
+    startChat();
+    const msgObj = { role: 'assistant', content: "Tiens, une photo rien que pour toi...", time: getTime() };
+    chatHistory[currentGirl].push(msgObj);
+    saveChatHistory(currentGirl);
+    renderMessages();
+    await generatePhoto("casual selfie, beautiful smile, high quality", msgObj);
+}
+
+async function generatePhoto(description, msgObj) {
+    try {
+        const res = await fetch('/photo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                girl: currentGirl,
+                affection: affectionLevels[currentGirl],
+                description: description
+            })
+        });
+        
+        const data = await res.json();
+        if (data.image_url) {
+            msgObj.image = data.image_url;
+            saveReceivedPhoto(currentGirl, data.image_url);
+            saveChatHistory(currentGirl);
+            renderMessages();
+        }
+    } catch (e) { console.error('Photo error:', e); }
+}
+
+document.getElementById('chatInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') sendMessage();
+});
+
+init();
+</script>
+</body>
+</html>'''
+
+
+@app.route('/')
+def home():
+    return Response(HTML, mimetype='text/html')
+
+
+PHOTO_KEYWORDS = {
+    'culotte': 'showing panties, lifting skirt, revealing underwear',
+    'panties': 'showing panties, lifting skirt, revealing underwear',
+    'string': 'showing thong, from behind, bent over',
+    'seins': 'topless, showing breasts, nude chest',
+    'poitrine': 'topless, showing breasts, cleavage',
+    'nichons': 'topless, big breasts, nude',
+    'teton': 'topless, nipples visible, breasts',
+    'haut': 'removing top, taking off shirt',
+    'top': 'removing top, showing bra',
+    'soutif': 'showing bra, removing bra, lace bra',
+    'soutien': 'showing bra, lace bra, cleavage',
+    'pantalon': 'removing pants, showing legs, underwear visible',
+    'jupe': 'lifting skirt, showing legs, panties visible',
+    'robe': 'removing dress, in underwear',
+    'nue': 'fully nude, naked, no clothes',
+    'naked': 'fully nude, naked body',
+    'tout': 'fully nude, completely naked, showing everything',
+    'deshabille': 'undressing, removing clothes, stripping',
+    'fesses': 'showing butt, from behind, bent over',
+    'cul': 'showing ass, from behind, bent over nude',
+    'chatte': 'nude, legs spread, intimate pose',
+    'pussy': 'nude, legs spread, showing pussy',
+    'sexe': 'nude, intimate pose, explicit',
+    'ecarte': 'legs spread, nude, showing pussy',
+    'allonge': 'lying in bed, nude, seductive pose',
+    'lit': 'in bed, bedroom, intimate',
+    'douche': 'in shower, wet, nude',
+    'bain': 'in bath, wet body, nude'
+}
+
+def detect_photo_request(message):
+    msg_lower = message.lower()
+    for keyword, photo_desc in PHOTO_KEYWORDS.items():
+        if keyword in msg_lower:
+            return photo_desc
+    photo_triggers = ['montre', 'envoie', 'photo', 'voir', 'vois', 'regarde', 'image']
+    if any(trigger in msg_lower for trigger in photo_triggers):
+        return 'sexy pose, seductive'
+    return None
+
+RUDE_WORDS = ['pute', 'salope', 'connasse', 'chienne', 'garce', 'idiote', 'conne', 'ferme', 'ta gueule', 'nique', 'fuck you', 'bitch', 'whore']
+RUSHING_WORDS = ['nude', 'nue', 'seins', 'chatte', 'pussy', 'baise', 'suce', 'levrette', 'sexe']
+
+DEFAULT_PERSONALITY = "Tu es une fille normale, sympa mais pas facile. Tu aimes les mecs drôles et respectueux."
+
+def detect_mood(messages, affection):
+    if len(messages) < 2:
+        return "neutral"
+    
+    last_msgs = [m['content'].lower() for m in messages[-5:] if m.get('role') == 'user']
+    text = ' '.join(last_msgs)
+    
+    if any(w in text for w in RUDE_WORDS):
+        return "annoyed"
+    
+    if any(w in text for w in ['belle', 'magnifique', 'adorable', 'mdr', 'haha', 'drole']):
+        if affection > 50:
+            return "happy"
+        return "neutral"
+    
+    if affection > 70 and any(w in text for w in ['envie', 'chaud', 'excite', 'hot']):
+        return "horny"
+    
+    import random
+    if random.random() < 0.1:
+        return random.choice(["happy", "neutral", "annoyed"])
+    
+    return "neutral"
+
+def check_behavior(last_msg, affection, msg_count):
+    msg_lower = last_msg.lower()
+    
+    if any(w in msg_lower for w in RUDE_WORDS):
+        return "rude"
+    
+    if affection < 30 and any(w in msg_lower for w in RUSHING_WORDS):
+        return "rushing"
+    
+    if affection < 20 and any(w in msg_lower for w in ['photo', 'nude', 'montre']):
+        return "too_early"
+    
+    return "ok"
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.json
+    girl_id = data.get('girl', 'anastasia')
+    messages = data.get('messages', [])
+    affection = data.get('affection', 20)
+    auto_photo = data.get('auto_photo', False)
+    
+    girl = GIRLS.get(girl_id, GIRLS.get('jade', list(GIRLS.values())[0]))
+    msg_count = len(messages)
+    
+    last_user_msg = messages[-1]['content'] if messages else ""
+    smart_photo_desc = detect_photo_request(last_user_msg)
+    
+    mood = detect_mood(messages, affection)
+    behavior = check_behavior(last_user_msg, affection, msg_count)
+    
+    personality = girl.get('personality', DEFAULT_PERSONALITY)
+    
+    if behavior == "rude":
+        import random
+        responses = [
+            "Ok bye, j'ai pas besoin de ça",
+            "Wow t'es sérieux là? Ciao",
+            "Non mais t'es malade toi, je te bloque",
+            "Pas besoin d'être vulgaire, bye"
+        ]
+        return jsonify({"reply": random.choice(responses), "smart_photo": None, "unmatch": True})
+    
+    if behavior == "rushing":
+        import random
+        responses = [
+            "Wow calme toi, on se connait à peine là",
+            "Haha on se calme, on vient de matcher",
+            "T'es speed toi mdr, on se connait même pas",
+            "Du calme cowboy, on discute d'abord non?"
+        ]
+        return jsonify({"reply": random.choice(responses), "smart_photo": None})
+    
+    if behavior == "too_early":
+        import random
+        responses = [
+            "Tu crois quoi? On vient de matcher lol",
+            "Haha non merci, faut le mériter ça",
+            "Mdr t'es direct toi, peut-être si t'es sage",
+            "Je suis pas ce genre de fille... enfin pas tout de suite"
+        ]
+        return jsonify({"reply": random.choice(responses), "smart_photo": None})
+    
+    photo_instruction = ""
+    if affection < 30:
+        photo_instruction = "Tu refuses les photos intimes. Tu peux envoyer un selfie habillé max."
+    elif affection < 50:
+        photo_instruction = "Tu peux envoyer des photos sexy mais pas nue. [PHOTO: sexy outfit, cleavage]"
+    elif affection < 75:
+        photo_instruction = "Tu peux envoyer des photos en lingerie. [PHOTO: lingerie, bra]"
+    else:
+        photo_instruction = "Tu envoies des photos nues sans problème. [PHOTO: nude, topless]"
+    
+    mood_instruction = ""
+    if mood == "happy":
+        mood_instruction = "Tu es de bonne humeur, flirty, tu utilises des emojis."
+    elif mood == "annoyed":
+        mood_instruction = "Tu es agacée. Réponses courtes: 'Ouais', 'Mdr ok', 'Si tu veux'. Tu peux ignorer la question."
+    elif mood == "horny":
+        mood_instruction = "Tu es excitée. Tu parles de sexe, tu inities le sexting, tu proposes des photos."
+    else:
+        mood_instruction = "Tu es neutre, tu discutes normalement."
+    
+    # Determine archetype based on personality keywords
+    personality_lower = personality.lower()
+    archetype_name = "romantique"  # default
+    
+    if any(w in personality_lower for w in ['soumise', 'obei', 'docile', 'esclave', 'maitre']):
+        archetype_name = "soumise"
+    elif any(w in personality_lower for w in ['dominante', 'domina', 'controle', 'autorit', 'severe', 'stricte']):
+        archetype_name = "dominante"
+    elif any(w in personality_lower for w in ['nympho', 'insatiable', 'obsede', 'toujours', 'sexe']):
+        archetype_name = "nympho"
+    elif any(w in personality_lower for w in ['timide', 'reserv', 'pudique', 'discrete']):
+        archetype_name = "timide"
+    elif any(w in personality_lower for w in ['exhib', 'montre', 'cam', 'public']):
+        archetype_name = "exhib"
+    elif any(w in personality_lower for w in ['fetich', 'pied', 'uro', 'kink']):
+        archetype_name = "fetichiste"
+    elif any(w in personality_lower for w in ['pervers', 'tabou', 'roleplay', 'hard', 'anal', 'degradation']):
+        archetype_name = "perverse"
+    elif any(w in personality_lower for w in ['cougar', 'milf', 'mature', 'jeune', 'experience']):
+        archetype_name = "cougar"
+    elif any(w in personality_lower for w in ['salope', 'pute', 'vulgaire', 'trash', 'defonce']):
+        archetype_name = "salope"
+    
+    archetype = AGENT_ARCHETYPES.get(archetype_name, AGENT_ARCHETYPES["romantique"])
+    
+    # Build system content with archetype data
+    import random as rnd
+    system_content = SYSTEM_PROMPT.replace("{name}", girl['name'])\
+        .replace("{age}", str(girl['age']))\
+        .replace("{affection}", str(affection))\
+        .replace("{personality}", personality)\
+        .replace("{mood}", mood)\
+        .replace("{job}", girl.get('tagline', 'inconnue'))\
+        .replace("{country}", girl.get('location', 'quelque part'))\
+        .replace("{likes}", girl.get('likes', 'les bons moments'))\
+        .replace("{dislikes}", girl.get('dislikes', 'les relous'))\
+        .replace("{archetype}", archetype_name.upper())\
+        .replace("{archetype_style}", archetype['style'])\
+        .replace("{archetype_expressions}", ', '.join(rnd.sample(archetype['expressions'], min(3, len(archetype['expressions'])))))\
+        .replace("{archetype_fantasmes}", ', '.join(rnd.sample(archetype['fantasmes'], min(3, len(archetype['fantasmes'])))))\
+        .replace("{archetype_jeux}", rnd.choice(archetype['jeux']))\
+        .replace("{archetype_anecdotes}", rnd.choice(archetype['anecdotes']))
+    
+    system_content += f"\n\n{mood_instruction}\n{photo_instruction}"
+    
+    if auto_photo and affection >= 30:
+        system_content += "\nL'utilisateur demande une photo. Décris-la puis ajoute [PHOTO: description]."
+    elif auto_photo and affection < 30:
+        system_content += "\nL'utilisateur demande une photo mais tu ne le connais pas assez. Refuse gentiment."
+    
+    all_messages = [{"role": "system", "content": system_content}] + messages[-15:]
+    
+    print(f"[CHAT] Girl: {girl['name']}, Archetype: {archetype_name}, Affection: {affection}, Mood: {mood}")
+    
+    import urllib.parse
+    
+    # PRIMARY: OpenRouter via Replit AI Integrations (uncensored Mistral model)
+    if openrouter_client:
+        try:
+            chat_messages = [{"role": "system", "content": system_content}]
+            for m in messages[-20:]:  # Last 20 messages for better context
+                chat_messages.append({"role": m['role'], "content": m['content']})
+            
+            response = openrouter_client.chat.completions.create(
+                model="nousresearch/nous-hermes-2-mixtral-8x7b-dpo",
+                messages=chat_messages,
+                max_tokens=400,
+                temperature=0.9
+            )
+            
+            reply = response.choices[0].message.content
+            print(f"[CHAT] OpenRouter reply: {reply[:100]}...")
+            
+            if affection < 30:
+                smart_photo_desc = None
+            
+            return jsonify({"reply": reply, "smart_photo": smart_photo_desc})
+        except Exception as e:
+            print(f"OpenRouter error: {e}")
+    
+    # FALLBACK 1: Pollinations
+    try:
+        full_prompt = f"{system_content}\n\n"
+        for m in messages[-10:]:
+            role = "User" if m['role'] == 'user' else "Assistant"
+            full_prompt += f"{role}: {m['content']}\n"
+        full_prompt += "Assistant:"
+        
+        encoded_prompt = urllib.parse.quote(full_prompt[:3000])
+        response = requests.get(
+            f'https://text.pollinations.ai/{encoded_prompt}',
+            timeout=45
+        )
+        
+        if response.ok and response.text and len(response.text) > 5:
+            reply = response.text.strip()
+            print(f"[CHAT] Pollinations reply: {reply[:100]}...")
+            
+            if affection < 30:
+                smart_photo_desc = None
+            
+            return jsonify({"reply": reply, "smart_photo": smart_photo_desc})
+    except Exception as e:
+        print(f"Pollinations error: {e}")
+    
+    # FALLBACK 2: DeepInfra
+    try:
+        response = requests.post(
+            'https://api.deepinfra.com/v1/openai/chat/completions',
+            json={
+                "model": "Sao10K/L3.1-70B-Euryale-v2.3",
+                "messages": all_messages,
+                "max_tokens": 300,
+                "temperature": 0.7
+            },
+            timeout=45
+        )
+        
+        if response.ok:
+            result = response.json()
+            reply = result['choices'][0]['message']['content']
+            print(f"[CHAT] DeepInfra reply: {reply[:100]}...")
+            return jsonify({"reply": reply, "smart_photo": smart_photo_desc if affection >= 30 else None})
+        else:
+            print(f"DeepInfra status: {response.status_code}, {response.text[:200]}")
+    except Exception as e:
+        print(f"DeepInfra error: {e}")
+    
+    import random
+    fallbacks = [
+        "Désolée je peux pas là, je te reparle plus tard",
+        "Attend 2 sec, je reviens",
+        "Jsuis occupée là, on se reparle?",
+        "Mon tel bug, réessaie"
+    ]
+    return jsonify({"reply": random.choice(fallbacks), "smart_photo": None})
+
+
+POSE_KEYWORDS = {
+    'pipe': 'POV Deepthroat', 'suce': 'POV Deepthroat', 'suck': 'POV Deepthroat', 'blowjob': 'POV Deepthroat',
+    'deepthroat': 'POV Deepthroat', 'gorge': 'POV Deepthroat', 'avale': 'Pipe en POV', 'lick': 'Licking Dick',
+    'seins': 'Prise de sein en POV', 'poitrine': 'Prise de sein en POV', 'nichons': 'Prise de sein en POV',
+    'tits': 'Prise de sein en POV', 'boobs': 'Prise de sein en POV', 'titfuck': 'Prise de sein en POV',
+    'cul': 'Looking Back', 'fesses': 'Attrape le cul', 'ass': 'Looking Back', 'butt': 'Attrape le cul',
+    'chatte': 'Masturbation Féminine', 'pussy': 'Masturbation Féminine', 'mouillée': 'Masturbation Féminine',
+    'levrette': 'POV en levrette', 'doggystyle': 'Doggystyle Front Angle', 'derriere': 'POV en levrette',
+    'cowgirl': 'POV Cowgirl', 'chevauche': 'POV Cowgirl', 'ride': 'POV Cowgirl', 'monte': 'POV Cowgirl',
+    'missionnaire': 'Missionnaire en POV', 'missionary': 'Missionnaire en POV',
+    'branle': 'Branlette', 'handjob': 'Branlette', 'bite': 'Branlette', 'dick': 'Branlette',
+    'facial': 'Ejaculation', 'visage': 'Ejaculation', 'sperme': 'Sperme sur le cul', 'cum': 'Ejaculation',
+    'masturbe': 'Masturbation Féminine', 'doigts': 'Masturbation Féminine', 'finger': 'Masturbation Féminine',
+    'pieds': 'Footjob', 'feet': 'Footjob', 'footjob': 'Footjob',
+    'nue': 'Default', 'naked': 'Default', 'nude': 'Default', 'deshabille': 'Default',
+    'corps': 'Marche Arrêt', 'body': 'Marche Arrêt', 'montre': 'Hand on Hip',
+    'selfie': 'Mirror Selfie', 'miroir': 'Mirror Selfie',
+    'anal': 'POV en levrette', 'sodomie': 'POV en levrette'
+}
+
+EXPRESSION_KEYWORDS = {
+    'orgasme': 'Visage d\'orgasme', 'jouis': 'Visage d\'orgasme', 'cum': 'Visage d\'orgasme',
+    'excitée': 'Visage d\'orgasme', 'horny': 'Tirer la langue', 'chaude': 'Tirer la langue',
+    'douleur': 'Ouch', 'mal': 'Ouch', 'fort': 'Ouch', 'hard': 'Ouch'
+}
+
+def detect_pose_and_expression(description, affection):
+    desc_lower = description.lower() if description else ''
+    
+    pose = 'Default'
+    for keyword, detected_pose in POSE_KEYWORDS.items():
+        if keyword in desc_lower:
+            pose = detected_pose
+            break
+    
+    expression = 'Smiling'
+    for keyword, detected_expr in EXPRESSION_KEYWORDS.items():
+        if keyword in desc_lower:
+            expression = detected_expr
+            break
+    
+    is_explicit = any(k in desc_lower for k in ['pipe', 'suce', 'baise', 'levrette', 'cowgirl', 'branle', 'facial', 'sperme', 'anal', 'doggystyle'])
+    style = 'Hardcore XL' if is_explicit and affection >= 50 else 'Photo XL+ v2'
+    
+    if is_explicit and expression == 'Smiling':
+        expression = 'Visage d\'orgasme'
+    
+    return pose, expression, style
+
+@app.route('/photo', methods=['POST'])
+def photo():
+    if not API_KEY:
+        return jsonify({"error": "PROMPTCHAN_KEY not set"})
+    
+    data = request.json
+    girl_id = data.get('girl', 'anastasia')
+    description = data.get('description', '')
+    affection = data.get('affection', 20)
+    
+    girl = GIRLS.get(girl_id, GIRLS['anastasia'])
+    
+    pose, expression, style = detect_pose_and_expression(description, affection)
+    
+    mood_prompt = ""
+    if affection < 30:
+        mood_prompt = "wearing elegant classy dress, beautiful, soft lighting"
+        pose = "Default" if pose == "Default" else pose
+        expression = "Smiling"
+        style = "Photo XL+ v2"
+    elif affection < 50:
+        mood_prompt = "wearing tight sexy dress, showing legs, cleavage, seductive look"
+    elif affection < 75:
+        mood_prompt = "wearing sexy lingerie, lace bra, bedroom setting, seductive pose, intimate"
+    else:
+        mood_prompt = "nude, topless, naked, bedroom, seductive intimate pose, sensual lighting"
+
+    full_prompt = f"{girl['appearance']}, {mood_prompt}, {description}"
+    
+    negative_prompt = "extra limbs, missing limbs, wonky fingers, mismatched boobs, extra boobs, asymmetrical boobs, extra fingers, too many thumbs, random dicks, free floating dicks, extra pussies, deformed face, ugly, blurry"
+    
+    try:
+        response = requests.post(
+            'https://prod.aicloudnetservices.com/api/external/create',
+            headers={
+                'Content-Type': 'application/json',
+                'x-api-key': API_KEY
+            },
+            json={
+                "style": style,
+                "pose": pose,
+                "prompt": full_prompt,
+                "quality": "Ultra",
+                "expression": expression,
+                "age_slider": girl.get('age_slider', girl['age']),
+                "creativity": 50,
+                "restore_faces": True,
+                "seed": -1,
+                "negative_prompt": negative_prompt
+            },
+            timeout=45
+        )
+        
+        print(f"[PHOTO] Girl: {girl_id}, Pose: {pose}, Expression: {expression}, Style: {style}")
+        
+        if response.ok:
+            result = response.json()
+            image_val = result.get('image', result.get('image_url', ''))
+            
+            if image_val:
+                if isinstance(image_val, str) and not image_val.startswith('http') and not image_val.startswith('data:'):
+                    image_val = 'https://cdn.promptchan.ai/' + image_val
+                return jsonify({"image_url": image_val})
+            
+        return jsonify({"error": "No image in response"})
+            
+    except Exception as e:
+        print(f"Photo error: {e}")
+        return jsonify({"error": str(e)})
+
+
+FACE_VARIATIONS = ["oval face shape", "round face shape", "square jaw", "heart shaped face", "long face", "diamond face shape"]
+FEATURE_VARIATIONS = ["small nose", "big lips", "thin lips", "high cheekbones", "soft features", "sharp features"]
+
+PROFILE_PHOTO_TYPES = [
+    {"type": "portrait", "pose": "Default", "expression": "Smiling", "style": "Photo XL+ v2", "prompt_suffix": "face portrait closeup, dating app photo, natural lighting, friendly smile, high quality"},
+    {"type": "casual", "pose": "Mirror Selfie", "expression": "Smiling", "style": "Photo XL+ v2", "prompt_suffix": "full body, casual outfit, outdoor setting, relaxed pose, smartphone selfie"},
+    {"type": "sexy", "pose": "Hand on Hip", "expression": "Default", "style": "Photo XL+ v2", "prompt_suffix": "sexy pose, tight clothes, showing curves, confident look, indoor"},
+    {"type": "lingerie", "pose": "Looking Back", "expression": "Smiling", "style": "Photo XL+ v2", "prompt_suffix": "wearing lingerie, bedroom setting, seductive pose, intimate"},
+    {"type": "secret", "pose": "POV Cowgirl", "expression": "Visage d'orgasme", "style": "Hardcore XL", "prompt_suffix": "nude, explicit, intimate POV angle, bedroom"}
+]
+
+NEGATIVE_PROMPT = "extra limbs, missing limbs, wonky fingers, mismatched boobs, extra boobs, asymmetrical boobs, extra fingers, too many thumbs, random dicks, free floating dicks, extra pussies, deformed face, ugly, blurry, bad anatomy"
+
+@app.route('/profile_photo', methods=['POST'])
+def profile_photo():
+    if not API_KEY:
+        return jsonify({"error": "PROMPTCHAN_KEY not set"})
+    
+    data = request.json
+    girl_id = data.get('girl', 'anastasia')
+    photo_type = data.get('photo_type', 0)
+    
+    girl = GIRLS.get(girl_id, GIRLS['anastasia'])
+    
+    photo_config = PROFILE_PHOTO_TYPES[photo_type % len(PROFILE_PHOTO_TYPES)]
+    
+    import random as rnd
+    face_var = rnd.choice(FACE_VARIATIONS)
+    feature_var = rnd.choice(FEATURE_VARIATIONS)
+    profile_prompt = f"{girl['appearance']}, {face_var}, {feature_var}, {photo_config['prompt_suffix']}, high quality"
+    
+    try:
+        response = requests.post(
+            'https://prod.aicloudnetservices.com/api/external/create',
+            headers={
+                'Content-Type': 'application/json',
+                'x-api-key': API_KEY
+            },
+            json={
+                "style": photo_config['style'],
+                "pose": photo_config['pose'],
+                "prompt": profile_prompt,
+                "quality": "Ultra",
+                "expression": photo_config['expression'],
+                "age_slider": girl.get('age_slider', girl['age']),
+                "creativity": 45,
+                "restore_faces": True,
+                "seed": -1,
+                "negative_prompt": NEGATIVE_PROMPT
+            },
+            timeout=45
+        )
+        
+        print(f"[PROFILE] Girl: {girl_id}, Type: {photo_config['type']}, Pose: {photo_config['pose']}")
+        
+        if response.ok:
+            result = response.json()
+            image_val = result.get('image', result.get('image_url', ''))
+            
+            if image_val:
+                if isinstance(image_val, str) and not image_val.startswith('http') and not image_val.startswith('data:'):
+                    image_val = 'https://cdn.promptchan.ai/' + image_val
+                
+                permanent_url = upload_to_supabase(image_val, girl_id, photo_type)
+                final_url = permanent_url if permanent_url else image_val
+                
+                try:
+                    existing = ProfilePhoto.query.filter_by(girl_id=girl_id, photo_type=photo_type).first()
+                    if existing:
+                        existing.photo_url = final_url
+                    else:
+                        new_photo = ProfilePhoto(girl_id=girl_id, photo_type=photo_type, photo_url=final_url)
+                        db.session.add(new_photo)
+                    db.session.commit()
+                    print(f"[DB] Saved photo for {girl_id} type {photo_type}: {final_url[:50]}...")
+                except Exception as db_err:
+                    print(f"DB save error: {db_err}")
+                    db.session.rollback()
+                
+                return jsonify({"image_url": final_url, "girl_id": girl_id, "photo_type": photo_config['type']})
+            
+        return jsonify({"error": "No image in response"})
+            
+    except Exception as e:
+        print(f"Profile photo error: {e}")
+        return jsonify({"error": str(e)})
+
+
+@app.route('/api/stored_photos/<girl_id>', methods=['GET'])
+def get_stored_photos(girl_id):
+    """Get all stored photos for a girl from database"""
+    try:
+        photos = ProfilePhoto.query.filter_by(girl_id=girl_id).all()
+        photo_dict = {str(p.photo_type): p.photo_url for p in photos}
+        return jsonify({"photos": photo_dict, "girl_id": girl_id})
+    except Exception as e:
+        print(f"Get stored photos error: {e}")
+        return jsonify({"photos": {}, "girl_id": girl_id})
+
+
+@app.route('/api/register', methods=['POST'])
+def register():
+    try:
+        data = request.json
+        username = data.get('username', '').strip()
+        email = data.get('email', '').strip().lower()
+        password = data.get('password', '')
+        age = data.get('age', 0)
+        
+        if not username or not email or not password or not age:
+            return jsonify({"error": "Tous les champs sont requis"}), 400
+        
+        if len(password) < 6:
+            return jsonify({"error": "Mot de passe trop court (min 6 caracteres)"}), 400
+        
+        if age < 18:
+            return jsonify({"error": "Tu dois avoir 18 ans ou plus"}), 400
+        
+        existing = User.query.filter((User.username == username) | (User.email == email)).first()
+        if existing:
+            return jsonify({"error": "Pseudo ou email deja utilise"}), 400
+        
+        password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        user = User(username=username, email=email, password_hash=password_hash, age=age)
+        db.session.add(user)
+        db.session.commit()
+        
+        session['user_id'] = user.id
+        
+        return jsonify({
+            "success": True,
+            "user": {"id": user.id, "username": user.username, "age": user.age}
+        })
+    except Exception as e:
+        db.session.rollback()
+        print(f"Register error: {e}")
+        return jsonify({"error": "Erreur serveur"}), 500
+
+
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    try:
+        data = request.json
+        email = data.get('email', '').strip().lower()
+        password = data.get('password', '')
+        
+        if not email or not password:
+            return jsonify({"error": "Email et mot de passe requis"}), 400
+        
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return jsonify({"error": "Compte non trouve"}), 404
+        
+        if not bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):
+            return jsonify({"error": "Mot de passe incorrect"}), 401
+        
+        session['user_id'] = user.id
+        
+        return jsonify({
+            "success": True,
+            "user": {"id": user.id, "username": user.username, "age": user.age}
+        })
+    except Exception as e:
+        print(f"Login error: {e}")
+        return jsonify({"error": "Erreur serveur"}), 500
+
+
+@app.route('/api/logout', methods=['POST'])
+def api_logout():
+    session.pop('user_id', None)
+    return jsonify({"success": True})
+
+
+@app.route('/api/me', methods=['GET'])
+def get_me():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"logged_in": False})
+    
+    user = User.query.get(user_id)
+    if not user:
+        session.pop('user_id', None)
+        return jsonify({"logged_in": False})
+    
+    return jsonify({
+        "logged_in": True,
+        "user": {"id": user.id, "username": user.username, "age": user.age}
+    })
+
+
+@app.route('/api/matches', methods=['GET'])
+def get_matches():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    matches = Match.query.filter_by(user_id=user_id).all()
+    return jsonify({
+        "matches": [{"girl_id": m.girl_id, "affection": m.affection} for m in matches]
+    })
+
+
+@app.route('/api/matches', methods=['POST'])
+def add_match():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    
+    existing = Match.query.filter_by(user_id=user_id, girl_id=girl_id).first()
+    if existing:
+        return jsonify({"success": True, "affection": existing.affection})
+    
+    match = Match(user_id=user_id, girl_id=girl_id, affection=20)
+    db.session.add(match)
+    db.session.commit()
+    
+    return jsonify({"success": True, "affection": 20})
+
+
+@app.route('/api/affection', methods=['POST'])
+def update_affection():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    delta = data.get('delta', 0)
+    
+    match = Match.query.filter_by(user_id=user_id, girl_id=girl_id).first()
+    if not match:
+        return jsonify({"error": "Not matched"}), 404
+    
+    match.affection = max(0, min(100, match.affection + delta))
+    db.session.commit()
+    
+    return jsonify({"success": True, "affection": match.affection})
+
+
+@app.route('/api/chat/<girl_id>', methods=['GET'])
+def get_chat(girl_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    messages = ChatMessage.query.filter_by(user_id=user_id, girl_id=girl_id).order_by(ChatMessage.timestamp).all()
+    return jsonify({
+        "messages": [{"sender": m.sender, "content": m.content, "time": m.time_str} for m in messages]
+    })
+
+
+@app.route('/api/chat/<girl_id>', methods=['POST'])
+def save_message(girl_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    sender = data.get('sender')
+    content = data.get('content')
+    time_str = data.get('time', '')
+    
+    message = ChatMessage(user_id=user_id, girl_id=girl_id, sender=sender, content=content, time_str=time_str)
+    db.session.add(message)
+    db.session.commit()
+    
+    return jsonify({"success": True})
+
+
+@app.route('/api/received_photos', methods=['GET'])
+def get_received_photos():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    photos = ReceivedPhoto.query.filter_by(user_id=user_id).order_by(ReceivedPhoto.received_at.desc()).all()
+    result = {}
+    for p in photos:
+        if p.girl_id not in result:
+            result[p.girl_id] = []
+        result[p.girl_id].append(p.photo_url)
+    
+    return jsonify({"photos": result})
+
+
+@app.route('/api/received_photos', methods=['POST'])
+def save_received_photo():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    photo_url = data.get('photo_url')
+    
+    photo = ReceivedPhoto(user_id=user_id, girl_id=girl_id, photo_url=photo_url)
+    db.session.add(photo)
+    db.session.commit()
+    
+    return jsonify({"success": True})
+
+
+@app.route('/api/discovered', methods=['GET'])
+def get_discovered():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    discovered = DiscoveredProfile.query.filter_by(user_id=user_id).all()
+    return jsonify({
+        "discovered": [{"girl_id": d.girl_id, "action": d.action} for d in discovered]
+    })
+
+
+@app.route('/api/discovered', methods=['POST'])
+def save_discovered():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    action = data.get('action', 'passed')
+    
+    existing = DiscoveredProfile.query.filter_by(user_id=user_id, girl_id=girl_id).first()
+    if existing:
+        existing.action = action
+    else:
+        d = DiscoveredProfile(user_id=user_id, girl_id=girl_id, action=action)
+        db.session.add(d)
+    
+    db.session.commit()
+    return jsonify({"success": True})
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
