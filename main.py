@@ -5049,10 +5049,10 @@ def chat():
                 chat_messages.append({"role": m['role'], "content": m['content']})
             
             response = openrouter_client.chat.completions.create(
-                model="mistralai/mistral-medium-3.1",  # Uncensored Mistral model
+                model="nousresearch/nous-hermes-2-mixtral-8x7b-dpo",
                 messages=chat_messages,
-                max_tokens=500,
-                temperature=0.85
+                max_tokens=400,
+                temperature=0.9
             )
             
             reply = response.choices[0].message.content
