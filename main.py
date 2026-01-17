@@ -2310,17 +2310,25 @@ HTML = '''<!DOCTYPE html>
         .nav-tab { padding: 0.6rem 1.2rem; background: #12121a; border: none; border-radius: 20px; color: #888; font-size: 0.8rem; cursor: pointer; }
         .nav-tab.active { background: #e91e63; color: white; }
         
-        /* SWIPE PAGE */
-        .swipe-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1rem; position: relative; }
-        .swipe-card { width: 100%; max-width: 350px; height: 500px; background: #12121a; border-radius: 25px; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); will-change: transform; transform: translateZ(0); }
+        /* SWIPE PAGE - GPU ACCELERATED */
+        .swipe-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1rem; position: relative; perspective: 1000px; overflow: hidden; }
+        .swipe-card { width: 100%; max-width: 350px; height: 500px; background: #12121a; border-radius: 25px; overflow: hidden; position: absolute; box-shadow: 0 10px 30px rgba(0,0,0,0.5); will-change: transform, opacity; transform: translate3d(0, 0, 0); transition: none; backface-visibility: hidden; -webkit-backface-visibility: hidden; touch-action: pan-y; user-select: none; }
+        .swipe-card.animating { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-out; }
+        .swipe-card.swipe-left { transform: translate3d(-120vw, 0, 0) rotate(-30deg); opacity: 0; }
+        .swipe-card.swipe-right { transform: translate3d(120vw, 0, 0) rotate(30deg); opacity: 0; }
+        .swipe-card.next-card { transform: translate3d(0, 0, -50px) scale(0.95); opacity: 0.7; z-index: 0; }
+        .swipe-card.current-card { z-index: 10; opacity: 1; }
         .swipe-card-img { height: 70%; background: #1a1a2e; display: flex; align-items: center; justify-content: center; font-size: 6rem; font-weight: 800; color: rgba(233,30,99,0.2); overflow: hidden; position: relative; }
-        .swipe-card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .swipe-card-img img { width: 100%; height: 100%; object-fit: cover; will-change: transform; }
         .swipe-initial, .profile-initial, .card-initial, .msg-initial { font-size: inherit; font-weight: 800; color: rgba(233,30,99,0.3); }
         .swipe-card-info { padding: 1.5rem; }
         .swipe-card-name { font-size: 1.5rem; font-weight: 700; }
         .swipe-card-location { color: #888; font-size: 0.9rem; margin-top: 0.3rem; }
         .swipe-card-bio { color: #aaa; font-size: 0.85rem; margin-top: 0.5rem; line-height: 1.4; }
-        .swipe-buttons { display: flex; justify-content: center; gap: 2rem; padding: 1.5rem; }
+        .swipe-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 4rem; font-weight: 800; opacity: 0; pointer-events: none; z-index: 100; }
+        .swipe-overlay.like { color: #4CAF50; text-shadow: 0 0 20px rgba(76, 175, 80, 0.5); }
+        .swipe-overlay.nope { color: #ff4444; text-shadow: 0 0 20px rgba(255, 68, 68, 0.5); }
+        .swipe-buttons { display: flex; justify-content: center; gap: 2rem; padding: 1.5rem; position: relative; z-index: 20; }
         .swipe-btn { width: 70px; height: 70px; border-radius: 50%; border: none; font-size: 2rem; cursor: pointer; transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.15s ease; will-change: transform; }
         .swipe-btn:active { transform: scale(0.85); }
         .swipe-btn-pass { background: #333; color: #ff4444; }
@@ -2446,12 +2454,13 @@ HTML = '''<!DOCTYPE html>
         .photo-grid-item { aspect-ratio: 3/4; background: #12121a; border-radius: 12px; overflow: hidden; cursor: pointer; position: relative; border: 1px solid rgba(255,255,255,0.05); }
         .photo-grid-item img { width: 100%; height: 100%; object-fit: cover; }
         .photo-grid-item:hover { opacity: 0.9; }
-        .photo-locked { display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a1a2e, #16213e); cursor: not-allowed; }
-        .photo-locked .lock-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-        .photo-locked span { color: #888; font-size: 0.75rem; text-align: center; }
+        .photo-locked { display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a1a2e, #16213e); cursor: not-allowed; position: relative; overflow: hidden; }
+        .photo-locked::before { content: ''; position: absolute; inset: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="35" r="20" fill="%23e91e6333"/><ellipse cx="50" cy="75" rx="30" ry="25" fill="%23e91e6322"/></svg>') center/cover; filter: blur(20px); opacity: 0.5; }
+        .photo-locked .lock-icon { font-size: 2rem; margin-bottom: 0.5rem; z-index: 1; }
+        .photo-locked span { color: #888; font-size: 0.75rem; text-align: center; z-index: 1; }
         .secret-unlocked { position: relative; }
-        .secret-unlocked .unlock-badge { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); padding: 3px 6px; border-radius: 8px; font-size: 0.8rem; }
-        .secret-unlocked img { border: 2px solid #e91e63; }
+        .secret-unlocked img { width: 100%; height: 100%; object-fit: cover; border: 2px solid #e91e63; }
+        .secret-unlocked .unlock-badge { position: absolute; top: 5px; right: 5px; background: linear-gradient(135deg, #e91e63, #ff6b6b); padding: 4px 8px; border-radius: 10px; font-size: 0.7rem; color: white; font-weight: 600; }
         .photo-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #666; }
         .photo-loading .spinner { width: 30px; height: 30px; border: 3px solid #333; border-top-color: #e91e63; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 0.5rem; }
         .photo-loading span { font-size: 0.7rem; }
@@ -2733,8 +2742,18 @@ HTML = '''<!DOCTYPE html>
         </div>
     </div>
     
-    <div class="swipe-container">
-        <div class="swipe-card" id="swipeCard" onclick="handleDoubleTap(event, doubleTapLike)">
+    <div class="swipe-container" id="swipeContainer">
+        <div class="swipe-card next-card" id="swipeCardNext">
+            <div class="swipe-card-img" id="swipeCardImgNext"></div>
+            <div class="swipe-card-info">
+                <div class="swipe-card-name" id="swipeCardNameNext"></div>
+                <div class="swipe-card-location" id="swipeCardLocationNext"></div>
+                <div class="swipe-card-bio" id="swipeCardBioNext"></div>
+            </div>
+        </div>
+        <div class="swipe-card current-card" id="swipeCard" onclick="handleDoubleTap(event, doubleTapLike)">
+            <div class="swipe-overlay like" id="swipeLikeOverlay">LIKE</div>
+            <div class="swipe-overlay nope" id="swipeNopeOverlay">NOPE</div>
             <div class="swipe-card-img" id="swipeCardImg"></div>
             <div class="swipe-card-info">
                 <div class="swipe-card-name" id="swipeCardName"></div>
@@ -3095,6 +3114,300 @@ let darkMode = localStorage.getItem('darkMode') !== 'false';
 let photoGenerationQueue = [];
 let isGeneratingPhotos = false;
 let failedPhotos = {};
+
+// INSTANT SWIPE SYSTEM - Preload queue
+let preloadedImages = {};
+let touchStartX = 0;
+let touchStartY = 0;
+let touchDeltaX = 0;
+let isDragging = false;
+const SWIPE_THRESHOLD = 80;
+
+// Image Preloader - Cache images for instant display
+function preloadImage(url) {
+    return new Promise((resolve, reject) => {
+        if (!url) { resolve(null); return; }
+        if (preloadedImages[url]) { resolve(preloadedImages[url]); return; }
+        const img = new Image();
+        img.onload = () => { preloadedImages[url] = img; resolve(img); };
+        img.onerror = () => resolve(null);
+        img.src = url;
+    });
+}
+
+// Preload next 5 profiles
+async function preloadNextProfiles() {
+    const toPreload = swipeQueue.slice(0, 5);
+    for (const girlId of toPreload) {
+        const photo = getProfilePhoto(girlId);
+        if (photo) await preloadImage(photo);
+    }
+}
+
+// Setup touch gestures for swipe card
+function setupTouchGestures() {
+    const card = document.getElementById('swipeCard');
+    if (!card) return;
+    
+    card.addEventListener('touchstart', handleTouchStart, { passive: true });
+    card.addEventListener('touchmove', handleTouchMove, { passive: false });
+    card.addEventListener('touchend', handleTouchEnd, { passive: true });
+    card.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+}
+
+function handleTouchStart(e) {
+    if (isProcessingSwipe) return;
+    const touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    touchDeltaX = 0;
+    isDragging = true;
+    const card = document.getElementById('swipeCard');
+    if (card) card.classList.remove('animating');
+}
+
+function handleTouchMove(e) {
+    if (!isDragging || isProcessingSwipe) return;
+    const touch = e.touches[0];
+    touchDeltaX = touch.clientX - touchStartX;
+    const deltaY = touch.clientY - touchStartY;
+    
+    if (Math.abs(touchDeltaX) > Math.abs(deltaY)) {
+        e.preventDefault();
+        updateCardPosition(touchDeltaX);
+    }
+}
+
+function handleTouchEnd(e) {
+    if (!isDragging) return;
+    isDragging = false;
+    
+    if (Math.abs(touchDeltaX) > SWIPE_THRESHOLD) {
+        if (touchDeltaX > 0) {
+            animateSwipe('right');
+        } else {
+            animateSwipe('left');
+        }
+    } else {
+        resetCardPosition();
+    }
+}
+
+function handleMouseDown(e) {
+    if (isProcessingSwipe) return;
+    touchStartX = e.clientX;
+    touchDeltaX = 0;
+    isDragging = true;
+    const card = document.getElementById('swipeCard');
+    if (card) card.classList.remove('animating');
+}
+
+function handleMouseMove(e) {
+    if (!isDragging || isProcessingSwipe) return;
+    touchDeltaX = e.clientX - touchStartX;
+    updateCardPosition(touchDeltaX);
+}
+
+function handleMouseUp(e) {
+    if (!isDragging) return;
+    isDragging = false;
+    
+    if (Math.abs(touchDeltaX) > SWIPE_THRESHOLD) {
+        if (touchDeltaX > 0) {
+            animateSwipe('right');
+        } else {
+            animateSwipe('left');
+        }
+    } else {
+        resetCardPosition();
+    }
+}
+
+function updateCardPosition(deltaX) {
+    const card = document.getElementById('swipeCard');
+    const likeOverlay = document.getElementById('swipeLikeOverlay');
+    const nopeOverlay = document.getElementById('swipeNopeOverlay');
+    if (!card) return;
+    
+    const rotation = deltaX * 0.05;
+    const opacity = Math.min(Math.abs(deltaX) / 100, 1);
+    
+    requestAnimationFrame(() => {
+        card.style.transform = `translate3d(${deltaX}px, 0, 0) rotate(${rotation}deg)`;
+        if (likeOverlay) likeOverlay.style.opacity = deltaX > 0 ? opacity : 0;
+        if (nopeOverlay) nopeOverlay.style.opacity = deltaX < 0 ? opacity : 0;
+    });
+}
+
+function resetCardPosition() {
+    const card = document.getElementById('swipeCard');
+    const likeOverlay = document.getElementById('swipeLikeOverlay');
+    const nopeOverlay = document.getElementById('swipeNopeOverlay');
+    if (!card) return;
+    
+    card.classList.add('animating');
+    requestAnimationFrame(() => {
+        card.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
+        if (likeOverlay) likeOverlay.style.opacity = 0;
+        if (nopeOverlay) nopeOverlay.style.opacity = 0;
+    });
+}
+
+function animateSwipe(direction) {
+    if (isProcessingSwipe) return;
+    isProcessingSwipe = true;
+    
+    const card = document.getElementById('swipeCard');
+    const likeOverlay = document.getElementById('swipeLikeOverlay');
+    const nopeOverlay = document.getElementById('swipeNopeOverlay');
+    if (!card) { isProcessingSwipe = false; return; }
+    
+    card.classList.add('animating');
+    
+    // Show overlay during animation
+    if (direction === 'right') {
+        if (likeOverlay) likeOverlay.style.opacity = 1;
+        card.classList.add('swipe-right');
+        setTimeout(() => processSwipeRight(), 250);
+    } else {
+        if (nopeOverlay) nopeOverlay.style.opacity = 1;
+        card.classList.add('swipe-left');
+        setTimeout(() => processSwipeLeft(), 250);
+    }
+}
+
+function processSwipeLeft() {
+    if (!currentSwipeGirl) { isProcessingSwipe = false; return; }
+    
+    const girlId = currentSwipeGirl;
+    if (!passed.includes(girlId)) {
+        passed.push(girlId);
+        localStorage.setItem('dreamPassed', JSON.stringify(passed));
+        syncDiscovered(girlId, 'passed');
+    }
+    
+    const idx = swipeQueue.indexOf(girlId);
+    if (idx > -1) swipeQueue.splice(idx, 1);
+    currentSwipeGirl = null;
+    
+    isProcessingSwipe = false;
+    showNextCardInstant();
+}
+
+function processSwipeRight() {
+    if (!currentSwipeGirl) { isProcessingSwipe = false; return; }
+    
+    const girlId = currentSwipeGirl;
+    showTapFlash();
+    showHeartBurst(window.innerWidth / 2, window.innerHeight / 2);
+    
+    const idx = swipeQueue.indexOf(girlId);
+    if (idx > -1) swipeQueue.splice(idx, 1);
+    currentSwipeGirl = null;
+    
+    if (!passed.includes(girlId)) {
+        passed.push(girlId);
+        localStorage.setItem('dreamPassed', JSON.stringify(passed));
+    }
+    
+    const g = GIRLS[girlId];
+    const matchChance = g.match_chance || 0.7;
+    
+    if (Math.random() < matchChance) {
+        if (!matches.includes(girlId)) {
+            matches.push(girlId);
+            localStorage.setItem('dreamMatches', JSON.stringify(matches));
+            syncMatch(girlId);
+            syncDiscovered(girlId, 'liked');
+            showMatchAnimation(girlId);
+        } else {
+            isProcessingSwipe = false;
+            showNextCardInstant();
+        }
+    } else {
+        syncDiscovered(girlId, 'liked');
+        showNoMatch();
+    }
+}
+
+function showNextCardInstant() {
+    swipeQueue = swipeQueue.filter(id => !matches.includes(id) && !passed.includes(id) && !blocked.includes(id));
+    
+    const card = document.getElementById('swipeCard');
+    const nextCard = document.getElementById('swipeCardNext');
+    
+    if (swipeQueue.length === 0) {
+        if (card) card.style.display = 'none';
+        if (nextCard) nextCard.style.display = 'none';
+        document.getElementById('swipeButtons').style.display = 'none';
+        document.getElementById('noMoreCards').style.display = 'block';
+        currentSwipeGirl = null;
+        return;
+    }
+    
+    // Swap next card data to current card
+    currentSwipeGirl = swipeQueue[0];
+    const g = GIRLS[currentSwipeGirl];
+    if (!g) { swipeQueue.shift(); showNextCardInstant(); return; }
+    
+    const photo = getProfilePhoto(currentSwipeGirl);
+    
+    requestAnimationFrame(() => {
+        // Reset current card position
+        if (card) {
+            card.classList.remove('swipe-left', 'swipe-right', 'animating');
+            card.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
+            card.style.display = 'block';
+            
+            const swipeImg = document.getElementById('swipeCardImg');
+            if (photo) {
+                swipeImg.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover;" loading="eager">`;
+                swipeImg.classList.remove('photo-loading');
+            } else {
+                swipeImg.innerHTML = `<span class="swipe-initial">${INITIALS[currentSwipeGirl]}</span>`;
+                swipeImg.classList.add('photo-loading');
+                queuePhotoGeneration(currentSwipeGirl);
+            }
+            
+            document.getElementById('swipeCardName').textContent = g.name + ', ' + g.age;
+            document.getElementById('swipeCardLocation').textContent = g.location;
+            document.getElementById('swipeCardBio').textContent = g.bio;
+            
+            const likeOverlay = document.getElementById('swipeLikeOverlay');
+            const nopeOverlay = document.getElementById('swipeNopeOverlay');
+            if (likeOverlay) likeOverlay.style.opacity = 0;
+            if (nopeOverlay) nopeOverlay.style.opacity = 0;
+        }
+        
+        // Prepare next card
+        if (swipeQueue.length > 1 && nextCard) {
+            const nextId = swipeQueue[1];
+            const nextG = GIRLS[nextId];
+            if (nextG) {
+                const nextPhoto = getProfilePhoto(nextId);
+                const nextImg = document.getElementById('swipeCardImgNext');
+                if (nextPhoto) {
+                    nextImg.innerHTML = `<img src="${nextPhoto}" alt="${nextG.name}" style="width:100%; height:100%; object-fit:cover;" loading="eager">`;
+                } else {
+                    nextImg.innerHTML = `<span class="swipe-initial">${INITIALS[nextId]}</span>`;
+                    queuePhotoGeneration(nextId);
+                }
+                document.getElementById('swipeCardNameNext').textContent = nextG.name + ', ' + nextG.age;
+                document.getElementById('swipeCardLocationNext').textContent = nextG.location;
+                document.getElementById('swipeCardBioNext').textContent = nextG.bio;
+                nextCard.style.display = 'block';
+            }
+        }
+        
+        document.getElementById('swipeButtons').style.display = 'flex';
+        document.getElementById('noMoreCards').style.display = 'none';
+    });
+    
+    // Preload more profiles in background
+    preloadNextProfiles();
+}
 
 function getProfilePhoto(girlId) {
     return profilePhotos[girlId] || null;
@@ -4012,93 +4325,24 @@ function initSwipe() {
     
     isProcessingSwipe = false;
     currentSwipeGirl = null;
+    isDragging = false;
     
     initProfilePhotos();
-    showNextCard();
+    setupTouchGestures();
+    showNextCardInstant();
+    preloadNextProfiles();
     renderMatches();
     updateMessageBadge();
     applyTheme();
 }
 
 function showNextCard() {
-    swipeQueue = swipeQueue.filter(id => !matches.includes(id) && !passed.includes(id) && !blocked.includes(id));
-    
-    if (swipeQueue.length === 0) {
-        document.getElementById('swipeCard').style.display = 'none';
-        document.getElementById('swipeButtons').style.display = 'none';
-        document.getElementById('noMoreCards').style.display = 'block';
-        currentSwipeGirl = null;
-        return;
-    }
-    
-    currentSwipeGirl = swipeQueue[0];
-    
-    if (!currentSwipeGirl || !GIRLS[currentSwipeGirl]) {
-        swipeQueue.shift();
-        showNextCard();
-        return;
-    }
-    
-    const g = GIRLS[currentSwipeGirl];
-    const photo = getProfilePhoto(currentSwipeGirl);
-    
-    requestAnimationFrame(() => {
-        const swipeImg = document.getElementById('swipeCardImg');
-        if (photo) {
-            swipeImg.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover;">`;
-            swipeImg.style.backgroundImage = '';
-            swipeImg.classList.remove('photo-loading');
-        } else {
-            const retryBtn = failedPhotos[currentSwipeGirl] ? `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${currentSwipeGirl}')">Reessayer</button>` : '';
-            swipeImg.innerHTML = `<span class="swipe-initial">${INITIALS[currentSwipeGirl]}</span>${retryBtn}`;
-            swipeImg.style.backgroundImage = '';
-            if (!failedPhotos[currentSwipeGirl]) {
-                swipeImg.classList.add('photo-loading');
-                queuePhotoGeneration(currentSwipeGirl);
-            } else {
-                swipeImg.classList.remove('photo-loading');
-            }
-        }
-        document.getElementById('swipeCardName').textContent = g.name + ', ' + g.age;
-        document.getElementById('swipeCardLocation').textContent = g.location;
-        document.getElementById('swipeCardBio').textContent = g.bio;
-        document.getElementById('swipeCard').style.display = 'block';
-        document.getElementById('swipeButtons').style.display = 'flex';
-        document.getElementById('noMoreCards').style.display = 'none';
-    });
-    
-    if (swipeQueue.length > 1) {
-        const nextId = swipeQueue[1];
-        if (!profilePhotos[nextId] && !failedPhotos[nextId]) {
-            queuePhotoGeneration(nextId);
-        }
-    }
+    showNextCardInstant();
 }
 
 function swipeLeft() {
     if (!currentSwipeGirl || isProcessingSwipe) return;
-    isProcessingSwipe = true;
-    
-    const girlId = currentSwipeGirl;
-    
-    if (!girlId || !GIRLS[girlId]) {
-        isProcessingSwipe = false;
-        showNextCard();
-        return;
-    }
-    
-    if (!passed.includes(girlId)) {
-        passed.push(girlId);
-        localStorage.setItem('dreamPassed', JSON.stringify(passed));
-        syncDiscovered(girlId, 'passed');
-    }
-    
-    const idx = swipeQueue.indexOf(girlId);
-    if (idx > -1) swipeQueue.splice(idx, 1);
-    currentSwipeGirl = null;
-    
-    isProcessingSwipe = false;
-    showNextCard();
+    animateSwipe('left');
 }
 
 function resetSwipeState() {
@@ -4112,52 +4356,7 @@ function resetSwipeState() {
 
 function swipeRight() {
     if (!currentSwipeGirl || isProcessingSwipe) return;
-    isProcessingSwipe = true;
-    
-    const girlId = currentSwipeGirl;
-    
-    if (!girlId || !GIRLS[girlId]) {
-        isProcessingSwipe = false;
-        showNextCard();
-        return;
-    }
-    
-    showTapFlash();
-    showHeartBurst(window.innerWidth / 2, window.innerHeight / 2);
-    
-    const idx = swipeQueue.indexOf(girlId);
-    if (idx > -1) swipeQueue.splice(idx, 1);
-    currentSwipeGirl = null;
-    
-    if (!passed.includes(girlId)) {
-        passed.push(girlId);
-        localStorage.setItem('dreamPassed', JSON.stringify(passed));
-    }
-    
-    const card = document.getElementById('swipeCard');
-    if (card) {
-        card.style.opacity = '0.5';
-        card.style.pointerEvents = 'none';
-    }
-    
-    const g = GIRLS[girlId];
-    const matchChance = g.match_chance || 0.7;
-    
-    if (Math.random() < matchChance) {
-        if (!matches.includes(girlId)) {
-            matches.push(girlId);
-            localStorage.setItem('dreamMatches', JSON.stringify(matches));
-            syncMatch(girlId);
-            syncDiscovered(girlId, 'liked');
-            showMatchAnimation(girlId);
-        } else {
-            isProcessingSwipe = false;
-            showNextCard();
-        }
-    } else {
-        syncDiscovered(girlId, 'liked');
-        showNoMatch();
-    }
+    animateSwipe('right');
 }
 
 async function syncMatch(girlId) {
@@ -4294,7 +4493,8 @@ function showNoMatch() {
     setTimeout(() => {
         msg.style.display = 'none';
         resetSwipeState();
-        showNextCard();
+        isProcessingSwipe = false;
+        showNextCardInstant();
     }, 1500);
 }
 
@@ -4302,7 +4502,8 @@ function closeMatch() {
     document.getElementById('matchOverlay').style.display = 'none';
     resetSwipeState();
     renderMatches();
-    showNextCard();
+    isProcessingSwipe = false;
+    showNextCardInstant();
 }
 
 document.addEventListener('keydown', function(e) {
