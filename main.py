@@ -4433,6 +4433,23 @@ async function loadProfilePhotos(girlId) {
     if (!profilePhotos[girlId]) profilePhotos[girlId] = [null, null, null, null, null];
     while (profilePhotos[girlId].length < 5) profilePhotos[girlId].push(null);
     
+    // First check for stored photos from server
+    try {
+        const storedRes = await fetch('/api/stored_photos/' + girlId);
+        const storedData = await storedRes.json();
+        if (storedData.photos && Object.keys(storedData.photos).length > 0) {
+            for (const [typeStr, url] of Object.entries(storedData.photos)) {
+                const idx = parseInt(typeStr);
+                if (idx >= 0 && idx < 5 && url) {
+                    profilePhotos[girlId][idx] = url;
+                }
+            }
+            localStorage.setItem('profilePhotos', JSON.stringify(profilePhotos));
+        }
+    } catch (e) {
+        console.log('Stored photos check failed:', e);
+    }
+    
     // Check if first 4 photos exist (secret is separate)
     const regularPhotosReady = profilePhotos[girlId].slice(0, 4).filter(p => p).length === 4;
     if (regularPhotosReady) {
