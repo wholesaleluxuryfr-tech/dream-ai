@@ -1313,7 +1313,9 @@ HTML = '''<!DOCTYPE html>
         /* SWIPE PAGE */
         .swipe-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1rem; position: relative; }
         .swipe-card { width: 100%; max-width: 350px; height: 500px; background: #12121a; border-radius: 25px; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); will-change: transform; transform: translateZ(0); }
-        .swipe-card-img { height: 70%; background: #1a1a2e; display: flex; align-items: center; justify-content: center; font-size: 6rem; font-weight: 800; color: rgba(233,30,99,0.2); }
+        .swipe-card-img { height: 70%; background: #1a1a2e; display: flex; align-items: center; justify-content: center; font-size: 6rem; font-weight: 800; color: rgba(233,30,99,0.2); overflow: hidden; position: relative; }
+        .swipe-card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .swipe-initial, .profile-initial, .card-initial, .msg-initial { font-size: inherit; font-weight: 800; color: rgba(233,30,99,0.3); }
         .swipe-card-info { padding: 1.5rem; }
         .swipe-card-name { font-size: 1.5rem; font-weight: 700; }
         .swipe-card-location { color: #888; font-size: 0.9rem; margin-top: 0.3rem; }
@@ -1327,10 +1329,17 @@ HTML = '''<!DOCTYPE html>
         
         /* MATCH OVERLAY */
         #matchOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .match-title { font-size: 2.5rem; font-weight: 800; color: #e91e63; margin-bottom: 2rem; animation: pulse 1s ease-in-out infinite; }
+        .match-title { font-size: 2.5rem; font-weight: 800; color: #e91e63; margin-bottom: 1rem; animation: pulse 1s ease-in-out infinite; }
+        .match-girl-photo { width: 180px; height: 180px; border-radius: 50%; background: #12121a; border: 4px solid #e91e63; overflow: hidden; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; }
+        .match-girl-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .match-girl-photo .match-initial { font-size: 4rem; font-weight: 800; color: rgba(233,30,99,0.4); }
+        .match-girl-name { font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 1rem; }
+        .match-heart-icon { font-size: 1.5rem; color: #e91e63; display: flex; align-items: center; }
+        .match-photo-small { width: 60px !important; height: 60px !important; font-size: 1.5rem !important; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        .match-photos { display: flex; gap: 1rem; margin-bottom: 2rem; }
-        .match-photo { width: 120px; height: 120px; border-radius: 50%; background: #12121a; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 800; color: rgba(233,30,99,0.3); border: 3px solid #e91e63; }
+        .match-photos { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; align-items: center; }
+        .match-photo { width: 60px; height: 60px; border-radius: 50%; background: #12121a; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 800; color: rgba(233,30,99,0.3); border: 2px solid #e91e63; overflow: hidden; }
+        .match-photo img { width: 100%; height: 100%; object-fit: cover; }
         .match-names { font-size: 1.2rem; color: white; margin-bottom: 2rem; }
         .match-btn { padding: 1rem 3rem; background: #e91e63; border: none; border-radius: 30px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; }
         .match-close { margin-top: 1rem; background: transparent; border: 1px solid #444; color: #888; padding: 0.8rem 2rem; border-radius: 30px; cursor: pointer; }
@@ -1969,13 +1978,15 @@ HTML = '''<!DOCTYPE html>
 <div id="matchOverlay">
     <div class="hearts" id="hearts"></div>
     <div class="match-title">C'est un Match!</div>
+    <div class="match-girl-photo" id="matchGirlPhoto"></div>
+    <div class="match-girl-name" id="matchGirlName"></div>
     <div class="match-photos">
-        <div class="match-photo" id="matchPhotoUser">?</div>
-        <div class="match-photo" id="matchPhotoGirl"></div>
+        <div class="match-photo match-photo-small" id="matchPhotoUser">?</div>
+        <div class="match-heart-icon">+</div>
+        <div class="match-photo match-photo-small" id="matchPhotoGirl"></div>
     </div>
-    <div class="match-names" id="matchNames"></div>
     <button class="match-btn" onclick="goToMatchChat()">Envoyer un message</button>
-    <button class="match-close" onclick="closeMatch()">Continuer à swiper</button>
+    <button class="match-close" onclick="closeMatch()">Continuer a swiper</button>
 </div>
 
 <!-- NO MATCH MESSAGE -->
@@ -2127,34 +2138,30 @@ function refreshAllPhotos() {
     if (currentSwipeGirl) {
         const swipeImg = document.getElementById('swipeCardImg');
         if (swipeImg) {
+            const g = GIRLS[currentSwipeGirl];
             const photo = getProfilePhoto(currentSwipeGirl);
             if (photo) {
-                swipeImg.innerHTML = '';
-                swipeImg.style.backgroundImage = `url('${photo}')`;
-                swipeImg.style.backgroundSize = 'cover';
-                swipeImg.style.backgroundPosition = 'center top';
+                swipeImg.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover;">`;
                 swipeImg.classList.remove('photo-loading');
             } else if (failedPhotos[currentSwipeGirl]) {
                 const retryBtn = `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${currentSwipeGirl}')">Reessayer</button>`;
-                swipeImg.innerHTML = INITIALS[currentSwipeGirl] + retryBtn;
+                swipeImg.innerHTML = `<span class="swipe-initial">${INITIALS[currentSwipeGirl]}</span>${retryBtn}`;
                 swipeImg.classList.remove('photo-loading');
             }
         }
     }
     
     if (currentGirl) {
+        const g = GIRLS[currentGirl];
         const profilePhoto = document.getElementById('profileMainPhoto');
         if (profilePhoto) {
             const photo = getProfilePhoto(currentGirl);
             if (photo) {
-                profilePhoto.innerHTML = '';
-                profilePhoto.style.backgroundImage = `url('${photo}')`;
-                profilePhoto.style.backgroundSize = 'cover';
-                profilePhoto.style.backgroundPosition = 'center top';
+                profilePhoto.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`;
                 profilePhoto.classList.remove('photo-loading');
             } else if (failedPhotos[currentGirl]) {
                 const retryBtn = `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${currentGirl}')">Reessayer</button>`;
-                profilePhoto.innerHTML = INITIALS[currentGirl] + retryBtn;
+                profilePhoto.innerHTML = `<span class="profile-initial">${INITIALS[currentGirl]}</span>${retryBtn}`;
                 profilePhoto.classList.remove('photo-loading');
             }
         }
@@ -2163,21 +2170,7 @@ function refreshAllPhotos() {
         if (chatAvatar) {
             const photo = getProfilePhoto(currentGirl);
             if (photo) {
-                chatAvatar.textContent = '';
-                chatAvatar.style.backgroundImage = `url('${photo}')`;
-                chatAvatar.style.backgroundSize = 'cover';
-                chatAvatar.style.backgroundPosition = 'center';
-            }
-        }
-        
-        const matchPhotoGirl = document.getElementById('matchPhotoGirl');
-        if (matchPhotoGirl) {
-            const photo = getProfilePhoto(currentGirl);
-            if (photo) {
-                matchPhotoGirl.textContent = '';
-                matchPhotoGirl.style.backgroundImage = `url('${photo}')`;
-                matchPhotoGirl.style.backgroundSize = 'cover';
-                matchPhotoGirl.style.backgroundPosition = 'center';
+                chatAvatar.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
             }
         }
     }
@@ -2187,8 +2180,14 @@ function refreshAllPhotos() {
 }
 
 function initProfilePhotos() {
-    const girlIds = Object.keys(GIRLS);
-    girlIds.forEach(id => {
+    const firstBatch = swipeQueue.slice(0, 5);
+    firstBatch.forEach(id => {
+        if (!profilePhotos[id]) {
+            queuePhotoGeneration(id);
+        }
+    });
+    
+    matches.forEach(id => {
         if (!profilePhotos[id]) {
             queuePhotoGeneration(id);
         }
@@ -2596,13 +2595,12 @@ function renderMessagesList() {
         const preview = lastMsg ? (lastMsg.content.substring(0, 40) + (lastMsg.content.length > 40 ? '...' : '')) : 'Nouvelle conversation';
         const time = lastMsg ? lastMsg.time : '';
         const photo = getProfilePhoto(id);
-        const avatarStyle = photo ? 
-            `background-image: url('${photo}'); background-size: cover; background-position: center;` : 
-            'background: linear-gradient(135deg, #1a1a2e 0%, #0d0d12 100%);';
-        const initial = photo ? '' : INITIALS[id];
+        const avatarContent = photo ? 
+            `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : 
+            `<span class="msg-initial">${INITIALS[id]}</span>`;
         return `
             <div class="message-item" onclick="openChatDirectly('${id}')">
-                <div class="message-avatar" style="${avatarStyle}">${initial}</div>
+                <div class="message-avatar">${avatarContent}</div>
                 <div class="message-info">
                     <div class="message-name">${g.name}</div>
                     <div class="message-preview">${preview}</div>
@@ -2621,13 +2619,9 @@ function openChatDirectly(girlId) {
     const chatAvatar = document.getElementById('chatInitials');
     const photo = getProfilePhoto(girlId);
     if (photo) {
-        chatAvatar.textContent = '';
-        chatAvatar.style.backgroundImage = `url('${photo}')`;
-        chatAvatar.style.backgroundSize = 'cover';
-        chatAvatar.style.backgroundPosition = 'center';
+        chatAvatar.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
     } else {
-        chatAvatar.textContent = INITIALS[girlId];
-        chatAvatar.style.backgroundImage = '';
+        chatAvatar.innerHTML = `<span>${INITIALS[girlId]}</span>`;
     }
     renderMessages();
     showPage('chat');
@@ -2745,14 +2739,12 @@ function showNextCard() {
     requestAnimationFrame(() => {
         const swipeImg = document.getElementById('swipeCardImg');
         if (photo) {
-            swipeImg.innerHTML = '';
-            swipeImg.style.backgroundImage = `url('${photo}')`;
-            swipeImg.style.backgroundSize = 'cover';
-            swipeImg.style.backgroundPosition = 'center top';
+            swipeImg.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover;">`;
+            swipeImg.style.backgroundImage = '';
             swipeImg.classList.remove('photo-loading');
         } else {
             const retryBtn = failedPhotos[currentSwipeGirl] ? `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${currentSwipeGirl}')">Reessayer</button>` : '';
-            swipeImg.innerHTML = INITIALS[currentSwipeGirl] + retryBtn;
+            swipeImg.innerHTML = `<span class="swipe-initial">${INITIALS[currentSwipeGirl]}</span>${retryBtn}`;
             swipeImg.style.backgroundImage = '';
             if (!failedPhotos[currentSwipeGirl]) {
                 swipeImg.classList.add('photo-loading');
@@ -2806,20 +2798,27 @@ function swipeRight() {
 function showMatchAnimation(girlId) {
     playSound('match');
     const g = GIRLS[girlId];
+    const photo = getProfilePhoto(girlId);
+    
+    const mainPhoto = document.getElementById('matchGirlPhoto');
+    if (photo) {
+        mainPhoto.innerHTML = `<img src="${photo}" alt="${g.name}">`;
+    } else {
+        mainPhoto.innerHTML = `<span class="match-initial">${INITIALS[girlId]}</span>`;
+    }
+    
+    document.getElementById('matchGirlName').textContent = g.name + ', ' + g.age;
+    
     document.getElementById('matchPhotoUser').textContent = user.name.charAt(0).toUpperCase();
     
-    const girlPhoto = document.getElementById('matchPhotoGirl');
-    const photo = getProfilePhoto(girlId);
+    const girlPhotoSmall = document.getElementById('matchPhotoGirl');
     if (photo) {
-        girlPhoto.textContent = '';
-        girlPhoto.style.backgroundImage = `url('${photo}')`;
-        girlPhoto.style.backgroundSize = 'cover';
-        girlPhoto.style.backgroundPosition = 'center';
+        girlPhotoSmall.innerHTML = `<img src="${photo}" alt="${g.name}">`;
     } else {
-        girlPhoto.textContent = INITIALS[girlId];
-        girlPhoto.style.backgroundImage = '';
+        girlPhotoSmall.textContent = INITIALS[girlId];
     }
-    document.getElementById('matchNames').textContent = user.name + ' & ' + g.name;
+    
+    document.getElementById('matchNames').textContent = user.name + ' + ' + g.name;
     
     const heartsDiv = document.getElementById('hearts');
     heartsDiv.innerHTML = '';
@@ -2903,15 +2902,14 @@ function renderMatches() {
     grid.innerHTML = matches.map(id => {
         const g = GIRLS[id];
         const photo = getProfilePhoto(id);
-        const photoStyle = photo ? 
-            `background-image: url('${photo}'); background-size: cover; background-position: center top;` : 
-            '';
-        const initial = photo ? '' : INITIALS[id];
         const loadingClass = (!photo && !failedPhotos[id]) ? 'photo-loading' : '';
         const retryBtn = failedPhotos[id] ? `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${id}')">Reessayer</button>` : '';
+        const photoContent = photo ? 
+            `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">` : 
+            `<span class="card-initial">${INITIALS[id]}</span>${retryBtn}`;
         return `
             <div class="girl-card" onclick="showProfile('${id}')">
-                <div class="girl-card-img ${loadingClass}" style="${photoStyle}">${initial}${retryBtn}</div>
+                <div class="girl-card-img ${loadingClass}">${photoContent}</div>
                 <div class="girl-card-info">
                     <div class="girl-card-name">${g.name}, ${g.age}</div>
                     <div class="girl-card-tagline">${g.tagline}</div>
@@ -2963,15 +2961,11 @@ function showProfile(id) {
     const profilePhoto = document.getElementById('profileMainPhoto');
     const photo = getProfilePhoto(id);
     if (photo) {
-        profilePhoto.innerHTML = '';
-        profilePhoto.style.backgroundImage = `url('${photo}')`;
-        profilePhoto.style.backgroundSize = 'cover';
-        profilePhoto.style.backgroundPosition = 'center top';
+        profilePhoto.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`;
         profilePhoto.classList.remove('photo-loading');
     } else {
         const retryBtn = failedPhotos[id] ? `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${id}')">Reessayer</button>` : '';
-        profilePhoto.innerHTML = INITIALS[id] + retryBtn;
-        profilePhoto.style.backgroundImage = '';
+        profilePhoto.innerHTML = `<span class="profile-initial">${INITIALS[id]}</span>${retryBtn}`;
         if (!failedPhotos[id]) {
             profilePhoto.classList.add('photo-loading');
         } else {
