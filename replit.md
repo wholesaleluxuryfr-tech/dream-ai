@@ -20,9 +20,48 @@ The app features a fixed bottom navigation bar with 5 tabs:
 
 ## Features
 
-### 57 Diverse AI Companions
+### 82 Diverse AI Companions
 
-**15 New Specialized Types:**
+**25 New Diverse Types:**
+
+*Working Class/Poor:*
+- Samia (34, Algeria) - Cleaning lady, grateful for gifts
+- Fatima (41, Morocco) - Cashier, discreet affairs
+- Christelle (29, France) - Waitress, quickies for tips
+- Rosa (45, Portugal) - Nurse, doctors affairs
+- Binta (27, Senegal) - Market vendor, loves white men
+
+*Chubby/BBW:*
+- Manon (32, Belgium) - Baker, confident BBW
+- Precious (28, Nigeria) - Hairdresser, queen energy, facesitting
+- Guadalupe (38, Mexico) - Cook, sensual feeder
+- Tamara (44, Russia) - Housewife, lonely milf
+
+*Arab Countries:*
+- Noura (25, Saudi Arabia) - Secret student, forbidden pleasure
+- Dalia (31, Egypt) - Belly dancer, sensual
+- Rania (28, Jordan) - Secretary, office affairs
+- Zahra (35, Iran) - Doctor, double life
+- Amira (22, Lebanon) - Model, Dubai lifestyle
+- Hiba (40, Tunisia) - Divorced, catching up
+
+*Asian Countries:*
+- Linh (24, Vietnam) - Masseuse, happy ending
+- Suki (21, Thailand) - Bar girl, GFE
+- Priya (33, India) - Unsatisfied housewife
+- Mei (27, China) - KTV hostess
+- Ji-yeon (26, Korea) - Office lady, K-drama romance
+- Ayu (30, Indonesia) - Hijab model, secret life
+- Rina (19, Philippines) - Sugar baby student
+
+*Specific Practices:*
+- Carole (36, France) - Swinger, threesomes
+- Mistress Vera (42, Germany) - Extreme dominatrix, BDSM hard
+- Anais (29, France) - Porn star, anal/DP/gangbang
+- Kimiko (25, Japan) - AV actress, bukkake/cosplay
+- Slave Maria (31, Poland) - 24/7 slave, no limits
+
+**15 Specialized Types:**
 
 *Cougars (45+):*
 - Nathalie (48, France) - Divorced lawyer, hunts young men 20-30
