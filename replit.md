@@ -30,8 +30,8 @@ The application is built as a single-file Flask application (`main.py`), embeddi
 - **Authentication System:** Full user registration (username, email, password, age 18+), login/logout with session management, password hashing (bcrypt), and a tabbed login page.
 - **Tinder-Style Swipe System:** Variable match probabilities (30-90%), "C'est un Match!" animation, and "Elle n'a pas matché avec toi" feedback.
 - **AI Companions:** 134 diverse AI companions with unique personalities, mood systems (happy, neutral, annoyed, horny), behavior detection (rude, rushing, too_early), and rejection logic based on affection or disrespect.
-- **Chat AI:** Provides short, coherent responses (1-3 sentences) with French slang and context-aware memory.
-- **Photo System:** Auto-generates profile photos on first visit for each girl using Promptchan API, with photos cached locally. Four types of profile photos (Portrait, Sexy, Lingerie, Revealing) and context-based photo generation triggered by keywords in user messages.
+- **Chat AI:** Provides short, coherent responses (1-3 sentences) with French slang and context-aware memory. Enhanced with 10 distinct agent archetypes (soumise, dominante, nympho, timide, exhib, fetichiste, romantique, perverse, cougar, salope) - each with unique conversation styles, expressions, fantasies, games to propose, and personal anecdotes. Archetype is auto-detected from profile personality keywords.
+- **Photo System:** Auto-generates 5 profile photos per girl using Promptchan API: Portrait, Fullbody, Sexy, Lingerie, and Secret (explicit). Photos cached locally. Secret photo locked until match - unlocks automatically after matching. Context-based photo generation triggered by keywords in user messages.
 - **Affection-Based Content:** Dynamic content unlocking based on affection levels (Elegant, Sexy, Lingerie, Nude/Intimate photos).
 - **Stories Feature:** Instagram-style photo slideshow with auto-advance, navigation, and text overlays.
 - **Discover Filters:** Age (18-25, 25-35, 35-45, 45+) and Region (Europe, Asie, Afrique, Amerique, Tous) filters applied in real-time.
