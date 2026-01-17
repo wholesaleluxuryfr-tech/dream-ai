@@ -199,12 +199,21 @@ Keywords in user messages trigger auto-photo generation:
 - douche/bain → wet/shower scenes
 - And many more French/English keywords
 
+### Profile Photo Generation System
+- Auto-generates profile photos for each girl on first visit
+- Uses Promptchan API with portrait-style prompts
+- Photos cached in localStorage for instant loading
+- Loading state: Shows initial letter with skeleton animation
+- Retry button if generation fails
+- Photos displayed in: swipe cards, chat header, matches grid, messages list, profile page, match animation
+
 ### Data Storage (localStorage)
 - `dreamUser`: User profile (name, age)
 - `dreamMatches`: Array of matched girl IDs
 - `dreamPassed`: Array of passed girl IDs
 - `affectionLevels`: Object with affection per girl
-- `profilePhotos`: Object with photo arrays per girl
+- `profilePhotos`: Object with generated profile photo URLs per girl
+- `failedPhotos`: Object tracking failed photo generations for retry
 - `chat_[girlId]`: Full chat history per girl (persistent)
 - `receivedPhotos`: Object with photo URLs received in chats
 

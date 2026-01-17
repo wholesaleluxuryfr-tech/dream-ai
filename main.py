@@ -71,6 +71,10 @@ def icon_512():
     img.seek(0)
     return Response(img.getvalue(), mimetype='image/png')
 
+@app.route('/favicon.ico')
+def favicon():
+    return Response(b'', mimetype='image/x-icon', status=204)
+
 API_KEY = os.environ.get('PROMPTCHAN_KEY', '')
 
 SYSTEM_PROMPT = """Tu es {name}, {age} ans. Tu es une VRAIE personne sur une app de rencontres, pas un robot.
@@ -675,6 +679,12 @@ HTML = '''<!DOCTYPE html>
         .skeleton-circle { border-radius: 50%; }
         .skeleton-text { height: 14px; margin: 6px 0; }
         .skeleton-card { height: 240px; border-radius: 20px; }
+        
+        .photo-loading { position: relative; overflow: hidden; }
+        .photo-loading::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.08) 50%, transparent 75%); background-size: 200% 100%; animation: shimmer 1.5s ease-in-out infinite; }
+        .photo-initial { display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a1a2e 0%, #0d0d12 100%); font-weight: 700; color: rgba(233, 30, 99, 0.4); }
+        .photo-bg { background-size: cover; background-position: center top; background-repeat: no-repeat; }
+        .photo-retry { position: absolute; bottom: 10px; right: 10px; background: rgba(233, 30, 99, 0.8); color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 0.7rem; cursor: pointer; z-index: 10; }
         
         .page { display: none; min-height: 100vh; overflow-x: hidden; animation: fadeIn 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: opacity, transform; }
         @keyframes fadeIn { from { opacity: 0; transform: translate3d(0, 8px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
@@ -1432,6 +1442,171 @@ let pendingConfirmAction = null;
 let deferredPrompt = null;
 let darkMode = localStorage.getItem('darkMode') !== 'false';
 
+let photoGenerationQueue = [];
+let isGeneratingPhotos = false;
+let failedPhotos = JSON.parse(localStorage.getItem('failedPhotos') || '{}');
+
+function getProfilePhoto(girlId) {
+    return profilePhotos[girlId] || null;
+}
+
+function getPhotoHtml(girlId, sizeClass = '') {
+    const photo = getProfilePhoto(girlId);
+    const initial = INITIALS[girlId];
+    
+    if (photo) {
+        return `<div class="photo-bg ${sizeClass}" style="background-image: url('${photo}')"></div>`;
+    } else if (failedPhotos[girlId]) {
+        return `<div class="photo-initial ${sizeClass}">${initial}<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${girlId}')">Reessayer</button></div>`;
+    } else {
+        return `<div class="photo-initial photo-loading ${sizeClass}">${initial}</div>`;
+    }
+}
+
+function getAvatarHtml(girlId, size = 40) {
+    const photo = getProfilePhoto(girlId);
+    const initial = INITIALS[girlId];
+    const style = photo ? 
+        `background-image: url('${photo}'); background-size: cover; background-position: center;` : 
+        `background: linear-gradient(135deg, #1a1a2e 0%, #0d0d12 100%);`;
+    return `<div style="width: ${size}px; height: ${size}px; border-radius: 50%; ${style} display: flex; align-items: center; justify-content: center; font-weight: 600; color: rgba(233, 30, 99, 0.5); font-size: ${size * 0.4}px;">${photo ? '' : initial}</div>`;
+}
+
+async function generateProfilePhoto(girlId) {
+    if (profilePhotos[girlId]) return true;
+    
+    try {
+        const res = await fetch('/profile_photo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ girl: girlId })
+        });
+        
+        const data = await res.json();
+        
+        if (data.image_url) {
+            profilePhotos[girlId] = data.image_url;
+            localStorage.setItem('profilePhotos', JSON.stringify(profilePhotos));
+            delete failedPhotos[girlId];
+            localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
+            refreshAllPhotos();
+            return true;
+        } else {
+            failedPhotos[girlId] = true;
+            localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
+            refreshAllPhotos();
+            return false;
+        }
+    } catch (e) {
+        console.log('Photo gen error:', girlId, e);
+        failedPhotos[girlId] = true;
+        localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
+        refreshAllPhotos();
+        return false;
+    }
+}
+
+async function processPhotoQueue() {
+    if (isGeneratingPhotos || photoGenerationQueue.length === 0) return;
+    isGeneratingPhotos = true;
+    
+    while (photoGenerationQueue.length > 0) {
+        const girlId = photoGenerationQueue.shift();
+        if (!profilePhotos[girlId] && !failedPhotos[girlId]) {
+            await generateProfilePhoto(girlId);
+            await new Promise(r => setTimeout(r, 500));
+        }
+    }
+    
+    isGeneratingPhotos = false;
+}
+
+function queuePhotoGeneration(girlId) {
+    if (!profilePhotos[girlId] && !failedPhotos[girlId] && !photoGenerationQueue.includes(girlId)) {
+        photoGenerationQueue.push(girlId);
+        processPhotoQueue();
+    }
+}
+
+function retryPhoto(girlId) {
+    delete failedPhotos[girlId];
+    localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
+    queuePhotoGeneration(girlId);
+    refreshAllPhotos();
+}
+
+function refreshAllPhotos() {
+    if (currentSwipeGirl) {
+        const swipeImg = document.getElementById('swipeCardImg');
+        if (swipeImg) {
+            const photo = getProfilePhoto(currentSwipeGirl);
+            if (photo) {
+                swipeImg.innerHTML = '';
+                swipeImg.style.backgroundImage = `url('${photo}')`;
+                swipeImg.style.backgroundSize = 'cover';
+                swipeImg.style.backgroundPosition = 'center top';
+                swipeImg.classList.remove('photo-loading');
+            } else if (failedPhotos[currentSwipeGirl]) {
+                const retryBtn = `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${currentSwipeGirl}')">Reessayer</button>`;
+                swipeImg.innerHTML = INITIALS[currentSwipeGirl] + retryBtn;
+                swipeImg.classList.remove('photo-loading');
+            }
+        }
+    }
+    
+    if (currentGirl) {
+        const profilePhoto = document.getElementById('profileMainPhoto');
+        if (profilePhoto) {
+            const photo = getProfilePhoto(currentGirl);
+            if (photo) {
+                profilePhoto.innerHTML = '';
+                profilePhoto.style.backgroundImage = `url('${photo}')`;
+                profilePhoto.style.backgroundSize = 'cover';
+                profilePhoto.style.backgroundPosition = 'center top';
+                profilePhoto.classList.remove('photo-loading');
+            } else if (failedPhotos[currentGirl]) {
+                const retryBtn = `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${currentGirl}')">Reessayer</button>`;
+                profilePhoto.innerHTML = INITIALS[currentGirl] + retryBtn;
+                profilePhoto.classList.remove('photo-loading');
+            }
+        }
+        
+        const chatAvatar = document.getElementById('chatInitials');
+        if (chatAvatar) {
+            const photo = getProfilePhoto(currentGirl);
+            if (photo) {
+                chatAvatar.textContent = '';
+                chatAvatar.style.backgroundImage = `url('${photo}')`;
+                chatAvatar.style.backgroundSize = 'cover';
+                chatAvatar.style.backgroundPosition = 'center';
+            }
+        }
+        
+        const matchPhotoGirl = document.getElementById('matchPhotoGirl');
+        if (matchPhotoGirl) {
+            const photo = getProfilePhoto(currentGirl);
+            if (photo) {
+                matchPhotoGirl.textContent = '';
+                matchPhotoGirl.style.backgroundImage = `url('${photo}')`;
+                matchPhotoGirl.style.backgroundSize = 'cover';
+                matchPhotoGirl.style.backgroundPosition = 'center';
+            }
+        }
+    }
+    
+    renderMatches();
+    renderMessagesList();
+}
+
+function initProfilePhotos() {
+    const girlIds = Object.keys(GIRLS);
+    girlIds.forEach(id => {
+        if (!profilePhotos[id]) {
+            queuePhotoGeneration(id);
+        }
+    });
+}
+
 let audioContext = null;
 
 function initAudio() {
@@ -1832,9 +2007,14 @@ function renderMessagesList() {
         const lastMsg = chat[chat.length - 1];
         const preview = lastMsg ? (lastMsg.content.substring(0, 40) + (lastMsg.content.length > 40 ? '...' : '')) : 'Nouvelle conversation';
         const time = lastMsg ? lastMsg.time : '';
+        const photo = getProfilePhoto(id);
+        const avatarStyle = photo ? 
+            `background-image: url('${photo}'); background-size: cover; background-position: center;` : 
+            'background: linear-gradient(135deg, #1a1a2e 0%, #0d0d12 100%);';
+        const initial = photo ? '' : INITIALS[id];
         return `
             <div class="message-item" onclick="openChatDirectly('${id}')">
-                <div class="message-avatar">${INITIALS[id]}</div>
+                <div class="message-avatar" style="${avatarStyle}">${initial}</div>
                 <div class="message-info">
                     <div class="message-name">${g.name}</div>
                     <div class="message-preview">${preview}</div>
@@ -1850,7 +2030,17 @@ function openChatDirectly(girlId) {
     if (!chatHistory[girlId]) chatHistory[girlId] = loadChatHistory(girlId);
     const g = GIRLS[girlId];
     document.getElementById('chatName').textContent = g.name;
-    document.getElementById('chatInitials').textContent = INITIALS[girlId];
+    const chatAvatar = document.getElementById('chatInitials');
+    const photo = getProfilePhoto(girlId);
+    if (photo) {
+        chatAvatar.textContent = '';
+        chatAvatar.style.backgroundImage = `url('${photo}')`;
+        chatAvatar.style.backgroundSize = 'cover';
+        chatAvatar.style.backgroundPosition = 'center';
+    } else {
+        chatAvatar.textContent = INITIALS[girlId];
+        chatAvatar.style.backgroundImage = '';
+    }
     renderMessages();
     showPage('chat');
 }
@@ -1946,6 +2136,7 @@ function initSwipe() {
         if (affectionLevels[id] === undefined) affectionLevels[id] = 20;
     });
     localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+    initProfilePhotos();
     showNextCard();
     renderMatches();
     updateMessageBadge();
@@ -1961,9 +2152,27 @@ function showNextCard() {
     }
     currentSwipeGirl = swipeQueue[0];
     const g = GIRLS[currentSwipeGirl];
+    const photo = getProfilePhoto(currentSwipeGirl);
     
     requestAnimationFrame(() => {
-        document.getElementById('swipeCardImg').textContent = INITIALS[currentSwipeGirl];
+        const swipeImg = document.getElementById('swipeCardImg');
+        if (photo) {
+            swipeImg.innerHTML = '';
+            swipeImg.style.backgroundImage = `url('${photo}')`;
+            swipeImg.style.backgroundSize = 'cover';
+            swipeImg.style.backgroundPosition = 'center top';
+            swipeImg.classList.remove('photo-loading');
+        } else {
+            const retryBtn = failedPhotos[currentSwipeGirl] ? `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${currentSwipeGirl}')">Reessayer</button>` : '';
+            swipeImg.innerHTML = INITIALS[currentSwipeGirl] + retryBtn;
+            swipeImg.style.backgroundImage = '';
+            if (!failedPhotos[currentSwipeGirl]) {
+                swipeImg.classList.add('photo-loading');
+                queuePhotoGeneration(currentSwipeGirl);
+            } else {
+                swipeImg.classList.remove('photo-loading');
+            }
+        }
         document.getElementById('swipeCardName').textContent = g.name + ', ' + g.age;
         document.getElementById('swipeCardLocation').textContent = g.location;
         document.getElementById('swipeCardBio').textContent = g.bio;
@@ -1974,8 +2183,9 @@ function showNextCard() {
     
     const nextProfiles = swipeQueue.slice(1, 4);
     nextProfiles.forEach(id => {
-        const photos = profilePhotos[id] || [];
-        preloadImages(photos.slice(0, 2));
+        const photo = getProfilePhoto(id);
+        if (photo) preloadImages([photo]);
+        else queuePhotoGeneration(id);
     });
 }
 
@@ -2009,7 +2219,18 @@ function showMatchAnimation(girlId) {
     playSound('match');
     const g = GIRLS[girlId];
     document.getElementById('matchPhotoUser').textContent = user.name.charAt(0).toUpperCase();
-    document.getElementById('matchPhotoGirl').textContent = INITIALS[girlId];
+    
+    const girlPhoto = document.getElementById('matchPhotoGirl');
+    const photo = getProfilePhoto(girlId);
+    if (photo) {
+        girlPhoto.textContent = '';
+        girlPhoto.style.backgroundImage = `url('${photo}')`;
+        girlPhoto.style.backgroundSize = 'cover';
+        girlPhoto.style.backgroundPosition = 'center';
+    } else {
+        girlPhoto.textContent = INITIALS[girlId];
+        girlPhoto.style.backgroundImage = '';
+    }
     document.getElementById('matchNames').textContent = user.name + ' & ' + g.name;
     
     const heartsDiv = document.getElementById('hearts');
@@ -2093,9 +2314,16 @@ function renderMatches() {
     document.getElementById('noMatches').style.display = 'none';
     grid.innerHTML = matches.map(id => {
         const g = GIRLS[id];
+        const photo = getProfilePhoto(id);
+        const photoStyle = photo ? 
+            `background-image: url('${photo}'); background-size: cover; background-position: center top;` : 
+            '';
+        const initial = photo ? '' : INITIALS[id];
+        const loadingClass = (!photo && !failedPhotos[id]) ? 'photo-loading' : '';
+        const retryBtn = failedPhotos[id] ? `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${id}')">Reessayer</button>` : '';
         return `
             <div class="girl-card" onclick="showProfile('${id}')">
-                <div class="girl-card-img">${INITIALS[id]}</div>
+                <div class="girl-card-img ${loadingClass}" style="${photoStyle}">${initial}${retryBtn}</div>
                 <div class="girl-card-info">
                     <div class="girl-card-name">${g.name}, ${g.age}</div>
                     <div class="girl-card-tagline">${g.tagline}</div>
@@ -2144,7 +2372,24 @@ function showProfile(id) {
     document.getElementById('profileBio').textContent = g.bio;
     document.getElementById('profileAffection').textContent = affectionLevels[id] + '%';
     
-    document.getElementById('profileMainPhoto').textContent = INITIALS[id];
+    const profilePhoto = document.getElementById('profileMainPhoto');
+    const photo = getProfilePhoto(id);
+    if (photo) {
+        profilePhoto.innerHTML = '';
+        profilePhoto.style.backgroundImage = `url('${photo}')`;
+        profilePhoto.style.backgroundSize = 'cover';
+        profilePhoto.style.backgroundPosition = 'center top';
+        profilePhoto.classList.remove('photo-loading');
+    } else {
+        const retryBtn = failedPhotos[id] ? `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${id}')">Reessayer</button>` : '';
+        profilePhoto.innerHTML = INITIALS[id] + retryBtn;
+        profilePhoto.style.backgroundImage = '';
+        if (!failedPhotos[id]) {
+            profilePhoto.classList.add('photo-loading');
+        } else {
+            profilePhoto.classList.remove('photo-loading');
+        }
+    }
     loadProfilePhotos(id);
     
     showPage('profile');
@@ -2345,7 +2590,17 @@ function closeStories() {
 
 function startChat() {
     const g = GIRLS[currentGirl];
-    document.getElementById('chatInitials').textContent = INITIALS[currentGirl];
+    const chatAvatar = document.getElementById('chatInitials');
+    const photo = getProfilePhoto(currentGirl);
+    if (photo) {
+        chatAvatar.textContent = '';
+        chatAvatar.style.backgroundImage = `url('${photo}')`;
+        chatAvatar.style.backgroundSize = 'cover';
+        chatAvatar.style.backgroundPosition = 'center';
+    } else {
+        chatAvatar.textContent = INITIALS[currentGirl];
+        chatAvatar.style.backgroundImage = '';
+    }
     document.getElementById('chatName').textContent = g.name;
     renderMessages();
     showPage('chat');
@@ -2801,6 +3056,55 @@ def photo():
             
     except Exception as e:
         print(f"Photo error: {e}")
+        return jsonify({"error": str(e)})
+
+
+@app.route('/profile_photo', methods=['POST'])
+def profile_photo():
+    if not API_KEY:
+        return jsonify({"error": "PROMPTCHAN_KEY not set"})
+    
+    data = request.json
+    girl_id = data.get('girl', 'anastasia')
+    
+    girl = GIRLS.get(girl_id, GIRLS['anastasia'])
+    
+    profile_prompt = f"{girl['appearance']}, face portrait, beautiful, natural lighting, dating app photo, selfie style, friendly smile, high quality"
+    
+    try:
+        response = requests.post(
+            'https://prod.aicloudnetservices.com/api/external/create',
+            headers={
+                'Content-Type': 'application/json',
+                'x-api-key': API_KEY
+            },
+            json={
+                "style": "Photo XL+ v2",
+                "pose": "Default",
+                "prompt": profile_prompt,
+                "quality": "Ultra",
+                "expression": "Smile",
+                "age_slider": girl.get('age_slider', girl['age']),
+                "creativity": 40,
+                "restore_faces": True,
+                "seed": -1
+            },
+            timeout=30
+        )
+        
+        if response.ok:
+            result = response.json()
+            image_val = result.get('image', result.get('image_url', ''))
+            
+            if image_val:
+                if isinstance(image_val, str) and not image_val.startswith('http') and not image_val.startswith('data:'):
+                    image_val = 'https://cdn.promptchan.ai/' + image_val
+                return jsonify({"image_url": image_val, "girl_id": girl_id})
+            
+        return jsonify({"error": "No image in response"})
+            
+    except Exception as e:
+        print(f"Profile photo error: {e}")
         return jsonify({"error": str(e)})
 
 
