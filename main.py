@@ -81,8 +81,14 @@ class DiscoveredProfile(db.Model):
     discovered_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
-with app.app_context():
-    db.create_all()
+def init_db():
+    try:
+        with app.app_context():
+            db.create_all()
+    except Exception as e:
+        print(f"Database initialization: {e}")
+
+init_db()
 
 MANIFEST = {
     "name": "Dream AI",

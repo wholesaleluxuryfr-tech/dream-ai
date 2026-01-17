@@ -12,8 +12,8 @@ language = "python3"
 requiredFiles = [".replit", "replit.nix"]
 
 [deployment]
-run = ["python3", "main.py"]
-deploymentTarget = "cloudrun"
+run = ["gunicorn", "--bind=0.0.0.0:5000", "--workers=2", "--timeout=120", "--keep-alive=5", "main:app"]
+deploymentTarget = "autoscale"
 
 [agent]
 expertMode = true
@@ -35,13 +35,13 @@ args = "Flask App"
 name = "Flask App"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python main.py"
-waitForPort = 5000
-
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "gunicorn --bind=0.0.0.0:5000 --workers=2 --timeout=120 --keep-alive=5 main:app"
+waitForPort = 5000
 
 [[ports]]
 localPort = 5000
