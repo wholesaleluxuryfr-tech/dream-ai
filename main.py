@@ -19,8 +19,16 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
+    "pool_size": 3,
+    "max_overflow": 0,
+    "pool_timeout": 10,
 }
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db.session.remove()
 
 
 class User(db.Model):
@@ -2477,21 +2485,21 @@ HTML = '''<!DOCTYPE html>
             <button class="auth-tab" id="tabRegister" onclick="showAuthTab('register')">Inscription</button>
         </div>
         
-        <div class="login-form" id="formLogin">
-            <input type="email" class="login-input" id="loginEmail" placeholder="Email" required>
-            <input type="password" class="login-input" id="loginPassword" placeholder="Mot de passe" required>
-            <button class="login-btn" onclick="doLogin()">Se connecter</button>
+        <form class="login-form" id="formLogin" onsubmit="event.preventDefault(); doLogin();">
+            <input type="email" class="login-input" id="loginEmail" placeholder="Email" required autocomplete="email">
+            <input type="password" class="login-input" id="loginPassword" placeholder="Mot de passe" required autocomplete="current-password">
+            <button type="submit" class="login-btn">Se connecter</button>
             <div class="auth-error" id="loginError"></div>
-        </div>
+        </form>
         
-        <div class="login-form" id="formRegister" style="display:none;">
-            <input type="text" class="login-input" id="regUsername" placeholder="Pseudo" required>
-            <input type="email" class="login-input" id="regEmail" placeholder="Email" required>
-            <input type="password" class="login-input" id="regPassword" placeholder="Mot de passe" required>
+        <form class="login-form" id="formRegister" style="display:none;" onsubmit="event.preventDefault(); doRegister();">
+            <input type="text" class="login-input" id="regUsername" placeholder="Pseudo" required autocomplete="username">
+            <input type="email" class="login-input" id="regEmail" placeholder="Email" required autocomplete="email">
+            <input type="password" class="login-input" id="regPassword" placeholder="Mot de passe" required autocomplete="new-password">
             <input type="number" class="login-input" id="regAge" placeholder="Age (18+)" min="18" max="99" required>
-            <button class="login-btn" onclick="doRegister()">Creer mon compte</button>
+            <button type="submit" class="login-btn">Creer mon compte</button>
             <div class="auth-error" id="registerError"></div>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -3009,18 +3017,9 @@ function refreshAllPhotos() {
 }
 
 function initProfilePhotos() {
-    const firstBatch = swipeQueue.slice(0, 5);
-    firstBatch.forEach(id => {
-        if (!profilePhotos[id]) {
-            queuePhotoGeneration(id);
-        }
-    });
-    
-    matches.forEach(id => {
-        if (!profilePhotos[id]) {
-            queuePhotoGeneration(id);
-        }
-    });
+    if (swipeQueue.length > 0 && !profilePhotos[swipeQueue[0]]) {
+        queuePhotoGeneration(swipeQueue[0]);
+    }
 }
 
 let audioContext = null;
