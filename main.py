@@ -2281,6 +2281,12 @@ HTML = '''<!DOCTYPE html>
         .photo-grid-item { aspect-ratio: 3/4; background: #12121a; border-radius: 12px; overflow: hidden; cursor: pointer; position: relative; border: 1px solid rgba(255,255,255,0.05); }
         .photo-grid-item img { width: 100%; height: 100%; object-fit: cover; }
         .photo-grid-item:hover { opacity: 0.9; }
+        .photo-locked { display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a1a2e, #16213e); cursor: not-allowed; }
+        .photo-locked .lock-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .photo-locked span { color: #888; font-size: 0.75rem; text-align: center; }
+        .secret-unlocked { position: relative; }
+        .secret-unlocked .unlock-badge { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); padding: 3px 6px; border-radius: 8px; font-size: 0.8rem; }
+        .secret-unlocked img { border: 2px solid #e91e63; }
         .photo-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #666; }
         .photo-loading .spinner { width: 30px; height: 30px; border: 3px solid #333; border-top-color: #e91e63; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 0.5rem; }
         .photo-loading span { font-size: 0.7rem; }
@@ -3365,11 +3371,18 @@ function getRandomBg(category) {
     return bgs[Math.floor(Math.random() * bgs.length)];
 }
 
+const FACE_SHAPES = ['oval face shape', 'round face shape', 'square jawline', 'heart shaped face', 'diamond face'];
+const POSES = ['default pose', 'looking back over shoulder', 'mirror selfie', 'hand on hip confident'];
+const EXPRESSIONS = ['smiling warmly', 'sultry look', 'playful expression', 'seductive gaze', 'natural expression'];
+
+function getRandomFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
 const PHOTO_TYPES = [
-    { type: 'casual', getPrompt: (aff) => `casual everyday outfit, jeans and t-shirt or comfortable clothes, natural relaxed pose, ${getRandomBg('day')}, authentic candid photo, smartphone selfie style` },
-    { type: 'elegant', getPrompt: (aff) => `elegant cocktail dress, sophisticated style, ${getRandomBg('night')}, glamorous makeup, classy pose, evening wear` },
-    { type: 'swimsuit', getPrompt: (aff) => aff > 40 ? `wearing sexy bikini, ${getRandomBg('outdoor')}, beach or pool setting, showing curves, wet skin` : `wearing stylish swimsuit, ${getRandomBg('outdoor')}, beach setting, summer vibes` },
-    { type: 'sexy', getPrompt: (aff) => aff > 75 ? `nude in ${getRandomBg('home')}, intimate bedroom setting, sensual pose, naked body visible, explicit` : aff > 50 ? `wearing sexy lingerie, ${getRandomBg('home')}, seductive look, intimate setting, lace underwear` : `wearing revealing outfit, low cut top, ${getRandomBg('night')}, seductive pose, showing cleavage` }
+    { type: 'portrait', locked: false, getPrompt: () => `portrait photo, face closeup, ${getRandomFrom(EXPRESSIONS)}, ${getRandomFrom(FACE_SHAPES)}, natural makeup, ${getRandomBg('day')}, high quality selfie, looking at camera` },
+    { type: 'fullbody', locked: false, getPrompt: () => `full body shot, ${getRandomFrom(POSES)}, casual stylish outfit, ${getRandomBg('outdoor')}, fashion photography style, ${getRandomFrom(EXPRESSIONS)}` },
+    { type: 'sexy', locked: false, getPrompt: () => `sexy pose, ${getRandomFrom(POSES)}, tight dress or revealing top, ${getRandomBg('night')}, seductive ${getRandomFrom(EXPRESSIONS)}, showing curves, cleavage visible` },
+    { type: 'lingerie', locked: false, getPrompt: () => `wearing sexy lingerie, lace bra and panties, ${getRandomBg('home')}, bedroom setting, ${getRandomFrom(POSES)}, intimate atmosphere, seductive look` },
+    { type: 'secret', locked: true, getPrompt: () => `nude explicit, naked body fully visible, ${getRandomBg('home')}, intimate bedroom, sensual pose, orgasmic expression, erotic photography` }
 ];
 
 async function checkLogin() {
@@ -3856,7 +3869,44 @@ async function syncMatch(girlId) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ girl_id: girlId })
         });
+        // Trigger secret photo generation after match
+        generateSecretPhoto(girlId);
     } catch(e) { console.log('Sync match error:', e); }
+}
+
+async function generateSecretPhoto(girlId) {
+    // Ensure array exists with 5 slots
+    if (!profilePhotos[girlId]) profilePhotos[girlId] = [null, null, null, null, null];
+    if (profilePhotos[girlId].length < 5) {
+        while (profilePhotos[girlId].length < 5) profilePhotos[girlId].push(null);
+    }
+    
+    // Skip if secret photo already exists
+    if (profilePhotos[girlId][4]) return;
+    
+    try {
+        const aff = affectionLevels[girlId] || 20;
+        const photoPrompt = PHOTO_TYPES[4].getPrompt(aff);
+        const res = await fetch('/photo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                girl: girlId,
+                affection: aff,
+                description: photoPrompt,
+                photo_type: 4
+            })
+        });
+        const data = await res.json();
+        
+        if (data.image_url) {
+            profilePhotos[girlId][4] = data.image_url;
+            localStorage.setItem('profilePhotos', JSON.stringify(profilePhotos));
+            console.log('Secret photo unlocked for', girlId);
+        }
+    } catch (e) {
+        console.error('Secret photo generation error:', e);
+    }
 }
 
 async function syncDiscovered(girlId, action) {
@@ -4103,28 +4153,39 @@ async function loadProfilePhotos(girlId) {
     const grid = document.getElementById('profilePhotoGrid');
     const mainPhoto = document.getElementById('profileMainPhoto');
     const g = GIRLS[girlId];
+    const isMatched = matches.includes(girlId);
     
-    // Check if all 4 photos exist in localStorage
-    if (profilePhotos[girlId] && profilePhotos[girlId].filter(p => p).length === 4) {
+    // Ensure array exists with 5 slots
+    if (!profilePhotos[girlId]) profilePhotos[girlId] = [null, null, null, null, null];
+    while (profilePhotos[girlId].length < 5) profilePhotos[girlId].push(null);
+    
+    // Check if first 4 photos exist (secret is separate)
+    const regularPhotosReady = profilePhotos[girlId].slice(0, 4).filter(p => p).length === 4;
+    if (regularPhotosReady) {
+        // If matched and secret photo missing, generate it
+        if (isMatched && !profilePhotos[girlId][4]) {
+            generateSecretPhoto(girlId);
+        }
         renderProfilePhotos(girlId);
         return;
     }
     
     // Show loading state
-    const photoLabels = ['Selfie', 'Exterieur', 'Soiree', 'Intime'];
+    const photoLabels = ['Portrait', 'Exterieur', 'Sexy', 'Lingerie', 'Secret'];
     mainPhoto.innerHTML = '<div class="photo-loading"><div class="spinner"></div><span>Chargement...</span></div>';
     mainPhoto.style.fontSize = '1rem';
     
-    grid.innerHTML = photoLabels.map((label, i) => `
-        <div class="photo-grid-item">
-            <div class="photo-loading"><div class="spinner"></div><span>${label}</span></div>
-        </div>
-    `).join('');
+    grid.innerHTML = photoLabels.map((label, i) => {
+        if (i === 4 && !isMatched) {
+            return `<div class="photo-grid-item photo-locked"><span class="lock-icon">🔒</span><span>Photo privee</span></div>`;
+        }
+        return `<div class="photo-grid-item"><div class="photo-loading"><div class="spinner"></div><span>${label}</span></div></div>`;
+    }).join('');
     
     const aff = affectionLevels[girlId] || 20;
-    if (!profilePhotos[girlId]) profilePhotos[girlId] = [null, null, null, null];
     
-    for (let i = 0; i < PHOTO_TYPES.length; i++) {
+    // Generate only first 4 photos (secret is handled separately)
+    for (let i = 0; i < 4; i++) {
         if (profilePhotos[girlId][i]) {
             renderProfilePhotos(girlId);
             continue;
@@ -4140,7 +4201,8 @@ async function loadProfilePhotos(girlId) {
                 body: JSON.stringify({
                     girl: girlId,
                     affection: aff,
-                    description: photoPrompt
+                    description: photoPrompt,
+                    photo_type: i
                 })
             });
             const data = await res.json();
@@ -4156,6 +4218,11 @@ async function loadProfilePhotos(girlId) {
             console.error('Photo generation error:', e);
         }
     }
+    
+    // If matched, generate secret photo
+    if (isMatched && !profilePhotos[girlId][4]) {
+        generateSecretPhoto(girlId);
+    }
 }
 
 function renderProfilePhotos(girlId) {
@@ -4165,16 +4232,28 @@ function renderProfilePhotos(girlId) {
     const grid = document.getElementById('profilePhotoGrid');
     const mainPhoto = document.getElementById('profileMainPhoto');
     const photos = profilePhotos[girlId] || [];
+    const isMatched = matches.includes(girlId);
     
-    if (photos.length > 0) {
+    if (photos[0]) {
         mainPhoto.innerHTML = `<img src="${photos[0]}" style="width:100%;height:100%;object-fit:cover;">`;
         mainPhoto.style.fontSize = '';
     } else {
         mainPhoto.textContent = INITIALS[girlId];
     }
     
-    const labels = ['Selfie', 'Exterieur', 'Soiree', 'Intime'];
+    const labels = ['Portrait', 'Exterieur', 'Sexy', 'Lingerie', 'Secret'];
     grid.innerHTML = labels.map((label, i) => {
+        // Photo 5 (index 4) is locked until match
+        if (i === 4) {
+            if (!isMatched) {
+                return `<div class="photo-grid-item photo-locked"><span class="lock-icon">🔒</span><span>Photo privee</span></div>`;
+            } else if (photos[i]) {
+                return `<div class="photo-grid-item secret-unlocked" onclick="openGallery('${girlId}', ${i})"><img src="${photos[i]}" alt="${label}"><span class="unlock-badge">🔓🔥</span></div>`;
+            } else {
+                return `<div class="photo-grid-item"><div class="photo-loading"><div class="spinner"></div><span>Deverrouillage...</span></div></div>`;
+            }
+        }
+        
         if (photos[i]) {
             return `<div class="photo-grid-item" onclick="openGallery('${girlId}', ${i})"><img src="${photos[i]}" alt="${label}"></div>`;
         } else {
