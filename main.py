@@ -3612,8 +3612,31 @@ async function loadUserData() {
         profilePhotos = {};
         
         const savedProfilePhotos = localStorage.getItem('profilePhotos');
-        if (savedProfilePhotos) {
-            try { profilePhotos = JSON.parse(savedProfilePhotos); } catch(e) {}
+        const cacheVersion = localStorage.getItem('cacheVersion');
+        const CURRENT_CACHE_VERSION = '2.0'; // 5-photo system
+        
+        if (cacheVersion !== CURRENT_CACHE_VERSION) {
+            // Force refresh old cache - migrate from single photo to 5-photo system
+            console.log('Cache migration: clearing old profilePhotos for 5-photo system');
+            localStorage.removeItem('profilePhotos');
+            localStorage.setItem('cacheVersion', CURRENT_CACHE_VERSION);
+            profilePhotos = {};
+        } else if (savedProfilePhotos) {
+            try { 
+                profilePhotos = JSON.parse(savedProfilePhotos);
+                // Validate format - each entry should be an array of 5
+                for (const girlId in profilePhotos) {
+                    if (!Array.isArray(profilePhotos[girlId])) {
+                        // Old format detected, reset
+                        console.log('Old photo format detected, resetting');
+                        profilePhotos = {};
+                        localStorage.removeItem('profilePhotos');
+                        break;
+                    }
+                }
+            } catch(e) {
+                profilePhotos = {};
+            }
         }
         
         const [matchesRes, photosRes, discoveredRes] = await Promise.all([
