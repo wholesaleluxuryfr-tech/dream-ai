@@ -3586,6 +3586,55 @@ def chat():
     return jsonify({"reply": random.choice(fallbacks), "smart_photo": None})
 
 
+POSE_KEYWORDS = {
+    'pipe': 'POV Deepthroat', 'suce': 'POV Deepthroat', 'suck': 'POV Deepthroat', 'blowjob': 'POV Deepthroat',
+    'deepthroat': 'POV Deepthroat', 'gorge': 'POV Deepthroat', 'avale': 'Pipe en POV', 'lick': 'Licking Dick',
+    'seins': 'Prise de sein en POV', 'poitrine': 'Prise de sein en POV', 'nichons': 'Prise de sein en POV',
+    'tits': 'Prise de sein en POV', 'boobs': 'Prise de sein en POV', 'titfuck': 'Prise de sein en POV',
+    'cul': 'Looking Back', 'fesses': 'Attrape le cul', 'ass': 'Looking Back', 'butt': 'Attrape le cul',
+    'chatte': 'Masturbation Féminine', 'pussy': 'Masturbation Féminine', 'mouillée': 'Masturbation Féminine',
+    'levrette': 'POV en levrette', 'doggystyle': 'Doggystyle Front Angle', 'derriere': 'POV en levrette',
+    'cowgirl': 'POV Cowgirl', 'chevauche': 'POV Cowgirl', 'ride': 'POV Cowgirl', 'monte': 'POV Cowgirl',
+    'missionnaire': 'Missionnaire en POV', 'missionary': 'Missionnaire en POV',
+    'branle': 'Branlette', 'handjob': 'Branlette', 'bite': 'Branlette', 'dick': 'Branlette',
+    'facial': 'Ejaculation', 'visage': 'Ejaculation', 'sperme': 'Sperme sur le cul', 'cum': 'Ejaculation',
+    'masturbe': 'Masturbation Féminine', 'doigts': 'Masturbation Féminine', 'finger': 'Masturbation Féminine',
+    'pieds': 'Footjob', 'feet': 'Footjob', 'footjob': 'Footjob',
+    'nue': 'Default', 'naked': 'Default', 'nude': 'Default', 'deshabille': 'Default',
+    'corps': 'Marche Arrêt', 'body': 'Marche Arrêt', 'montre': 'Hand on Hip',
+    'selfie': 'Mirror Selfie', 'miroir': 'Mirror Selfie',
+    'anal': 'POV en levrette', 'sodomie': 'POV en levrette'
+}
+
+EXPRESSION_KEYWORDS = {
+    'orgasme': 'Visage d\'orgasme', 'jouis': 'Visage d\'orgasme', 'cum': 'Visage d\'orgasme',
+    'excitée': 'Visage d\'orgasme', 'horny': 'Tirer la langue', 'chaude': 'Tirer la langue',
+    'douleur': 'Ouch', 'mal': 'Ouch', 'fort': 'Ouch', 'hard': 'Ouch'
+}
+
+def detect_pose_and_expression(description, affection):
+    desc_lower = description.lower() if description else ''
+    
+    pose = 'Default'
+    for keyword, detected_pose in POSE_KEYWORDS.items():
+        if keyword in desc_lower:
+            pose = detected_pose
+            break
+    
+    expression = 'Smiling'
+    for keyword, detected_expr in EXPRESSION_KEYWORDS.items():
+        if keyword in desc_lower:
+            expression = detected_expr
+            break
+    
+    is_explicit = any(k in desc_lower for k in ['pipe', 'suce', 'baise', 'levrette', 'cowgirl', 'branle', 'facial', 'sperme', 'anal', 'doggystyle'])
+    style = 'Hardcore XL' if is_explicit and affection >= 50 else 'Photo XL+ v2'
+    
+    if is_explicit and expression == 'Smiling':
+        expression = 'Visage d\'orgasme'
+    
+    return pose, expression, style
+
 @app.route('/photo', methods=['POST'])
 def photo():
     if not API_KEY:
@@ -3598,9 +3647,14 @@ def photo():
     
     girl = GIRLS.get(girl_id, GIRLS['anastasia'])
     
+    pose, expression, style = detect_pose_and_expression(description, affection)
+    
     mood_prompt = ""
     if affection < 30:
         mood_prompt = "wearing elegant classy dress, beautiful, soft lighting"
+        pose = "Default" if pose == "Default" else pose
+        expression = "Smiling"
+        style = "Photo XL+ v2"
     elif affection < 50:
         mood_prompt = "wearing tight sexy dress, showing legs, cleavage, seductive look"
     elif affection < 75:
@@ -3610,6 +3664,8 @@ def photo():
 
     full_prompt = f"{girl['appearance']}, {mood_prompt}, {description}"
     
+    negative_prompt = "extra limbs, missing limbs, wonky fingers, mismatched boobs, extra boobs, asymmetrical boobs, extra fingers, too many thumbs, random dicks, free floating dicks, extra pussies, deformed face, ugly, blurry"
+    
     try:
         response = requests.post(
             'https://prod.aicloudnetservices.com/api/external/create',
@@ -3618,18 +3674,21 @@ def photo():
                 'x-api-key': API_KEY
             },
             json={
-                "style": "Photo XL+ v2",
-                "pose": "Default",
+                "style": style,
+                "pose": pose,
                 "prompt": full_prompt,
                 "quality": "Ultra",
-                "expression": "Neutral",
+                "expression": expression,
                 "age_slider": girl.get('age_slider', girl['age']),
                 "creativity": 50,
                 "restore_faces": True,
-                "seed": -1
+                "seed": -1,
+                "negative_prompt": negative_prompt
             },
-            timeout=30
+            timeout=45
         )
+        
+        print(f"[PHOTO] Girl: {girl_id}, Pose: {pose}, Expression: {expression}, Style: {style}")
         
         if response.ok:
             result = response.json()
@@ -3647,6 +3706,15 @@ def photo():
         return jsonify({"error": str(e)})
 
 
+PROFILE_PHOTO_TYPES = [
+    {"type": "portrait", "pose": "Default", "expression": "Smiling", "style": "Photo XL+ v2", "prompt_suffix": "face portrait, beautiful, natural lighting, dating app photo, selfie style, friendly smile"},
+    {"type": "sexy", "pose": "Looking Back", "expression": "Default", "style": "Photo XL+ v2", "prompt_suffix": "full body, looking over shoulder, tight jeans, seductive look, casual setting"},
+    {"type": "lingerie", "pose": "Hand on Hip", "expression": "Smiling", "style": "Photo XL+ v2", "prompt_suffix": "wearing sexy lingerie, bedroom setting, confident pose, intimate lighting"},
+    {"type": "revealing", "pose": "Mirror Selfie", "expression": "Default", "style": "Photo XL+ v2", "prompt_suffix": "mirror selfie, revealing outfit, bathroom or bedroom, sensual"}
+]
+
+NEGATIVE_PROMPT = "extra limbs, missing limbs, wonky fingers, mismatched boobs, extra boobs, asymmetrical boobs, extra fingers, too many thumbs, random dicks, free floating dicks, extra pussies, deformed face, ugly, blurry, bad anatomy"
+
 @app.route('/profile_photo', methods=['POST'])
 def profile_photo():
     if not API_KEY:
@@ -3654,10 +3722,13 @@ def profile_photo():
     
     data = request.json
     girl_id = data.get('girl', 'anastasia')
+    photo_type = data.get('photo_type', 0)
     
     girl = GIRLS.get(girl_id, GIRLS['anastasia'])
     
-    profile_prompt = f"{girl['appearance']}, face portrait, beautiful, natural lighting, dating app photo, selfie style, friendly smile, high quality"
+    photo_config = PROFILE_PHOTO_TYPES[photo_type % len(PROFILE_PHOTO_TYPES)]
+    
+    profile_prompt = f"{girl['appearance']}, {photo_config['prompt_suffix']}, high quality"
     
     try:
         response = requests.post(
@@ -3667,18 +3738,21 @@ def profile_photo():
                 'x-api-key': API_KEY
             },
             json={
-                "style": "Photo XL+ v2",
-                "pose": "Default",
+                "style": photo_config['style'],
+                "pose": photo_config['pose'],
                 "prompt": profile_prompt,
                 "quality": "Ultra",
-                "expression": "Smile",
+                "expression": photo_config['expression'],
                 "age_slider": girl.get('age_slider', girl['age']),
-                "creativity": 40,
+                "creativity": 45,
                 "restore_faces": True,
-                "seed": -1
+                "seed": -1,
+                "negative_prompt": NEGATIVE_PROMPT
             },
-            timeout=30
+            timeout=45
         )
+        
+        print(f"[PROFILE] Girl: {girl_id}, Type: {photo_config['type']}, Pose: {photo_config['pose']}")
         
         if response.ok:
             result = response.json()
@@ -3687,7 +3761,7 @@ def profile_photo():
             if image_val:
                 if isinstance(image_val, str) and not image_val.startswith('http') and not image_val.startswith('data:'):
                     image_val = 'https://cdn.promptchan.ai/' + image_val
-                return jsonify({"image_url": image_val, "girl_id": girl_id})
+                return jsonify({"image_url": image_val, "girl_id": girl_id, "photo_type": photo_config['type']})
             
         return jsonify({"error": "No image in response"})
             

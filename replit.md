@@ -151,11 +151,35 @@ The app features a fixed bottom navigation bar with 5 tabs:
 - Mia (32, Brazilian fitness) - muscular, abs, round athletic butt
 - Svetlana (27, Ukrainian athlete) - tall, strong, powerful
 
-### Photo System - 4 Varied Outfit Types Per Girl
-1. **Casual** - Jeans & t-shirt, comfortable everyday clothes
-2. **Elegant** - Cocktail dress, sophisticated evening wear
-3. **Swimsuit** - Bikini/swimwear, beach/pool setting
-4. **Sexy** - Lingerie/revealing outfits (affection-based)
+### Photo System - Optimized Promptchan API
+
+**Profile Photos (4 types per girl):**
+1. **Portrait** - pose="Default", expression="Smiling", dating app style
+2. **Sexy** - pose="Looking Back", expression="Default", seductive look
+3. **Lingerie** - pose="Hand on Hip", expression="Smiling", bedroom
+4. **Revealing** - pose="Mirror Selfie", expression="Default", sensual
+
+**Contextual Pose Detection:**
+- "seins/poitrine" → Prise de sein en POV
+- "cul/fesses" → Looking Back, Attrape le cul
+- "pipe/suce" → POV Deepthroat
+- "levrette/doggystyle" → POV en levrette
+- "cowgirl" → POV Cowgirl
+- "branle" → Branlette
+- "facial" → Ejaculation
+- "masturbe" → Masturbation Feminine
+
+**Expression Detection:**
+- Normal → Smiling
+- Explicit → Visage d'orgasme
+- Hard → Ouch
+
+**Style Selection:**
+- Photo XL+ v2 (realistic, default)
+- Hardcore XL (explicit content)
+
+**Negative Prompt:**
+- extra limbs, wonky fingers, extra boobs, deformed face
 
 ### Photo Backgrounds
 - **Day**: beach, city street, park, cafe terrace, gym, office
