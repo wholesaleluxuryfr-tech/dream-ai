@@ -174,8 +174,8 @@ def upload_to_supabase(image_url, girl_id, photo_type):
         return None
 
 MANIFEST = {
-    "name": "Dream AI",
-    "short_name": "Dream AI",
+    "name": "Dream AI Girl",
+    "short_name": "Dream AI Girl",
     "description": "Trouve ta partenaire virtuelle",
     "start_url": "/",
     "display": "standalone",
@@ -2222,11 +2222,11 @@ HTML = '''<!DOCTYPE html>
     <meta name="theme-color" content="#e91e63">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Dream AI">
+    <meta name="apple-mobile-web-app-title" content="Dream AI Girl">
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/icon-192.png">
-    <title>Dream AI</title>
+    <title>Dream AI Girl</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
@@ -2663,7 +2663,7 @@ HTML = '''<!DOCTYPE html>
 <!-- LOGIN PAGE v2.1 -->
 <div class="page login-page active" id="pageLogin">
     <div class="login-box">
-        <div class="login-logo">DREAM AI</div>
+        <div class="login-logo">DREAM AI GIRL</div>
         <div class="login-subtitle">Trouve ta partenaire virtuelle</div>
         
         <div class="auth-tabs">
@@ -2701,7 +2701,7 @@ HTML = '''<!DOCTYPE html>
 <div class="page page-with-nav" id="pageDiscover">
     <div class="header">
         <div class="header-row">
-            <div class="logo">DREAM AI</div>
+            <div class="logo">DREAM AI GIRL</div>
             <div class="user-name" id="headerUserName"></div>
         </div>
     </div>
@@ -2824,7 +2824,7 @@ HTML = '''<!DOCTYPE html>
             <div class="settings-item" onclick="showPremiumPopup()">
                 <div class="settings-item-left">
                     <span class="settings-item-icon">👑</span>
-                    <span class="settings-item-text">Dream AI Premium</span>
+                    <span class="settings-item-text">Dream AI Girl Premium</span>
                 </div>
                 <span class="settings-item-arrow">→</span>
             </div>
@@ -2971,7 +2971,7 @@ HTML = '''<!DOCTYPE html>
 <div class="premium-popup" id="premiumPopup">
     <div class="premium-content">
         <div class="premium-crown">👑</div>
-        <div class="premium-title">Dream AI Premium</div>
+        <div class="premium-title">Dream AI Girl Premium</div>
         <div class="premium-features">
             <div class="premium-feature">Super Likes illimites</div>
             <div class="premium-feature">Voir qui t'a like</div>

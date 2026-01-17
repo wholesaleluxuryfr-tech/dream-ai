@@ -1,8 +1,8 @@
-# Dream AI - Premium Adult Companion App
+# Dream AI Girl - Premium Adult Companion App
 
 ## Overview
 
-Dream AI is a Flask-based adult dating application designed to offer a unique interactive experience. It features 134 diverse AI-powered virtual companions from around the world, engaging in uncensored French conversations. The application integrates a Tinder-style swipe matching system, realistic match probabilities, dynamic affection levels, and AI-generated photos. Its core purpose is to provide an engaging and immersive adult dating simulation, with all user data securely persisted in a PostgreSQL database.
+Dream AI Girl is a Flask-based adult dating application designed to offer a unique interactive experience. It features 134 diverse AI-powered virtual companions from around the world, engaging in uncensored French conversations. The application integrates a Tinder-style swipe matching system, realistic match probabilities, dynamic affection levels, and AI-generated photos. Its core purpose is to provide an engaging and immersive adult dating simulation, with all user data securely persisted in a PostgreSQL database.
 
 ## User Preferences
 
