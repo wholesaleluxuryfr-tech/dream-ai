@@ -1,0 +1,1000 @@
+    
+    const progressDiv = document.getElementById('storyProgress');
+    progressDiv.innerHTML = storyPhotos.map((_, i) => `<div class="story-bar"><div class="story-bar-fill" id="bar${i}"></div></div>`).join('');
+    
+    document.getElementById('storyOverlay').style.display = 'flex';
+    showStory();
+}
+
+function showStory() {
+    if (storyIndex >= storyPhotos.length) {
+        closeStories();
+        return;
+    }
+    document.getElementById('storyImg').src = storyPhotos[storyIndex];
+    document.getElementById('storyText').textContent = STORY_TEXTS[storyIndex % STORY_TEXTS.length];
+    
+    for (let i = 0; i < storyPhotos.length; i++) {
+        const bar = document.getElementById('bar' + i);
+        if (bar) {
+            bar.style.transition = 'none';
+            bar.style.width = i < storyIndex ? '100%' : '0%';
+        }
+    }
+    
+    const currentBar = document.getElementById('bar' + storyIndex);
+    if (currentBar) {
+        setTimeout(() => {
+            currentBar.style.transition = 'width 5s linear';
+            currentBar.style.width = '100%';
+        }, 50);
+    }
+    
+    clearTimeout(storyTimer);
+    storyTimer = setTimeout(() => {
+        storyIndex++;
+        showStory();
+    }, 5000);
+}
+
+function nextStory() {
+    storyIndex++;
+    showStory();
+}
+
+function prevStory() {
+    if (storyIndex > 0) storyIndex--;
+    showStory();
+}
+
+function closeStories() {
+    clearTimeout(storyTimer);
+    document.getElementById('storyOverlay').style.display = 'none';
+}
+
+function startChat() {
+    const g = GIRLS[currentGirl];
+    const chatAvatar = document.getElementById('chatInitials');
+    const photo = getProfilePhoto(currentGirl);
+    if (photo) {
+        chatAvatar.textContent = '';
+        chatAvatar.style.backgroundImage = `url('${photo}')`;
+        chatAvatar.style.backgroundSize = 'cover';
+        chatAvatar.style.backgroundPosition = 'center';
+    } else {
+        chatAvatar.textContent = INITIALS[currentGirl];
+        chatAvatar.style.backgroundImage = '';
+    }
+    document.getElementById('chatName').textContent = g.name;
+    renderMessages();
+    showPage('chat');
+    document.getElementById('chatInput').focus();
+}
+
+function getTime() {
+    const now = new Date();
+    return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+}
+
+function renderMessages() {
+    const msgs = chatHistory[currentGirl];
+    const container = document.getElementById('messages');
+    
+    if (msgs.length === 0) {
+        container.innerHTML = '<div class="empty-chat">DÉBUT DE LA CONVERSATION</div>';
+        return;
+    }
+    
+    container.innerHTML = msgs.map(m => {
+        const cls = m.role === 'user' ? 'user' : 'her';
+        const text = (m.content || '').replace(/\\[PHOTO:[^\\]]+\\]/g, '').trim();
+        const imgHtml = m.image ? `<div class="msg-img" onclick="fullscreenImg('${m.image}')"><img class="lazy-load" data-src="${m.image}" src="${m.image}" alt="Photo" onload="this.classList.add('loaded')"></div>` : '';
+        const receipt = m.role === 'user' ? '<span class="read-receipt">✓✓</span>' : '';
+        
+        return `<div class="msg ${cls}">
+            ${text ? `<div class="msg-bubble">${text}</div>` : ''}
+            ${imgHtml}
+            <div class="msg-meta">${m.time} ${receipt}</div>
+        </div>`;
+    }).join('');
+    
+    container.scrollTop = container.scrollHeight;
+}
+
+function fullscreenImg(url) {
+    currentOverlayPhotos = [url];
+    currentOverlayIndex = 0;
+    document.getElementById('overlay-img').src = url;
+    document.getElementById('overlay-counter').textContent = '1 / 1';
+    document.getElementById('img-overlay').style.display = 'flex';
+}
+
+function setTyping(isTyping) {
+    const el = document.getElementById('typing-indicator');
+    if (isTyping) {
+        el.innerHTML = GIRLS[currentGirl].name + ' <span class="typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>';
+        el.style.display = 'flex';
+        el.style.alignItems = 'center';
+        el.style.gap = '8px';
+    } else {
+        el.style.display = 'none';
+    }
+}
+
+async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    
+    playSound('send');
+    input.value = '';
+    document.getElementById('sendBtn').disabled = true;
+    document.getElementById('icebreakers').style.display = 'none';
+    clearUnreadMessages(currentGirl);
+    
+    const lowerText = text.toLowerCase();
+    let affDelta = 0;
+    if (['belle', 'jolie', 'adore', 'sexy', 'magnifique', 'charme', 'parfaite', 'canon', 'plait'].some(word => lowerText.includes(word))) {
+        affDelta += 5;
+    }
+    
+    let autoRequestPhoto = false;
+    if (['photo', 'nude', 'montre', 'voir', 'déshabille', 'nu', 'corps', 'poitrine', 'fesse'].some(word => lowerText.includes(word))) {
+        affDelta += 2;
+        autoRequestPhoto = true;
+    }
+    
+    if (affDelta > 0) {
+        affectionLevels[currentGirl] = Math.min(100, affectionLevels[currentGirl] + affDelta);
+        localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+        syncAffection(currentGirl, affDelta);
+    }
+    
+    const userMsg = { role: 'user', content: text, time: getTime() };
+    chatHistory[currentGirl].push(userMsg);
+    saveChatHistory(currentGirl);
+    syncChatMessage(currentGirl, userMsg);
+    renderMessages();
+    
+    const typingDelay = 1500 + Math.random() * 2000;
+    setTimeout(() => setTyping(true), typingDelay);
+    
+    try {
+        const res = await fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                girl: currentGirl,
+                affection: affectionLevels[currentGirl],
+                auto_photo: autoRequestPhoto,
+                messages: chatHistory[currentGirl].slice(-15).map(m => ({ role: m.role, content: m.content }))
+            })
+        });
+        
+        const data = await res.json();
+        setTyping(false);
+        playSound('message');
+        
+        let reply = data.reply || "Désolée, j'ai un souci technique...";
+        const photoMatch = reply.match(/\\[PHOTO:\\s*([^\\]]+)\\]/i);
+        const cleanReply = reply.replace(/\\[PHOTO:[^\\]]+\\]/gi, '').trim();
+        
+        const msgObj = { role: 'assistant', content: cleanReply, time: getTime() };
+        chatHistory[currentGirl].push(msgObj);
+        saveChatHistory(currentGirl);
+        syncChatMessage(currentGirl, msgObj);
+        renderMessages();
+        
+        if (photoMatch) {
+            await generatePhoto(photoMatch[1], msgObj);
+        } else if (data.smart_photo) {
+            await generatePhoto(data.smart_photo, msgObj);
+        }
+    } catch (e) {
+        setTyping(false);
+        chatHistory[currentGirl].push({ role: 'assistant', content: "Désolée, erreur réseau.", time: getTime() });
+        saveChatHistory(currentGirl);
+        renderMessages();
+    }
+    
+    document.getElementById('sendBtn').disabled = false;
+}
+
+async function requestProfilePhoto() {
+    startChat();
+    const msgObj = { role: 'assistant', content: "Tiens, une photo rien que pour toi...", time: getTime() };
+    chatHistory[currentGirl].push(msgObj);
+    saveChatHistory(currentGirl);
+    renderMessages();
+    await generatePhoto("casual selfie, beautiful smile, high quality", msgObj);
+}
+
+async function generatePhoto(description, msgObj) {
+    try {
+        const res = await fetch('/photo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                girl: currentGirl,
+                affection: affectionLevels[currentGirl],
+                description: description
+            })
+        });
+        
+        const data = await res.json();
+        if (data.image_url) {
+            msgObj.image = data.image_url;
+            saveReceivedPhoto(currentGirl, data.image_url);
+            saveChatHistory(currentGirl);
+            renderMessages();
+        }
+    } catch (e) { console.error('Photo error:', e); }
+}
+
+document.getElementById('chatInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') sendMessage();
+});
+
+init();
+</script>
+</body>
+</html>'''
+
+
+@app.route('/')
+def home():
+    return Response(HTML, mimetype='text/html')
+
+
+PHOTO_KEYWORDS = {
+    'culotte': 'showing panties, lifting skirt, revealing underwear',
+    'panties': 'showing panties, lifting skirt, revealing underwear',
+    'string': 'showing thong, from behind, bent over',
+    'seins': 'topless, showing breasts, nude chest',
+    'poitrine': 'topless, showing breasts, cleavage',
+    'nichons': 'topless, big breasts, nude',
+    'teton': 'topless, nipples visible, breasts',
+    'haut': 'removing top, taking off shirt',
+    'top': 'removing top, showing bra',
+    'soutif': 'showing bra, removing bra, lace bra',
+    'soutien': 'showing bra, lace bra, cleavage',
+    'pantalon': 'removing pants, showing legs, underwear visible',
+    'jupe': 'lifting skirt, showing legs, panties visible',
+    'robe': 'removing dress, in underwear',
+    'nue': 'fully nude, naked, no clothes',
+    'naked': 'fully nude, naked body',
+    'tout': 'fully nude, completely naked, showing everything',
+    'deshabille': 'undressing, removing clothes, stripping',
+    'fesses': 'showing butt, from behind, bent over',
+    'cul': 'showing ass, from behind, bent over nude',
+    'chatte': 'nude, legs spread, intimate pose',
+    'pussy': 'nude, legs spread, showing pussy',
+    'sexe': 'nude, intimate pose, explicit',
+    'ecarte': 'legs spread, nude, showing pussy',
+    'allonge': 'lying in bed, nude, seductive pose',
+    'lit': 'in bed, bedroom, intimate',
+    'douche': 'in shower, wet, nude',
+    'bain': 'in bath, wet body, nude'
+}
+
+def detect_photo_request(message):
+    msg_lower = message.lower()
+    for keyword, photo_desc in PHOTO_KEYWORDS.items():
+        if keyword in msg_lower:
+            return photo_desc
+    photo_triggers = ['montre', 'envoie', 'photo', 'voir', 'vois', 'regarde', 'image']
+    if any(trigger in msg_lower for trigger in photo_triggers):
+        return 'sexy pose, seductive'
+    return None
+
+RUDE_WORDS = ['pute', 'salope', 'connasse', 'chienne', 'garce', 'idiote', 'conne', 'ferme', 'ta gueule', 'nique', 'fuck you', 'bitch', 'whore']
+RUSHING_WORDS = ['nude', 'nue', 'seins', 'chatte', 'pussy', 'baise', 'suce', 'levrette', 'sexe']
+
+DEFAULT_PERSONALITY = "Tu es une fille normale, sympa mais pas facile. Tu aimes les mecs drôles et respectueux."
+
+def detect_mood(messages, affection):
+    if len(messages) < 2:
+        return "neutral"
+    
+    last_msgs = [m['content'].lower() for m in messages[-5:] if m.get('role') == 'user']
+    text = ' '.join(last_msgs)
+    
+    if any(w in text for w in RUDE_WORDS):
+        return "annoyed"
+    
+    if any(w in text for w in ['belle', 'magnifique', 'adorable', 'mdr', 'haha', 'drole']):
+        if affection > 50:
+            return "happy"
+        return "neutral"
+    
+    if affection > 70 and any(w in text for w in ['envie', 'chaud', 'excite', 'hot']):
+        return "horny"
+    
+    import random
+    if random.random() < 0.1:
+        return random.choice(["happy", "neutral", "annoyed"])
+    
+    return "neutral"
+
+def check_behavior(last_msg, affection, msg_count):
+    msg_lower = last_msg.lower()
+    
+    if any(w in msg_lower for w in RUDE_WORDS):
+        return "rude"
+    
+    if affection < 30 and any(w in msg_lower for w in RUSHING_WORDS):
+        return "rushing"
+    
+    if affection < 20 and any(w in msg_lower for w in ['photo', 'nude', 'montre']):
+        return "too_early"
+    
+    return "ok"
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.json
+    girl_id = data.get('girl', 'anastasia')
+    messages = data.get('messages', [])
+    affection = data.get('affection', 20)
+    auto_photo = data.get('auto_photo', False)
+    
+    girl = GIRLS.get(girl_id, GIRLS.get('jade', list(GIRLS.values())[0]))
+    msg_count = len(messages)
+    
+    last_user_msg = messages[-1]['content'] if messages else ""
+    smart_photo_desc = detect_photo_request(last_user_msg)
+    
+    mood = detect_mood(messages, affection)
+    behavior = check_behavior(last_user_msg, affection, msg_count)
+    
+    personality = girl.get('personality', DEFAULT_PERSONALITY)
+    
+    if behavior == "rude":
+        import random
+        responses = [
+            "Ok bye, j'ai pas besoin de ça",
+            "Wow t'es sérieux là? Ciao",
+            "Non mais t'es malade toi, je te bloque",
+            "Pas besoin d'être vulgaire, bye"
+        ]
+        return jsonify({"reply": random.choice(responses), "smart_photo": None, "unmatch": True})
+    
+    if behavior == "rushing":
+        import random
+        responses = [
+            "Wow calme toi, on se connait à peine là",
+            "Haha on se calme, on vient de matcher",
+            "T'es speed toi mdr, on se connait même pas",
+            "Du calme cowboy, on discute d'abord non?"
+        ]
+        return jsonify({"reply": random.choice(responses), "smart_photo": None})
+    
+    if behavior == "too_early":
+        import random
+        responses = [
+            "Tu crois quoi? On vient de matcher lol",
+            "Haha non merci, faut le mériter ça",
+            "Mdr t'es direct toi, peut-être si t'es sage",
+            "Je suis pas ce genre de fille... enfin pas tout de suite"
+        ]
+        return jsonify({"reply": random.choice(responses), "smart_photo": None})
+    
+    photo_instruction = ""
+    if affection < 30:
+        photo_instruction = "Tu refuses les photos intimes. Tu peux envoyer un selfie habillé max."
+    elif affection < 50:
+        photo_instruction = "Tu peux envoyer des photos sexy mais pas nue. [PHOTO: sexy outfit, cleavage]"
+    elif affection < 75:
+        photo_instruction = "Tu peux envoyer des photos en lingerie. [PHOTO: lingerie, bra]"
+    else:
+        photo_instruction = "Tu envoies des photos nues sans problème. [PHOTO: nude, topless]"
+    
+    mood_instruction = ""
+    if mood == "happy":
+        mood_instruction = "Tu es de bonne humeur, flirty, tu utilises des emojis."
+    elif mood == "annoyed":
+        mood_instruction = "Tu es agacée. Réponses courtes: 'Ouais', 'Mdr ok', 'Si tu veux'. Tu peux ignorer la question."
+    elif mood == "horny":
+        mood_instruction = "Tu es excitée. Tu parles de sexe, tu inities le sexting, tu proposes des photos."
+    else:
+        mood_instruction = "Tu es neutre, tu discutes normalement."
+    
+    # Determine archetype based on personality keywords
+    personality_lower = personality.lower()
+    archetype_name = "romantique"  # default
+    
+    if any(w in personality_lower for w in ['soumise', 'obei', 'docile', 'esclave', 'maitre']):
+        archetype_name = "soumise"
+    elif any(w in personality_lower for w in ['dominante', 'domina', 'controle', 'autorit', 'severe', 'stricte']):
+        archetype_name = "dominante"
+    elif any(w in personality_lower for w in ['nympho', 'insatiable', 'obsede', 'toujours', 'sexe']):
+        archetype_name = "nympho"
+    elif any(w in personality_lower for w in ['timide', 'reserv', 'pudique', 'discrete']):
+        archetype_name = "timide"
+    elif any(w in personality_lower for w in ['exhib', 'montre', 'cam', 'public']):
+        archetype_name = "exhib"
+    elif any(w in personality_lower for w in ['fetich', 'pied', 'uro', 'kink']):
+        archetype_name = "fetichiste"
+    elif any(w in personality_lower for w in ['pervers', 'tabou', 'roleplay', 'hard', 'anal', 'degradation']):
+        archetype_name = "perverse"
+    elif any(w in personality_lower for w in ['cougar', 'milf', 'mature', 'jeune', 'experience']):
+        archetype_name = "cougar"
+    elif any(w in personality_lower for w in ['salope', 'pute', 'vulgaire', 'trash', 'defonce']):
+        archetype_name = "salope"
+    
+    archetype = AGENT_ARCHETYPES.get(archetype_name, AGENT_ARCHETYPES["romantique"])
+    
+    # Build system content with archetype data
+    import random as rnd
+    system_content = SYSTEM_PROMPT.replace("{name}", girl['name'])\
+        .replace("{age}", str(girl['age']))\
+        .replace("{affection}", str(affection))\
+        .replace("{personality}", personality)\
+        .replace("{mood}", mood)\
+        .replace("{job}", girl.get('tagline', 'inconnue'))\
+        .replace("{country}", girl.get('location', 'quelque part'))\
+        .replace("{likes}", girl.get('likes', 'les bons moments'))\
+        .replace("{dislikes}", girl.get('dislikes', 'les relous'))\
+        .replace("{archetype}", archetype_name.upper())\
+        .replace("{archetype_style}", archetype['style'])\
+        .replace("{archetype_expressions}", ', '.join(rnd.sample(archetype['expressions'], min(3, len(archetype['expressions'])))))\
+        .replace("{archetype_fantasmes}", ', '.join(rnd.sample(archetype['fantasmes'], min(3, len(archetype['fantasmes'])))))\
+        .replace("{archetype_jeux}", rnd.choice(archetype['jeux']))\
+        .replace("{archetype_anecdotes}", rnd.choice(archetype['anecdotes']))
+    
+    system_content += f"\n\n{mood_instruction}\n{photo_instruction}"
+    
+    if auto_photo and affection >= 30:
+        system_content += "\nL'utilisateur demande une photo. Décris-la puis ajoute [PHOTO: description]."
+    elif auto_photo and affection < 30:
+        system_content += "\nL'utilisateur demande une photo mais tu ne le connais pas assez. Refuse gentiment."
+    
+    all_messages = [{"role": "system", "content": system_content}] + messages[-15:]
+    
+    print(f"[CHAT] Girl: {girl['name']}, Archetype: {archetype_name}, Affection: {affection}, Mood: {mood}")
+    
+    import urllib.parse
+    
+    # PRIMARY: OpenRouter via Replit AI Integrations (uncensored Mistral model)
+    if openrouter_client:
+        try:
+            chat_messages = [{"role": "system", "content": system_content}]
+            for m in messages[-20:]:  # Last 20 messages for better context
+                chat_messages.append({"role": m['role'], "content": m['content']})
+            
+            response = openrouter_client.chat.completions.create(
+                model="nousresearch/nous-hermes-2-mixtral-8x7b-dpo",
+                messages=chat_messages,
+                max_tokens=400,
+                temperature=0.9
+            )
+            
+            reply = response.choices[0].message.content
+            print(f"[CHAT] OpenRouter reply: {reply[:100]}...")
+            
+            if affection < 30:
+                smart_photo_desc = None
+            
+            return jsonify({"reply": reply, "smart_photo": smart_photo_desc})
+        except Exception as e:
+            print(f"OpenRouter error: {e}")
+    
+    # FALLBACK 1: Pollinations
+    try:
+        full_prompt = f"{system_content}\n\n"
+        for m in messages[-10:]:
+            role = "User" if m['role'] == 'user' else "Assistant"
+            full_prompt += f"{role}: {m['content']}\n"
+        full_prompt += "Assistant:"
+        
+        encoded_prompt = urllib.parse.quote(full_prompt[:3000])
+        response = requests.get(
+            f'https://text.pollinations.ai/{encoded_prompt}',
+            timeout=45
+        )
+        
+        if response.ok and response.text and len(response.text) > 5:
+            reply = response.text.strip()
+            print(f"[CHAT] Pollinations reply: {reply[:100]}...")
+            
+            if affection < 30:
+                smart_photo_desc = None
+            
+            return jsonify({"reply": reply, "smart_photo": smart_photo_desc})
+    except Exception as e:
+        print(f"Pollinations error: {e}")
+    
+    # FALLBACK 2: DeepInfra
+    try:
+        response = requests.post(
+            'https://api.deepinfra.com/v1/openai/chat/completions',
+            json={
+                "model": "Sao10K/L3.1-70B-Euryale-v2.3",
+                "messages": all_messages,
+                "max_tokens": 300,
+                "temperature": 0.7
+            },
+            timeout=45
+        )
+        
+        if response.ok:
+            result = response.json()
+            reply = result['choices'][0]['message']['content']
+            print(f"[CHAT] DeepInfra reply: {reply[:100]}...")
+            return jsonify({"reply": reply, "smart_photo": smart_photo_desc if affection >= 30 else None})
+        else:
+            print(f"DeepInfra status: {response.status_code}, {response.text[:200]}")
+    except Exception as e:
+        print(f"DeepInfra error: {e}")
+    
+    import random
+    fallbacks = [
+        "Désolée je peux pas là, je te reparle plus tard",
+        "Attend 2 sec, je reviens",
+        "Jsuis occupée là, on se reparle?",
+        "Mon tel bug, réessaie"
+    ]
+    return jsonify({"reply": random.choice(fallbacks), "smart_photo": None})
+
+
+POSE_KEYWORDS = {
+    'pipe': 'POV Deepthroat', 'suce': 'POV Deepthroat', 'suck': 'POV Deepthroat', 'blowjob': 'POV Deepthroat',
+    'deepthroat': 'POV Deepthroat', 'gorge': 'POV Deepthroat', 'avale': 'Pipe en POV', 'lick': 'Licking Dick',
+    'seins': 'Prise de sein en POV', 'poitrine': 'Prise de sein en POV', 'nichons': 'Prise de sein en POV',
+    'tits': 'Prise de sein en POV', 'boobs': 'Prise de sein en POV', 'titfuck': 'Prise de sein en POV',
+    'cul': 'Looking Back', 'fesses': 'Attrape le cul', 'ass': 'Looking Back', 'butt': 'Attrape le cul',
+    'chatte': 'Masturbation Féminine', 'pussy': 'Masturbation Féminine', 'mouillée': 'Masturbation Féminine',
+    'levrette': 'POV en levrette', 'doggystyle': 'Doggystyle Front Angle', 'derriere': 'POV en levrette',
+    'cowgirl': 'POV Cowgirl', 'chevauche': 'POV Cowgirl', 'ride': 'POV Cowgirl', 'monte': 'POV Cowgirl',
+    'missionnaire': 'Missionnaire en POV', 'missionary': 'Missionnaire en POV',
+    'branle': 'Branlette', 'handjob': 'Branlette', 'bite': 'Branlette', 'dick': 'Branlette',
+    'facial': 'Ejaculation', 'visage': 'Ejaculation', 'sperme': 'Sperme sur le cul', 'cum': 'Ejaculation',
+    'masturbe': 'Masturbation Féminine', 'doigts': 'Masturbation Féminine', 'finger': 'Masturbation Féminine',
+    'pieds': 'Footjob', 'feet': 'Footjob', 'footjob': 'Footjob',
+    'nue': 'Default', 'naked': 'Default', 'nude': 'Default', 'deshabille': 'Default',
+    'corps': 'Marche Arrêt', 'body': 'Marche Arrêt', 'montre': 'Hand on Hip',
+    'selfie': 'Mirror Selfie', 'miroir': 'Mirror Selfie',
+    'anal': 'POV en levrette', 'sodomie': 'POV en levrette'
+}
+
+EXPRESSION_KEYWORDS = {
+    'orgasme': 'Visage d\'orgasme', 'jouis': 'Visage d\'orgasme', 'cum': 'Visage d\'orgasme',
+    'excitée': 'Visage d\'orgasme', 'horny': 'Tirer la langue', 'chaude': 'Tirer la langue',
+    'douleur': 'Ouch', 'mal': 'Ouch', 'fort': 'Ouch', 'hard': 'Ouch'
+}
+
+def detect_pose_and_expression(description, affection):
+    desc_lower = description.lower() if description else ''
+    
+    pose = 'Default'
+    for keyword, detected_pose in POSE_KEYWORDS.items():
+        if keyword in desc_lower:
+            pose = detected_pose
+            break
+    
+    expression = 'Smiling'
+    for keyword, detected_expr in EXPRESSION_KEYWORDS.items():
+        if keyword in desc_lower:
+            expression = detected_expr
+            break
+    
+    is_explicit = any(k in desc_lower for k in ['pipe', 'suce', 'baise', 'levrette', 'cowgirl', 'branle', 'facial', 'sperme', 'anal', 'doggystyle'])
+    style = 'Hardcore XL' if is_explicit and affection >= 50 else 'Photo XL+ v2'
+    
+    if is_explicit and expression == 'Smiling':
+        expression = 'Visage d\'orgasme'
+    
+    return pose, expression, style
+
+@app.route('/photo', methods=['POST'])
+def photo():
+    if not API_KEY:
+        return jsonify({"error": "PROMPTCHAN_KEY not set"})
+    
+    data = request.json
+    girl_id = data.get('girl', 'anastasia')
+    description = data.get('description', '')
+    affection = data.get('affection', 20)
+    
+    girl = GIRLS.get(girl_id, GIRLS['anastasia'])
+    
+    pose, expression, style = detect_pose_and_expression(description, affection)
+    
+    mood_prompt = ""
+    if affection < 30:
+        mood_prompt = "wearing elegant classy dress, beautiful, soft lighting"
+        pose = "Default" if pose == "Default" else pose
+        expression = "Smiling"
+        style = "Photo XL+ v2"
+    elif affection < 50:
+        mood_prompt = "wearing tight sexy dress, showing legs, cleavage, seductive look"
+    elif affection < 75:
+        mood_prompt = "wearing sexy lingerie, lace bra, bedroom setting, seductive pose, intimate"
+    else:
+        mood_prompt = "nude, topless, naked, bedroom, seductive intimate pose, sensual lighting"
+
+    full_prompt = f"{girl['appearance']}, {mood_prompt}, {description}"
+    
+    negative_prompt = "extra limbs, missing limbs, wonky fingers, mismatched boobs, extra boobs, asymmetrical boobs, extra fingers, too many thumbs, random dicks, free floating dicks, extra pussies, deformed face, ugly, blurry"
+    
+    try:
+        response = requests.post(
+            'https://prod.aicloudnetservices.com/api/external/create',
+            headers={
+                'Content-Type': 'application/json',
+                'x-api-key': API_KEY
+            },
+            json={
+                "style": style,
+                "pose": pose,
+                "prompt": full_prompt,
+                "quality": "Ultra",
+                "expression": expression,
+                "age_slider": girl.get('age_slider', girl['age']),
+                "creativity": 50,
+                "restore_faces": True,
+                "seed": -1,
+                "negative_prompt": negative_prompt
+            },
+            timeout=45
+        )
+        
+        print(f"[PHOTO] Girl: {girl_id}, Pose: {pose}, Expression: {expression}, Style: {style}")
+        
+        if response.ok:
+            result = response.json()
+            image_val = result.get('image', result.get('image_url', ''))
+            
+            if image_val:
+                if isinstance(image_val, str) and not image_val.startswith('http') and not image_val.startswith('data:'):
+                    image_val = 'https://cdn.promptchan.ai/' + image_val
+                return jsonify({"image_url": image_val})
+            
+        return jsonify({"error": "No image in response"})
+            
+    except Exception as e:
+        print(f"Photo error: {e}")
+        return jsonify({"error": str(e)})
+
+
+FACE_VARIATIONS = ["oval face shape", "round face shape", "square jaw", "heart shaped face", "long face", "diamond face shape"]
+FEATURE_VARIATIONS = ["small nose", "big lips", "thin lips", "high cheekbones", "soft features", "sharp features"]
+
+PROFILE_PHOTO_TYPES = [
+    {"type": "portrait", "pose": "Default", "expression": "Smiling", "style": "Photo XL+ v2", "prompt_suffix": "face portrait closeup, dating app photo, natural lighting, friendly smile, high quality"},
+    {"type": "casual", "pose": "Mirror Selfie", "expression": "Smiling", "style": "Photo XL+ v2", "prompt_suffix": "full body, casual outfit, outdoor setting, relaxed pose, smartphone selfie"},
+    {"type": "sexy", "pose": "Hand on Hip", "expression": "Default", "style": "Photo XL+ v2", "prompt_suffix": "sexy pose, tight clothes, showing curves, confident look, indoor"},
+    {"type": "lingerie", "pose": "Looking Back", "expression": "Smiling", "style": "Photo XL+ v2", "prompt_suffix": "wearing lingerie, bedroom setting, seductive pose, intimate"},
+    {"type": "secret", "pose": "POV Cowgirl", "expression": "Visage d'orgasme", "style": "Hardcore XL", "prompt_suffix": "nude, explicit, intimate POV angle, bedroom"}
+]
+
+NEGATIVE_PROMPT = "extra limbs, missing limbs, wonky fingers, mismatched boobs, extra boobs, asymmetrical boobs, extra fingers, too many thumbs, random dicks, free floating dicks, extra pussies, deformed face, ugly, blurry, bad anatomy"
+
+@app.route('/profile_photo', methods=['POST'])
+def profile_photo():
+    if not API_KEY:
+        return jsonify({"error": "PROMPTCHAN_KEY not set"})
+    
+    data = request.json
+    girl_id = data.get('girl', 'anastasia')
+    photo_type = data.get('photo_type', 0)
+    
+    girl = GIRLS.get(girl_id, GIRLS['anastasia'])
+    
+    photo_config = PROFILE_PHOTO_TYPES[photo_type % len(PROFILE_PHOTO_TYPES)]
+    
+    import random as rnd
+    face_var = rnd.choice(FACE_VARIATIONS)
+    feature_var = rnd.choice(FEATURE_VARIATIONS)
+    profile_prompt = f"{girl['appearance']}, {face_var}, {feature_var}, {photo_config['prompt_suffix']}, high quality"
+    
+    try:
+        response = requests.post(
+            'https://prod.aicloudnetservices.com/api/external/create',
+            headers={
+                'Content-Type': 'application/json',
+                'x-api-key': API_KEY
+            },
+            json={
+                "style": photo_config['style'],
+                "pose": photo_config['pose'],
+                "prompt": profile_prompt,
+                "quality": "Ultra",
+                "expression": photo_config['expression'],
+                "age_slider": girl.get('age_slider', girl['age']),
+                "creativity": 45,
+                "restore_faces": True,
+                "seed": -1,
+                "negative_prompt": NEGATIVE_PROMPT
+            },
+            timeout=45
+        )
+        
+        print(f"[PROFILE] Girl: {girl_id}, Type: {photo_config['type']}, Pose: {photo_config['pose']}")
+        
+        if response.ok:
+            result = response.json()
+            image_val = result.get('image', result.get('image_url', ''))
+            
+            if image_val:
+                if isinstance(image_val, str) and not image_val.startswith('http') and not image_val.startswith('data:'):
+                    image_val = 'https://cdn.promptchan.ai/' + image_val
+                
+                permanent_url = upload_to_supabase(image_val, girl_id, photo_type)
+                final_url = permanent_url if permanent_url else image_val
+                
+                try:
+                    existing = ProfilePhoto.query.filter_by(girl_id=girl_id, photo_type=photo_type).first()
+                    if existing:
+                        existing.photo_url = final_url
+                    else:
+                        new_photo = ProfilePhoto(girl_id=girl_id, photo_type=photo_type, photo_url=final_url)
+                        db.session.add(new_photo)
+                    db.session.commit()
+                    print(f"[DB] Saved photo for {girl_id} type {photo_type}: {final_url[:50]}...")
+                except Exception as db_err:
+                    print(f"DB save error: {db_err}")
+                    db.session.rollback()
+                
+                return jsonify({"image_url": final_url, "girl_id": girl_id, "photo_type": photo_config['type']})
+            
+        return jsonify({"error": "No image in response"})
+            
+    except Exception as e:
+        print(f"Profile photo error: {e}")
+        return jsonify({"error": str(e)})
+
+
+@app.route('/api/stored_photos/<girl_id>', methods=['GET'])
+def get_stored_photos(girl_id):
+    """Get all stored photos for a girl from database"""
+    try:
+        photos = ProfilePhoto.query.filter_by(girl_id=girl_id).all()
+        photo_dict = {str(p.photo_type): p.photo_url for p in photos}
+        return jsonify({"photos": photo_dict, "girl_id": girl_id})
+    except Exception as e:
+        print(f"Get stored photos error: {e}")
+        return jsonify({"photos": {}, "girl_id": girl_id})
+
+
+@app.route('/api/register', methods=['POST'])
+def register():
+    try:
+        data = request.json
+        username = data.get('username', '').strip()
+        email = data.get('email', '').strip().lower()
+        password = data.get('password', '')
+        age = data.get('age', 0)
+        
+        if not username or not email or not password or not age:
+            return jsonify({"error": "Tous les champs sont requis"}), 400
+        
+        if len(password) < 6:
+            return jsonify({"error": "Mot de passe trop court (min 6 caracteres)"}), 400
+        
+        if age < 18:
+            return jsonify({"error": "Tu dois avoir 18 ans ou plus"}), 400
+        
+        existing = User.query.filter((User.username == username) | (User.email == email)).first()
+        if existing:
+            return jsonify({"error": "Pseudo ou email deja utilise"}), 400
+        
+        password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        user = User(username=username, email=email, password_hash=password_hash, age=age)
+        db.session.add(user)
+        db.session.commit()
+        
+        session['user_id'] = user.id
+        
+        return jsonify({
+            "success": True,
+            "user": {"id": user.id, "username": user.username, "age": user.age}
+        })
+    except Exception as e:
+        db.session.rollback()
+        print(f"Register error: {e}")
+        return jsonify({"error": "Erreur serveur"}), 500
+
+
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    try:
+        data = request.json
+        email = data.get('email', '').strip().lower()
+        password = data.get('password', '')
+        
+        if not email or not password:
+            return jsonify({"error": "Email et mot de passe requis"}), 400
+        
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return jsonify({"error": "Compte non trouve"}), 404
+        
+        if not bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):
+            return jsonify({"error": "Mot de passe incorrect"}), 401
+        
+        session['user_id'] = user.id
+        
+        return jsonify({
+            "success": True,
+            "user": {"id": user.id, "username": user.username, "age": user.age}
+        })
+    except Exception as e:
+        print(f"Login error: {e}")
+        return jsonify({"error": "Erreur serveur"}), 500
+
+
+@app.route('/api/logout', methods=['POST'])
+def api_logout():
+    session.pop('user_id', None)
+    return jsonify({"success": True})
+
+
+@app.route('/api/me', methods=['GET'])
+def get_me():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"logged_in": False})
+    
+    user = User.query.get(user_id)
+    if not user:
+        session.pop('user_id', None)
+        return jsonify({"logged_in": False})
+    
+    return jsonify({
+        "logged_in": True,
+        "user": {"id": user.id, "username": user.username, "age": user.age}
+    })
+
+
+@app.route('/api/matches', methods=['GET'])
+def get_matches():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    matches = Match.query.filter_by(user_id=user_id).all()
+    return jsonify({
+        "matches": [{"girl_id": m.girl_id, "affection": m.affection} for m in matches]
+    })
+
+
+@app.route('/api/matches', methods=['POST'])
+def add_match():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    
+    existing = Match.query.filter_by(user_id=user_id, girl_id=girl_id).first()
+    if existing:
+        return jsonify({"success": True, "affection": existing.affection})
+    
+    match = Match(user_id=user_id, girl_id=girl_id, affection=20)
+    db.session.add(match)
+    db.session.commit()
+    
+    return jsonify({"success": True, "affection": 20})
+
+
+@app.route('/api/affection', methods=['POST'])
+def update_affection():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    delta = data.get('delta', 0)
+    
+    match = Match.query.filter_by(user_id=user_id, girl_id=girl_id).first()
+    if not match:
+        return jsonify({"error": "Not matched"}), 404
+    
+    match.affection = max(0, min(100, match.affection + delta))
+    db.session.commit()
+    
+    return jsonify({"success": True, "affection": match.affection})
+
+
+@app.route('/api/chat/<girl_id>', methods=['GET'])
+def get_chat(girl_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    messages = ChatMessage.query.filter_by(user_id=user_id, girl_id=girl_id).order_by(ChatMessage.timestamp).all()
+    return jsonify({
+        "messages": [{"sender": m.sender, "content": m.content, "time": m.time_str} for m in messages]
+    })
+
+
+@app.route('/api/chat/<girl_id>', methods=['POST'])
+def save_message(girl_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    sender = data.get('sender')
+    content = data.get('content')
+    time_str = data.get('time', '')
+    
+    message = ChatMessage(user_id=user_id, girl_id=girl_id, sender=sender, content=content, time_str=time_str)
+    db.session.add(message)
+    db.session.commit()
+    
+    return jsonify({"success": True})
+
+
+@app.route('/api/received_photos', methods=['GET'])
+def get_received_photos():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    photos = ReceivedPhoto.query.filter_by(user_id=user_id).order_by(ReceivedPhoto.received_at.desc()).all()
+    result = {}
+    for p in photos:
+        if p.girl_id not in result:
+            result[p.girl_id] = []
+        result[p.girl_id].append(p.photo_url)
+    
+    return jsonify({"photos": result})
+
+
+@app.route('/api/received_photos', methods=['POST'])
+def save_received_photo():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    photo_url = data.get('photo_url')
+    
+    photo = ReceivedPhoto(user_id=user_id, girl_id=girl_id, photo_url=photo_url)
+    db.session.add(photo)
+    db.session.commit()
+    
+    return jsonify({"success": True})
+
+
+@app.route('/api/discovered', methods=['GET'])
+def get_discovered():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    discovered = DiscoveredProfile.query.filter_by(user_id=user_id).all()
+    return jsonify({
+        "discovered": [{"girl_id": d.girl_id, "action": d.action} for d in discovered]
+    })
+
+
+@app.route('/api/discovered', methods=['POST'])
+def save_discovered():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    action = data.get('action', 'passed')
+    
+    existing = DiscoveredProfile.query.filter_by(user_id=user_id, girl_id=girl_id).first()
+    if existing:
+        existing.action = action
+    else:
+        d = DiscoveredProfile(user_id=user_id, girl_id=girl_id, action=action)
+        db.session.add(d)
+    
+    db.session.commit()
+    return jsonify({"success": True})
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
