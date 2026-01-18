@@ -3117,6 +3117,29 @@ let darkMode = localStorage.getItem('darkMode') !== 'false';
 let photoGenerationQueue = [];
 let isGeneratingPhotos = false;
 let failedPhotos = {};
+let isDataReady = false;
+
+// Helper to ensure girl context exists before any operation
+function ensureGirlContext(girlId) {
+    if (!girlId) return false;
+    if (!chatHistory[girlId]) chatHistory[girlId] = [];
+    if (affectionLevels[girlId] === undefined) affectionLevels[girlId] = 20;
+    if (!profilePhotos[girlId] || !Array.isArray(profilePhotos[girlId])) {
+        profilePhotos[girlId] = [null, null, null, null, null];
+    }
+    return true;
+}
+
+// Safe match application - used both by swipe and data loading
+function applyMatch(girlId, affection) {
+    if (!matches.includes(girlId)) {
+        matches.push(girlId);
+    }
+    affectionLevels[girlId] = affection || 20;
+    ensureGirlContext(girlId);
+    localStorage.setItem('dreamMatches', JSON.stringify(matches));
+    localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+}
 
 // INSTANT SWIPE SYSTEM - Preload queue
 let preloadedImages = {};
@@ -3345,10 +3368,7 @@ async function processSwipeRight() {
             const data = await res.json();
             if (data.success) {
                 removeFromQueue();
-                matches.push(girlId);
-                affectionLevels[girlId] = data.affection || 20;
-                localStorage.setItem('dreamMatches', JSON.stringify(matches));
-                localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+                applyMatch(girlId, data.affection || 20);
                 syncDiscovered(girlId, 'liked');
                 generateSecretPhoto(girlId);
                 showMatchAnimation(girlId);
@@ -4093,6 +4113,7 @@ async function doRegister() {
 }
 
 async function loadUserData() {
+    isDataReady = false;
     try {
         matches = [];
         passed = [];
@@ -4164,6 +4185,7 @@ async function loadUserData() {
         }
         
         for (const girlId of matches) {
+            ensureGirlContext(girlId);
             const chatRes = await fetch('/api/chat/' + girlId);
             const chatData = await chatRes.json();
             if (chatData.messages && chatData.messages.length > 0) {
@@ -4173,8 +4195,10 @@ async function loadUserData() {
         }
         
         localStorage.setItem('failedPhotos', JSON.stringify({}));
+        isDataReady = true;
     } catch(e) {
         console.log('Load user data error:', e);
+        isDataReady = true;
     }
 }
 
@@ -4895,6 +4919,11 @@ const STORY_TEXTS = [
 ];
 
 function openStories() {
+    if (!currentGirl || !isDataReady) {
+        showToast("Chargement en cours...");
+        return;
+    }
+    ensureGirlContext(currentGirl);
     const photos = profilePhotos[currentGirl] || [];
     if (photos.filter(p => p).length === 0) {
         showToast("Pas encore de photos disponibles");
@@ -4957,6 +4986,11 @@ function closeStories() {
 }
 
 function startChat() {
+    if (!currentGirl || !isDataReady) {
+        showToast("Chargement en cours...");
+        return;
+    }
+    ensureGirlContext(currentGirl);
     const g = GIRLS[currentGirl];
     const chatAvatar = document.getElementById('chatInitials');
     const photo = getProfilePhoto(currentGirl);
@@ -5026,6 +5060,11 @@ function setTyping(isTyping) {
 }
 
 async function sendMessage() {
+    if (!currentGirl || !isDataReady) {
+        showToast("Chargement en cours...");
+        return;
+    }
+    ensureGirlContext(currentGirl);
     const input = document.getElementById('chatInput');
     const text = input.value.trim();
     if (!text) return;
@@ -5105,6 +5144,11 @@ async function sendMessage() {
 }
 
 async function requestProfilePhoto() {
+    if (!currentGirl || !isDataReady) {
+        showToast("Chargement en cours...");
+        return;
+    }
+    ensureGirlContext(currentGirl);
     startChat();
     const msgObj = { role: 'assistant', content: "Tiens, une photo rien que pour toi...", time: getTime() };
     chatHistory[currentGirl].push(msgObj);
