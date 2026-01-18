@@ -3483,52 +3483,71 @@ function getAvatarHtml(girlId, size = 40) {
 }
 
 async function generateProfilePhoto(girlId) {
-    if (profilePhotos[girlId]) return true;
+    // Check if we already have a valid photo array with at least the first photo
+    if (profilePhotos[girlId] && Array.isArray(profilePhotos[girlId]) && profilePhotos[girlId][0]) {
+        return true;
+    }
+    
+    // Initialize as array if needed
+    if (!profilePhotos[girlId] || !Array.isArray(profilePhotos[girlId])) {
+        profilePhotos[girlId] = [null, null, null, null, null];
+    }
     
     try {
         const storedRes = await fetch('/api/stored_photos/' + girlId);
         const storedData = await storedRes.json();
-        if (storedData.photos && storedData.photos['0']) {
-            profilePhotos[girlId] = storedData.photos['0'];
+        if (storedData.photos && Object.keys(storedData.photos).length > 0) {
+            // Store all photos in array format
+            for (const [typeStr, url] of Object.entries(storedData.photos)) {
+                const idx = parseInt(typeStr);
+                if (idx >= 0 && idx < 5 && url) {
+                    profilePhotos[girlId][idx] = url;
+                }
+            }
             localStorage.setItem('profilePhotos', JSON.stringify(profilePhotos));
             delete failedPhotos[girlId];
             localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
             refreshAllPhotos();
-            return true;
+            if (profilePhotos[girlId][0]) return true;
         }
     } catch (e) {
         console.log('Stored photo check failed:', e);
     }
     
-    try {
-        const res = await fetch('/profile_photo', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ girl: girlId })
-        });
-        
-        const data = await res.json();
-        
-        if (data.image_url) {
-            profilePhotos[girlId] = data.image_url;
-            localStorage.setItem('profilePhotos', JSON.stringify(profilePhotos));
-            delete failedPhotos[girlId];
-            localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
-            refreshAllPhotos();
-            return true;
-        } else {
+    // Generate first photo if not available
+    if (!profilePhotos[girlId][0]) {
+        try {
+            const res = await fetch('/profile_photo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ girl: girlId })
+            });
+            
+            const data = await res.json();
+            
+            if (data.image_url) {
+                profilePhotos[girlId][0] = data.image_url;
+                localStorage.setItem('profilePhotos', JSON.stringify(profilePhotos));
+                delete failedPhotos[girlId];
+                localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
+                refreshAllPhotos();
+                return true;
+            } else {
+                failedPhotos[girlId] = true;
+                localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
+                refreshAllPhotos();
+                return false;
+            }
+        } catch (e) {
+            console.log('Photo gen error:', girlId, e);
             failedPhotos[girlId] = true;
             localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
             refreshAllPhotos();
             return false;
         }
-    } catch (e) {
-        console.log('Photo gen error:', girlId, e);
-        failedPhotos[girlId] = true;
-        localStorage.setItem('failedPhotos', JSON.stringify(failedPhotos));
-        refreshAllPhotos();
-        return false;
     }
+    
+    return true;
 }
 
 async function processPhotoQueue() {
@@ -3537,7 +3556,8 @@ async function processPhotoQueue() {
     
     while (photoGenerationQueue.length > 0) {
         const girlId = photoGenerationQueue.shift();
-        if (!profilePhotos[girlId] && !failedPhotos[girlId]) {
+        const hasPhoto = profilePhotos[girlId] && Array.isArray(profilePhotos[girlId]) && profilePhotos[girlId][0];
+        if (!hasPhoto && !failedPhotos[girlId]) {
             await generateProfilePhoto(girlId);
             await new Promise(r => setTimeout(r, 500));
         }
@@ -3547,7 +3567,8 @@ async function processPhotoQueue() {
 }
 
 function queuePhotoGeneration(girlId) {
-    if (!profilePhotos[girlId] && !failedPhotos[girlId] && !photoGenerationQueue.includes(girlId)) {
+    const hasPhoto = profilePhotos[girlId] && Array.isArray(profilePhotos[girlId]) && profilePhotos[girlId][0];
+    if (!hasPhoto && !failedPhotos[girlId] && !photoGenerationQueue.includes(girlId)) {
         photoGenerationQueue.push(girlId);
         processPhotoQueue();
     }
