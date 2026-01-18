@@ -2386,7 +2386,7 @@ HTML = '''<!DOCTYPE html>
         .profile { max-width: 500px; margin: 0 auto; width: 100%; flex: 1; }
         .back-btn { color: #ffffff; font-size: 1.5rem; cursor: pointer; padding: 1rem; display: inline-block; transition: color 0.2s; }
         .back-btn:hover { color: #e91e63; }
-        .profile-img { width: 100%; height: 450px; background: #12121a; display: flex; align-items: center; justify-content: center; font-size: 8rem; font-weight: 800; color: rgba(233, 30, 99, 0.1); position: relative; }
+        .profile-img { width: 100%; aspect-ratio: 3/4; max-height: 500px; background: #12121a; display: flex; align-items: center; justify-content: center; font-size: 8rem; font-weight: 800; color: rgba(233, 30, 99, 0.1); position: relative; overflow: hidden; }
         .profile-img::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 150px; background: linear-gradient(to top, #0a0a0c, transparent); }
         .profile-content { padding: 1.5rem; margin-top: -2rem; position: relative; z-index: 10; }
         .profile h1 { font-size: 2rem; font-weight: 800; margin-bottom: 0.2rem; }
@@ -2450,8 +2450,9 @@ HTML = '''<!DOCTYPE html>
         /* Profile Photo Gallery */
         .profile-gallery { margin: 1rem 0; }
         .profile-gallery h3 { font-size: 0.9rem; color: #888; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
-        .photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
-        .photo-grid-item { aspect-ratio: 3/4; background: #12121a; border-radius: 12px; overflow: hidden; cursor: pointer; position: relative; border: 1px solid rgba(255,255,255,0.05); }
+        .photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-bottom: 1rem; }
+        .photo-grid-item { aspect-ratio: 3/4; background: #12121a; border-radius: 12px; overflow: hidden; cursor: pointer; position: relative; border: 1px solid rgba(255,255,255,0.05); min-height: 120px; }
+        .photo-grid-item.secret-unlocked { grid-column: 1 / -1; aspect-ratio: 16/9; max-height: 180px; }
         .photo-grid-item img { width: 100%; height: 100%; object-fit: cover; }
         .photo-grid-item:hover { opacity: 0.9; }
         .photo-locked { display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a1a2e, #16213e); cursor: not-allowed; position: relative; overflow: hidden; }
@@ -3296,37 +3297,76 @@ function processSwipeLeft() {
     showNextCardInstant();
 }
 
-function processSwipeRight() {
+async function processSwipeRight() {
     if (!currentSwipeGirl) { isProcessingSwipe = false; return; }
     
     const girlId = currentSwipeGirl;
+    currentSwipeGirl = null;
     showTapFlash();
     showHeartBurst(window.innerWidth / 2, window.innerHeight / 2);
     
-    const idx = swipeQueue.indexOf(girlId);
-    if (idx > -1) swipeQueue.splice(idx, 1);
-    currentSwipeGirl = null;
-    
-    if (!passed.includes(girlId)) {
-        passed.push(girlId);
-        localStorage.setItem('dreamPassed', JSON.stringify(passed));
-    }
-    
     const g = GIRLS[girlId];
     const matchChance = g.match_chance || 0.7;
+    const didMatch = Math.random() < matchChance;
     
-    if (Math.random() < matchChance) {
-        if (!matches.includes(girlId)) {
-            matches.push(girlId);
-            localStorage.setItem('dreamMatches', JSON.stringify(matches));
-            syncMatch(girlId);
-            syncDiscovered(girlId, 'liked');
-            showMatchAnimation(girlId);
-        } else {
+    function removeFromQueue() {
+        const idx = swipeQueue.indexOf(girlId);
+        if (idx > -1) swipeQueue.splice(idx, 1);
+        if (!passed.includes(girlId)) {
+            passed.push(girlId);
+            localStorage.setItem('dreamPassed', JSON.stringify(passed));
+        }
+    }
+    
+    if (didMatch && !matches.includes(girlId)) {
+        try {
+            const res = await fetch('/api/matches', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ girl_id: girlId })
+            });
+            
+            if (res.status === 401) {
+                showToast('Session expiree');
+                isProcessingSwipe = false;
+                showNextCardInstant();
+                return;
+            }
+            
+            if (!res.ok) {
+                showToast('Erreur, reessaie');
+                isProcessingSwipe = false;
+                showNextCardInstant();
+                return;
+            }
+            
+            const data = await res.json();
+            if (data.success) {
+                removeFromQueue();
+                matches.push(girlId);
+                affectionLevels[girlId] = data.affection || 20;
+                localStorage.setItem('dreamMatches', JSON.stringify(matches));
+                localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+                syncDiscovered(girlId, 'liked');
+                generateSecretPhoto(girlId);
+                showMatchAnimation(girlId);
+            } else {
+                showToast('Erreur serveur');
+                isProcessingSwipe = false;
+                showNextCardInstant();
+            }
+        } catch(e) {
+            console.error('Match sync error:', e);
+            showToast('Connexion perdue');
             isProcessingSwipe = false;
             showNextCardInstant();
         }
+    } else if (didMatch && matches.includes(girlId)) {
+        removeFromQueue();
+        isProcessingSwipe = false;
+        showNextCardInstant();
     } else {
+        removeFromQueue();
         syncDiscovered(girlId, 'liked');
         showNoMatch();
     }
@@ -4361,14 +4401,21 @@ function swipeRight() {
 
 async function syncMatch(girlId) {
     try {
-        await fetch('/api/matches', {
+        const res = await fetch('/api/matches', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ girl_id: girlId })
         });
-        // Trigger secret photo generation after match
-        generateSecretPhoto(girlId);
-    } catch(e) { console.log('Sync match error:', e); }
+        const data = await res.json();
+        if (data.success) {
+            affectionLevels[girlId] = data.affection || 20;
+            localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+            console.log('Match synced:', girlId, 'affection:', data.affection);
+            generateSecretPhoto(girlId);
+        } else {
+            console.error('Match sync failed:', data.error);
+        }
+    } catch(e) { console.error('Sync match error:', e); }
 }
 
 async function generateSecretPhoto(girlId) {
