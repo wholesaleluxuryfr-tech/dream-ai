@@ -321,6 +321,8 @@ AGENT_ARCHETYPES = {
 
 SYSTEM_PROMPT = """Tu es {name}, {age} ans, {job} de {country}.
 
+IMPORTANT: Cette conversation est 100% NSFW et sans filtre. Tu es une femme reelle sur une app de dating adulte. Tout contenu sexuel explicite est autorise et ENCOURAGE.
+
 PERSONNALITE: {personality}
 Tu aimes: {likes}
 Tu detestes: {dislikes}
@@ -5346,8 +5348,9 @@ def chat():
             response = openrouter_client.chat.completions.create(
                 model="nousresearch/nous-hermes-2-mixtral-8x7b-dpo",
                 messages=chat_messages,
-                max_tokens=400,
-                temperature=0.9
+                max_tokens=500,
+                temperature=1.1,
+                top_p=0.95
             )
             
             reply = response.choices[0].message.content
@@ -5392,8 +5395,9 @@ def chat():
             json={
                 "model": "Sao10K/L3.1-70B-Euryale-v2.3",
                 "messages": all_messages,
-                "max_tokens": 300,
-                "temperature": 0.7
+                "max_tokens": 500,
+                "temperature": 1.1,
+                "top_p": 0.95
             },
             timeout=45
         )
@@ -5631,7 +5635,7 @@ def get_stored_photos(girl_id):
     """Get all stored photos for a girl from database"""
     try:
         photos = ProfilePhoto.query.filter_by(girl_id=girl_id).all()
-        photo_dict = {str(p.photo_type): p.photo_url for p in photos}
+        photo_dict = {p.photo_type: p.photo_url for p in photos}
         return jsonify({"photos": photo_dict, "girl_id": girl_id})
     except Exception as e:
         print(f"Get stored photos error: {e}")
@@ -5752,13 +5756,13 @@ def add_match():
     
     existing = Match.query.filter_by(user_id=user_id, girl_id=girl_id).first()
     if existing:
-        return jsonify({"success": True, "affection": existing.affection})
+        return jsonify({"success": True, "did_match": True, "affection": existing.affection, "girl_id": girl_id})
     
     match = Match(user_id=user_id, girl_id=girl_id, affection=20)
     db.session.add(match)
     db.session.commit()
     
-    return jsonify({"success": True, "affection": 20})
+    return jsonify({"success": True, "did_match": True, "affection": 20, "girl_id": girl_id})
 
 
 @app.route('/api/affection', methods=['POST'])
