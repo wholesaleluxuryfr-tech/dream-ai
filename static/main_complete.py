@@ -3450,7 +3450,12 @@ function showNextCardInstant() {
 }
 
 function getProfilePhoto(girlId) {
-    return profilePhotos[girlId] || null;
+    const photos = profilePhotos[girlId];
+    if (!photos) return null;
+    if (Array.isArray(photos)) {
+        return photos[0] || null;
+    }
+    return photos;
 }
 
 function getPhotoHtml(girlId, sizeClass = '') {
@@ -4667,7 +4672,8 @@ function showProfile(id) {
     document.getElementById('profileName').textContent = g.name + ', ' + g.age;
     document.getElementById('profileTagline').textContent = g.tagline;
     document.getElementById('profileBio').textContent = g.bio;
-    document.getElementById('profileAffection').textContent = affectionLevels[id] + '%';
+    const affection = affectionLevels[id] || 20;
+    document.getElementById('profileAffection').textContent = affection + '%';
     
     const profilePhoto = document.getElementById('profileMainPhoto');
     const photo = getProfilePhoto(id);
