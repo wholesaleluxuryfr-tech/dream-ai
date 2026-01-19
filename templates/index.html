@@ -2857,15 +2857,23 @@ async function requestProfilePhoto() {
     }
     ensureGirlContext(currentGirl);
     startChat();
-    const msgObj = { role: 'assistant', content: "Tiens, une photo rien que pour toi...", time: getTime() };
+    const msgObj = { role: 'assistant', content: "Tiens, une photo rien que pour toi...", time: getTime(), loading: true };
     chatHistory[currentGirl].push(msgObj);
     saveChatHistory(currentGirl);
     renderMessages();
-    await generatePhoto("casual selfie, beautiful smile, high quality", msgObj);
+    showToast("Generation de la photo...");
+    const success = await generatePhoto("casual selfie, beautiful smile, high quality", msgObj);
+    msgObj.loading = false;
+    if (!success) {
+        msgObj.content = "Desole, la photo n'a pas pu etre generee...";
+    }
+    saveChatHistory(currentGirl);
+    renderMessages();
 }
 
 async function generatePhoto(description, msgObj) {
     try {
+        console.log("[PHOTO] Generating:", description);
         const res = await fetch('/photo', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -2877,13 +2885,24 @@ async function generatePhoto(description, msgObj) {
         });
         
         const data = await res.json();
+        console.log("[PHOTO] Response:", data);
         if (data.image_url) {
             msgObj.image = data.image_url;
             saveReceivedPhoto(currentGirl, data.image_url);
             saveChatHistory(currentGirl);
             renderMessages();
+            return true;
+        } else if (data.error) {
+            console.error("[PHOTO] API Error:", data.error);
+            showToast("Erreur photo: " + data.error);
+            return false;
         }
-    } catch (e) { console.error('Photo error:', e); }
+        return false;
+    } catch (e) { 
+        console.error('[PHOTO] Error:', e); 
+        showToast("Erreur de generation photo");
+        return false;
+    }
 }
 
 document.getElementById('chatInput').addEventListener('keypress', e => {
