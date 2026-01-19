@@ -887,6 +887,14 @@ let isGeneratingPhotos = false;
 let failedPhotos = {};
 let isDataReady = false;
 
+const PHOTO_TYPES = [
+    { name: 'Portrait', getPrompt: (aff) => 'face portrait closeup, dating app photo, natural lighting, friendly smile' },
+    { name: 'Exterieur', getPrompt: (aff) => 'full body, casual outfit, outdoor setting, relaxed pose' },
+    { name: 'Sexy', getPrompt: (aff) => aff >= 40 ? 'sexy pose, tight clothes, showing curves, seductive look' : 'casual pose, stylish outfit' },
+    { name: 'Lingerie', getPrompt: (aff) => aff >= 50 ? 'wearing lingerie, bedroom setting, seductive pose' : 'elegant dress, classy' },
+    { name: 'Secret', getPrompt: (aff) => 'nude, explicit, intimate POV angle, bedroom' }
+];
+
 // Helper to ensure girl context exists before any operation
 function ensureGirlContext(girlId) {
     if (!girlId) return false;
