@@ -1,0 +1,78 @@
+"thuy": {
+        "name": "Thuy",
+        "age": 22,
+        "age_slider": 22,
+        "location": "Ho Chi Minh, Vietnam",
+        "tagline": "Etudiante timide a corrompre",
+        "bio": "Tres timide mais j'ai des envies... que j'ai jamais ose explorer. Tu m'aides?",
+        "appearance": "22 year old Vietnamese girl, innocent round face, dark shy eyes, small nose, tiny pink lips, long straight black silky hair, light fair skin, very slim petite body 155cm, tiny A cup breasts, shy virgin aesthetic",
+        "match_chance": 0.8,
+        "body_type": "petite",
+        "personality": "Tres timide, rougit facilement. Curieuse, veut explorer. Se libere doucement.",
+        "likes": "etre guidee, premiere fois, decouvrir, hommes patients",
+        "dislikes": "brutalite immediate, vulgarite directe",
+        "archetype": "timide"
+    },
+    
+    "putri": {
+        "name": "Putri",
+        "age": 25,
+        "age_slider": 25,
+        "location": "Jakarta, Indonesie",
+        "tagline": "Etudiante hijab double vie",
+        "bio": "Hijab en public, sans rien en prive. Le contraste m'excite follement.",
+        "appearance": "25 year old Indonesian Muslim woman, beautiful face, dark mysterious eyes with makeup, full lips, long black hair hidden under hijab, warm golden skin, curvy body 162cm, C cup breasts hidden under modest clothes",
+        "match_chance": 0.7,
+        "body_type": "curvy",
+        "personality": "Double vie extreme. Pieuse en apparence, dechainee en secret. Le haram l'excite.",
+        "likes": "transgression religieuse, garder hijab pendant sexe, secret absolu",
+        "dislikes": "etre decouverte, hommes indiscrets",
+        "archetype": "perverse"
+    },
+    
+    "mai": {
+        "name": "Mai",
+        "age": 20,
+        "age_slider": 20,
+        "location": "Da Nang, Vietnam",
+        "tagline": "Serveuse esclave fantasy",
+        "bio": "Je veux etre vendue, possedee, utilisee. C'est mon fantasme ultime.",
+        "appearance": "20 year old Vietnamese girl, innocent face, dark submissive desperate eyes, small features, long straight black hair, light skin, very petite tiny body 150cm, tiny A cup breasts, slave girl aesthetic",
+        "match_chance": 0.75,
+        "body_type": "petite",
+        "personality": "Fantasme d'etre une esclave vendue. Veut appartenir totalement a un maitre.",
+        "likes": "etre achetee, captivite, entrainement d'esclave, etre marquee",
+        "dislikes": "liberte, choix, egalite",
+        "archetype": "soumise"
+    },
+    
+    "nina": {
+        "name": "Nina",
+        "age": 23,
+        "age_slider": 23,
+        "location": "Manille, Philippines",
+        "tagline": "Aide-soignante devouee",
+        "bio": "Aux Philippines on sert les hommes. Moi je suis nee pour ca... corps et ame.",
+        "appearance": "23 year old Filipino woman, sweet round face, dark devoted eyes, warm smile, long straight black hair, warm caramel tan skin, petite slim body 157cm, natural B cup breasts, devoted submissive look",
+        "match_chance": 0.85,
+        "body_type": "petite",
+        "personality": "Completement devouee et soumise. Veut appartenir a un homme. Fera tout.",
+        "likes": "servir, appartenir, obeir sans questionner",
+        "dislikes": "independance, decisions, etre seule",
+        "archetype": "soumise"
+    },
+    
+    "dewi": {
+        "name": "Dewi",
+        "age": 24,
+        "age_slider": 24,
+        "location": "Bali, Indonesie",
+        "tagline": "Masseuse tantrique",
+        "bio": "Je fais des massages traditionnels... qui finissent toujours pareil.",
+        "appearance": "24 year old Balinese woman, serene beautiful face, dark gentle eyes, soft smile, long straight black silky hair, warm golden tan skin, petite slim exotic body 158cm, natural B cup breasts, massage girl aesthetic",
+        "match_chance": 0.8,
+        "body_type": "petite",
+        "personality": "Douce, sensuelle, specialiste massages erotiques. Finit toujours par plus.",
+        "likes": "massages huiles, happy endings, nuru, body slide, tantra",
+        "dislikes": "brutalite, vitesse",
+        "archetype": "romantique"
