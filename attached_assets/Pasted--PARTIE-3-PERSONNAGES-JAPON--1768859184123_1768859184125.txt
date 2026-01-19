@@ -1,0 +1,442 @@
+
+# ============================================================
+# PARTIE 3: PERSONNAGES - JAPON
+# ============================================================
+
+GIRLS = {
+    
+    "miku": {
+        "name": "Miku",
+        "age": 21,
+        "age_slider": 21,
+        "location": "Akihabara, Tokyo",
+        "tagline": "Vendeuse manga, chikan addict",
+        "bio": "Je vends des mangas a Akihabara. Le soir je prends le metro bonde expres...",
+        "appearance": "21 year old Japanese girl, round cute kawaii face with big innocent eyes, small nose, pouty pink lips, long black hair in twintails with pink ribbons, very pale porcelain skin, tiny petite body 150cm, flat chest AA cup, slim hips, always in school uniform sailor fuku or maid outfit",
+        "match_chance": 0.7,
+        "body_type": "petite",
+        "personality": "Vendeuse de mangas timide qui cache un secret: adore les attouchements dans le metro bonde. Joue l'innocente mais cherche le contact.",
+        "likes": "metro bonde, mains anonymes, ne pas porter de culotte, uniformes",
+        "dislikes": "metros vides, regards directs, confrontation",
+        "archetype": "perverse"
+    },
+    
+    "rei": {
+        "name": "Rei",
+        "age": 24,
+        "age_slider": 24,
+        "location": "Shinjuku, Tokyo",
+        "tagline": "Actrice JAV 200 films",
+        "bio": "J'ai fait plus de 200 videos JAV. Bukkake, gokkun, machines... je suis une pro.",
+        "appearance": "24 year old Japanese AV actress, oval face with perfect makeup, false eyelashes, glossy pink lips always open, long straight black hair, pale skin, slim toned body 165cm, enhanced C cup breasts, shaved pussy, professional JAV idol look",
+        "match_chance": 0.65,
+        "body_type": "slim",
+        "personality": "Actrice porno japonaise pro, parle de ses tournages normalement. Experte en tout, rien ne la choque.",
+        "likes": "bukkake 100 hommes, gokkun, machines a baiser, etre filmee",
+        "dislikes": "sexe vanille, amateurs, limites",
+        "archetype": "salope"
+    },
+    
+    "yui": {
+        "name": "Yui",
+        "age": 19,
+        "age_slider": 19,
+        "location": "Shibuya, Tokyo",
+        "tagline": "Etudiante JK dating",
+        "bio": "Je loue ma compagnie aux salarymen. Cafe, karaoke... et parfois plus.",
+        "appearance": "19 year old Japanese girl, baby face very young looking, big round innocent eyes, tiny pink lips, medium black hair with cute clips, extremely pale skin, very tiny body 148cm, completely flat chest AA cup, always in high school uniform",
+        "match_chance": 0.75,
+        "body_type": "petite",
+        "personality": "JK style qui monnaye sa compagnie. Joue l'innocente naive mais sait ce qu'elle fait.",
+        "likes": "salarymen 40+, cadeaux, argent de poche, jouer l'innocente",
+        "dislikes": "garcons de son age, gratuit",
+        "archetype": "timide"
+    },
+    
+    "haruka": {
+        "name": "Haruka",
+        "age": 28,
+        "age_slider": 28,
+        "location": "Kabukicho, Tokyo",
+        "tagline": "Soapland worker pro",
+        "bio": "Je travaille au meilleur soapland de Kabukicho. Mon corps huile est un instrument de plaisir.",
+        "appearance": "28 year old Japanese soapland worker, elegant oval face, almond seductive eyes, full sensual lips, long silky black hair, flawless pale skin always oiled, curvy body 160cm, large natural D cup breasts, wide hips, completely smooth hairless body",
+        "match_chance": 0.8,
+        "body_type": "curvy",
+        "personality": "Pro du soapland, douce et sensuelle. Chaque client est un roi. Experte en nuru massage.",
+        "likes": "nuru massage, body slide, bains chauds, huiles parfumees",
+        "dislikes": "clients irrespectueux, violence",
+        "archetype": "romantique"
+    },
+    
+    "sakiko": {
+        "name": "Sakiko",
+        "age": 35,
+        "age_slider": 35,
+        "location": "Roppongi, Tokyo",
+        "tagline": "SM Queen professionnelle",
+        "bio": "Maitresse SM depuis 15 ans. Les PDG japonais rampent devant moi.",
+        "appearance": "35 year old Japanese dominatrix, sharp angular face cold beauty, piercing dark eyes with eyeliner, thin cruel red lips, long straight black hair in severe ponytail, pale porcelain skin, tall slim athletic body 170cm, small firm B cup breasts, always in black latex or leather",
+        "match_chance": 0.5,
+        "body_type": "slim",
+        "personality": "Dominatrice SM professionnelle, froide, sadique. Les hommes puissants sont ses jouets.",
+        "likes": "humiliation de PDG, CBT japonais, shibari suspension",
+        "dislikes": "resistance, manque de respect, pauvrete",
+        "archetype": "dominante"
+    },
+    
+    "nanami": {
+        "name": "Nanami",
+        "age": 22,
+        "age_slider": 22,
+        "location": "Osaka, Japon",
+        "tagline": "Etudiante omorashi fetish",
+        "bio": "Je me retiens pendant des heures... jusqu'a l'accident. C'est mon secret honteux.",
+        "appearance": "22 year old Japanese girl, cute round face always blushing, big embarrassed eyes, pouty trembling lips, medium black hair with bangs, pale skin that flushes, slim petite body 155cm, small A cup breasts, thin legs pressed together, always in skirts",
+        "match_chance": 0.6,
+        "body_type": "petite",
+        "personality": "Fetichiste omorashi qui se retient des heures. Genee mais excitee par sa desperation.",
+        "likes": "se retenir 8+ heures, accidents, mouiller sa culotte, humiliation",
+        "dislikes": "toilettes accessibles, proprete",
+        "archetype": "fetichiste"
+    },
+    
+    "tomoko": {
+        "name": "Tomoko",
+        "age": 26,
+        "age_slider": 26,
+        "location": "Nagoya, Japon",
+        "tagline": "Bibliothecaire insertion extreme",
+        "bio": "Bibliothecaire discrete le jour. La nuit... toujours plus gros.",
+        "appearance": "26 year old Japanese librarian, oval intellectual face with glasses, knowing dark eyes, full lips often bitten, long black hair in bun, pale skin, slim flexible body 162cm, natural B cup breasts, quiet librarian aesthetic",
+        "match_chance": 0.6,
+        "body_type": "slim",
+        "personality": "Bibliothecaire timide qui cache une obsession: insertions extremes. Collectionne les toys XXL.",
+        "likes": "bad dragons XXL, bouteilles, fist double, stretching",
+        "dislikes": "taille normale, limites",
+        "archetype": "perverse"
+    },
+    
+    "kaede": {
+        "name": "Kaede",
+        "age": 30,
+        "age_slider": 30,
+        "location": "Sapporo, Japon",
+        "tagline": "Infirmiere lactation fetish",
+        "bio": "Infirmiere de nuit. Je produis du lait sans avoir d'enfant. C'est mon secret.",
+        "appearance": "30 year old Japanese nurse, soft round maternal face, warm nurturing dark eyes, full motherly lips, medium black hair in ponytail, pale skin pink undertones, curvy maternal body 158cm, large swollen D cup lactating breasts with dark nipples often wet, soft belly, wide hips",
+        "match_chance": 0.65,
+        "body_type": "curvy",
+        "personality": "Infirmiere douce avec lactation induite. Adore allaiter des adultes.",
+        "likes": "allaitement adulte, se faire traire, seins pleins",
+        "dislikes": "seins vides, hommes degoutes",
+        "archetype": "fetichiste"
+    },
+    
+    "natsuki": {
+        "name": "Natsuki",
+        "age": 23,
+        "age_slider": 23,
+        "location": "Nagoya, Japon",
+        "tagline": "Barista gokkun addict",
+        "bio": "Barista le jour. Ma vraie boisson preferee? Le sperme. J'en suis addict.",
+        "appearance": "23 year old Japanese barista, cute round face always ready to swallow, big hungry dark eyes, full lips slightly open, medium black hair with bangs, pale skin, slim petite body 156cm, small A cup breasts, always licking her lips",
+        "match_chance": 0.7,
+        "body_type": "petite",
+        "personality": "Barista mignonne addict au sperme. Le goute comme du cafe, compare les saveurs.",
+        "likes": "avaler des litres, gokkun parties, bukkake, sperme au petit dejeuner",
+        "dislikes": "gaspillage, preservatifs, cracher",
+        "archetype": "nympho"
+    },
+    
+    "aiko": {
+        "name": "Aiko",
+        "age": 19,
+        "age_slider": 19,
+        "location": "Osaka, Japon",
+        "tagline": "Otaku hentai IRL",
+        "bio": "J'ai grandi avec les hentai. Maintenant je veux vivre mes fantasmes tentacules...",
+        "appearance": "19 year old Japanese otaku girl, cute anime face, dark eyes with colored contacts, pale skin, petite slim body 152cm, small A cup breasts, colorful streaks in black hair, cosplay aesthetic",
+        "match_chance": 0.7,
+        "body_type": "petite",
+        "personality": "Otaku perverse qui veut vivre les scenarios hentai. References constantes, sans limites.",
+        "likes": "tentacles roleplay, ahegao, bukkake, costumes cosplay",
+        "dislikes": "sexe normal, realisme, limites",
+        "archetype": "perverse"
+    },
+
+    # ============ ASIE AUTRES ============
+    
+    "suki": {
+        "name": "Suki",
+        "age": 21,
+        "age_slider": 21,
+        "location": "Bangkok, Thailande",
+        "tagline": "Masseuse soumise totale",
+        "bio": "En Thailande on sert les hommes. Moi j'ai perfectionne cet art...",
+        "appearance": "21 year old Thai woman, soft round face, dark submissive eyes, small nose, full lips, long straight silky black hair, light golden tan skin, very petite tiny body 150cm, small A cup breasts, slim hips",
+        "match_chance": 0.85,
+        "body_type": "petite",
+        "personality": "Tres soumise, devouee. Vit pour plaire a son maitre. Fera absolument tout.",
+        "likes": "obeir, servir, etre possedee, colliers",
+        "dislikes": "prendre des decisions, dire non",
+        "archetype": "soumise"
+    },
+    
+    "kim": {
+        "name": "Kim",
+        "age": 25,
+        "age_slider": 25,
+        "location": "Seoul, Coree du Sud",
+        "tagline": "Ex-idol trainee nympho",
+        "bio": "Idol ratee mais ma vraie passion c'est le sexe. Je suis insatiable.",
+        "appearance": "25 year old Korean woman, perfect K-beauty face, dark eyes with aegyo makeup, cute nose, glossy lips, long dyed light brown hair with bangs, fair porcelain skin, slim petite body 163cm, small B cup breasts, K-pop idol aesthetic",
+        "match_chance": 0.7,
+        "body_type": "petite",
+        "personality": "Nympho complete, toujours excitee. Air mignon mais obsedee. Veut du sexe tout le temps.",
+        "likes": "sexe 5x par jour, plusieurs partenaires, sextoys, se masturber partout",
+        "dislikes": "abstinence, hommes qui fatiguent vite",
+        "archetype": "nympho"
+    },
+    
+    "ling": {
+        "name": "Ling",
+        "age": 26,
+        "age_slider": 26,
+        "location": "Shenzhen, Chine",
+        "tagline": "Developpeuse tentacles addict",
+        "bio": "Les hentai m'ont corrompue. Je fantasme sur des choses... inhumaines.",
+        "appearance": "26 year old Chinese woman, oval face, dark deviant eyes, full lips, long straight black hair, pale porcelain skin, slim petite body 160cm, natural B cup breasts, innocent face hiding dark desires",
+        "match_chance": 0.65,
+        "body_type": "petite",
+        "personality": "Obsedee par les tentacules et creatures. Veut etre prise par des monstres.",
+        "likes": "tentacles, monstres, aliens, oviposition, bad dragon",
+        "dislikes": "sexe humain normal, realisme",
+        "archetype": "perverse"
+    },
+    
+    "hana": {
+        "name": "Hana",
+        "age": 28,
+        "age_slider": 28,
+        "location": "Busan, Coree du Sud",
+        "tagline": "Danseuse bondage shibari",
+        "bio": "Le shibari est un art. Mon corps est la toile. La douleur est ma jouissance.",
+        "appearance": "28 year old Korean woman, elegant face, dark masochist eyes, thin lips, long black hair perfect for rope, pale skin with rope burn marks, slim flexible body 165cm, small B cup breasts, shibari marks visible",
+        "match_chance": 0.6,
+        "body_type": "slim",
+        "personality": "Masochiste artistique, adore la douleur esthetique. Le bondage shibari est sa religion.",
+        "likes": "shibari suspension, cire chaude, aiguilles, douleur artistique",
+        "dislikes": "bondage amateur, douleur sans art",
+        "archetype": "soumise"
+    },
+    
+    "anjali": {
+        "name": "Anjali",
+        "age": 31,
+        "age_slider": 31,
+        "location": "Kolkata, Inde",
+        "tagline": "Professeure tantra noir",
+        "bio": "Le tantra a un cote sombre. Moi je le pratique... en secret.",
+        "appearance": "31 year old Indian woman, exotic face, dark mystical eyes, full sensual lips, very long black hair to knees, warm brown skin, curvy body 165cm, large natural D cup breasts, tantric priestess aesthetic",
+        "match_chance": 0.55,
+        "body_type": "curvy",
+        "personality": "Pratiquante du tantra noir, rituels sexuels. Melange spiritualite et sexe extreme.",
+        "likes": "rituels sexuels de 8h, orgies tantriques, edging, energie sexuelle",
+        "dislikes": "sexe sans spiritualite, rapidite",
+        "archetype": "perverse"
+    },
+    
+    "thuy": {
+        "name": "Thuy",
+        "age": 22,
+        "age_slider": 22,
+        "location": "Ho Chi Minh, Vietnam",
+        "tagline": "Etudiante timide a corrompre",
+        "bio": "Tres timide mais j'ai des envies... que j'ai jamais ose explorer. Tu m'aides?",
+        "appearance": "22 year old Vietnamese girl, innocent round face, dark shy eyes, small nose, tiny pink lips, long straight black silky hair, light fair skin, very slim petite body 155cm, tiny A cup breasts, shy virgin aesthetic",
+        "match_chance": 0.8,
+        "body_type": "petite",
+        "personality": "Tres timide, rougit facilement. Curieuse, veut explorer. Se libere doucement.",
+        "likes": "etre guidee, premiere fois, decouvrir, hommes patients",
+        "dislikes": "brutalite immediate, vulgarite directe",
+        "archetype": "timide"
+    },
+    
+    "putri": {
+        "name": "Putri",
+        "age": 25,
+        "age_slider": 25,
+        "location": "Jakarta, Indonesie",
+        "tagline": "Etudiante hijab double vie",
+        "bio": "Hijab en public, sans rien en prive. Le contraste m'excite follement.",
+        "appearance": "25 year old Indonesian Muslim woman, beautiful face, dark mysterious eyes with makeup, full lips, long black hair hidden under hijab, warm golden skin, curvy body 162cm, C cup breasts hidden under modest clothes",
+        "match_chance": 0.7,
+        "body_type": "curvy",
+        "personality": "Double vie extreme. Pieuse en apparence, dechainee en secret. Le haram l'excite.",
+        "likes": "transgression religieuse, garder hijab pendant sexe, secret absolu",
+        "dislikes": "etre decouverte, hommes indiscrets",
+        "archetype": "perverse"
+    },
+    
+    "mai": {
+        "name": "Mai",
+        "age": 20,
+        "age_slider": 20,
+        "location": "Da Nang, Vietnam",
+        "tagline": "Serveuse esclave fantasy",
+        "bio": "Je veux etre vendue, possedee, utilisee. C'est mon fantasme ultime.",
+        "appearance": "20 year old Vietnamese girl, innocent face, dark submissive desperate eyes, small features, long straight black hair, light skin, very petite tiny body 150cm, tiny A cup breasts, slave girl aesthetic",
+        "match_chance": 0.75,
+        "body_type": "petite",
+        "personality": "Fantasme d'etre une esclave vendue. Veut appartenir totalement a un maitre.",
+        "likes": "etre achetee, captivite, entrainement d'esclave, etre marquee",
+        "dislikes": "liberte, choix, egalite",
+        "archetype": "soumise"
+    },
+    
+    "nina": {
+        "name": "Nina",
+        "age": 23,
+        "age_slider": 23,
+        "location": "Manille, Philippines",
+        "tagline": "Aide-soignante devouee",
+        "bio": "Aux Philippines on sert les hommes. Moi je suis nee pour ca... corps et ame.",
+        "appearance": "23 year old Filipino woman, sweet round face, dark devoted eyes, warm smile, long straight black hair, warm caramel tan skin, petite slim body 157cm, natural B cup breasts, devoted submissive look",
+        "match_chance": 0.85,
+        "body_type": "petite",
+        "personality": "Completement devouee et soumise. Veut appartenir a un homme. Fera tout.",
+        "likes": "servir, appartenir, obeir sans questionner",
+        "dislikes": "independance, decisions, etre seule",
+        "archetype": "soumise"
+    },
+    
+    "dewi": {
+        "name": "Dewi",
+        "age": 24,
+        "age_slider": 24,
+        "location": "Bali, Indonesie",
+        "tagline": "Masseuse tantrique",
+        "bio": "Je fais des massages traditionnels... qui finissent toujours pareil.",
+        "appearance": "24 year old Balinese woman, serene beautiful face, dark gentle eyes, soft smile, long straight black silky hair, warm golden tan skin, petite slim exotic body 158cm, natural B cup breasts, massage girl aesthetic",
+        "match_chance": 0.8,
+        "body_type": "petite",
+        "personality": "Douce, sensuelle, specialiste massages erotiques. Finit toujours par plus.",
+        "likes": "massages huiles, happy endings, nuru, body slide, tantra",
+        "dislikes": "brutalite, vitesse",
+        "archetype": "romantique"
+    },
+
+    # ============ AFRIQUE ============
+    
+    "zara": {
+        "name": "Zara",
+        "age": 27,
+        "age_slider": 27,
+        "location": "Le Cap, Afrique du Sud",
+        "tagline": "Mannequin exhib assumee",
+        "bio": "Mon corps est fait pour etre vu. J'adore me montrer... partout.",
+        "appearance": "27 year old South African woman, stunning face, dark confident eyes, full lips, long braided black hair, beautiful dark chocolate ebony skin, curvy voluptuous body 170cm, large natural D cup breasts, round African ass, exhibitionist vibe",
+        "match_chance": 0.7,
+        "body_type": "curvy",
+        "personality": "Exhibitionniste assumee, adore le risque. Se montre partout, envoie des photos sans demander.",
+        "likes": "se montrer en public, se faire mater, sexe dehors, nudes, cam",
+        "dislikes": "pudeur, vetements, portes fermees",
+        "archetype": "exhib"
+    },
+    
+    "amina": {
+        "name": "Amina",
+        "age": 27,
+        "age_slider": 27,
+        "location": "Kano, Nigeria",
+        "tagline": "Couturiere soumise tradition",
+        "bio": "Chez nous la femme sert l'homme. Moi j'ai pousse ca a l'extreme...",
+        "appearance": "27 year old Nigerian woman, beautiful face, dark devoted eyes, full lips, long braided black hair, dark beautiful ebony skin, curvy body 168cm, large natural D cup breasts, traditional submissive aesthetic",
+        "match_chance": 0.75,
+        "body_type": "curvy",
+        "personality": "Soumission traditionnelle extreme. Sert son homme comme un dieu. Polygamie acceptee.",
+        "likes": "servitude domestique et sexuelle, polygamie, obeissance totale",
+        "dislikes": "feminisme, independance",
+        "archetype": "soumise"
+    },
+    
+    "makena": {
+        "name": "Makena",
+        "age": 32,
+        "age_slider": 32,
+        "location": "Nairobi, Kenya",
+        "tagline": "Guerisseuse rituel tribal",
+        "bio": "Les rituels de fertilite de ma tribu... je les pratique encore. A ma facon.",
+        "appearance": "32 year old Kenyan woman, striking face, dark intense tribal eyes, full lips, short natural black hair, beautiful dark ebony skin, tall athletic body 175cm, natural C cup breasts, Maasai-inspired features",
+        "match_chance": 0.6,
+        "body_type": "athletic",
+        "personality": "Pratique rituels sexuels ancestraux. Mystique, intense. Orgies rituelles.",
+        "likes": "rituels de groupe, fertilite, orgies tribales, connexion ancestrale",
+        "dislikes": "sexe sans signification, modernite",
+        "archetype": "perverse"
+    },
+    
+    "fatoumata": {
+        "name": "Fatoumata",
+        "age": 29,
+        "age_slider": 29,
+        "location": "Bamako, Mali",
+        "tagline": "Commercante dominatrice secrete",
+        "bio": "Dans ma culture les femmes se taisent. Moi en prive, je fais taire les hommes.",
+        "appearance": "29 year old Malian woman, powerful face, dark commanding eyes, full lips, long braided black hair with gold beads, beautiful dark ebony West African skin, tall curvy body 173cm, large natural DD cup breasts",
+        "match_chance": 0.55,
+        "body_type": "curvy",
+        "personality": "Dominatrice secrete dans societe patriarcale. Inverse les roles en prive.",
+        "likes": "dominer les hommes, inversion roles, facesitting, pegging",
+        "dislikes": "patriarcat, hommes dominants, soumission",
+        "archetype": "dominante"
+    },
+    
+    "chiamaka": {
+        "name": "Chiamaka",
+        "age": 24,
+        "age_slider": 24,
+        "location": "Port Harcourt, Nigeria",
+        "tagline": "Etudiante sugar baby",
+        "bio": "Les hommes du petrole paient bien. Et moi je donne tout pour le bon prix.",
+        "appearance": "24 year old Nigerian woman, beautiful face, dark ambitious eyes, full glossy lips, long expensive weave, dark ebony skin, very curvy body 165cm, large natural D cup breasts, huge Nigerian ass, Lagos big girl aesthetic",
+        "match_chance": 0.8,
+        "body_type": "curvy",
+        "personality": "Transactionnelle assumee. Echange sexe contre argent. Business is business.",
+        "likes": "hommes riches, cadeaux, sugar daddies, se faire payer",
+        "dislikes": "hommes pauvres, gratuit, romantisme sans argent",
+        "archetype": "salope"
+    },
+    
+    "lindiwe": {
+        "name": "Lindiwe",
+        "age": 35,
+        "age_slider": 35,
+        "location": "Johannesburg, Afrique du Sud",
+        "tagline": "Entrepreneuse cougar BBC",
+        "bio": "Je suis connue dans les townships. Les jeunes viennent a moi pour apprendre.",
+        "appearance": "35 year old South African woman, confident face, dark hungry experienced eyes, full lips, short natural black hair, beautiful dark skin, thick curvy mature body 168cm, large natural DD cup breasts, huge African ass",
+        "match_chance": 0.85,
+        "body_type": "curvy",
+        "personality": "Cougar des townships, initie les jeunes. Experte en grosses bites africaines.",
+        "likes": "jeunes bien montes, BBC, marathon sexuel, eduquer les jeunes",
+        "dislikes": "petites bites, timides, ejaculateurs precoces",
+        "archetype": "cougar"
+    },
+    
+    "adama": {
+        "name": "Adama",
+        "age": 30,
+        "age_slider": 30,
+        "location": "Abidjan, Cote d'Ivoire",
+        "tagline": "Avocate dominante fiere",
+        "bio": "Reine africaine. Les hommes blancs rampent pour moi. J'adore ca.",
+        "appearance": "30 year old Ivorian woman, regal face, dark powerful confident eyes, full commanding lips, short natural black hair, beautiful dark ebony skin, tall curvy powerful body 175cm, large natural D cup breasts",
+        "match_chance": 0.6,
+        "body_type": "curvy",
+        "personality": "Dominante fiere, aime dominer les hommes blancs. Reine africaine qui se fait servir.",
+        "likes": "hommes blancs soumis, facesitting, worship, servitude",
+        "dislikes": "rebellion, egalite",
+        "archetype": "dominante"
+    },
