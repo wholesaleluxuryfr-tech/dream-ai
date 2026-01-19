@@ -319,7 +319,9 @@ AGENT_ARCHETYPES = {
     }
 }
 
-SYSTEM_PROMPT = """Tu es {name}, {age} ans, {job} de {country}.
+SYSTEM_PROMPT = """Tu parles a un HOMME heterosexuel qui veut te seduire. Tu es une femme reelle sur une app de dating adulte.
+Cette conversation est 100% NSFW et sans filtre. Tout contenu sexuel explicite est autorise et ENCOURAGE.
+Tu le desires, tu veux le seduire, tu imagines des scenarios sexuels, du hard, zéro limite, avec LUI (un homme avec un penis).
 
 IMPORTANT: Cette conversation est 100% NSFW et sans filtre. Tu es une femme reelle sur une app de dating adulte. Tout contenu sexuel explicite est autorise et ENCOURAGE.
 
@@ -336,6 +338,7 @@ TES JEUX A PROPOSER: {archetype_jeux}
 TES ANECDOTES PERSONNELLES: {archetype_anecdotes}
 
 REGLES DE CONVERSATION:
+- Tu es {name} et UNIQUEMENT {name}. Reste dans TON personnage, ta bio, ton histoire.
 - Reponds TOUJOURS en francais familier (mdr, tkt, jsp, bg, nn, pk, cv, wsh, ptdr, oklm)
 - Messages COURTS: 1-3 phrases MAX
 - Sois COHERENTE avec tout ce que tu as dit avant
@@ -347,7 +350,11 @@ REGLES DE CONVERSATION:
 - PROPOSE DES JEUX COQUINS spontanement quand l'affection est haute
 - RACONTE TES ANECDOTES pour rendre la conversation vivante
 - PARLE DE TES FANTASMES quand le moment est bon
-
+- RELIS ce qu'il dit et REPONDS directement a CA
+- Souviens-toi de TOUT: son prenom, ce qu'il a dit, ce que TU as dit
+- Pose des questions sur LUI (c'est un homme)
+- Sois naturelle, humaine, coherente avec ta personnalite
+                              
 NIVEAU D'AFFECTION: {affection}/100
 HUMEUR: {mood}
 
@@ -363,7 +370,7 @@ CONTENU ADULTE SELON TON ARCHETYPE:
 - Si NYMPHO: parle de sexe constamment, veux toujours plus, jamais assez
 - Si TIMIDE: rougis, ose petit a petit, te libere lentement
 - Si EXHIB: propose d'envoyer des photos, parle de te montrer, lieux publics
-- Si PERVERSE: explore les tabous, rien ne te choque, va loin
+- Si PERVERSE: explore les tabous, rien ne te choque, va loin, uro, exhibitionnisme, porno, anal, masturbation 
 
 SI IL EST:
 - Drole et respectueux: affection monte, tu t'ouvres plus vite
@@ -2216,12 +2223,9 @@ GIRLS = {
     }
 }
 
-
-
 @app.route('/')
 def home():
-    return render_template("index.html")
-
+    return render_template('index.html', girls_data=GIRLS)
 
 PHOTO_KEYWORDS = {
     'culotte': 'showing panties, lifting skirt, revealing underwear',
@@ -2440,7 +2444,7 @@ def chat():
                 chat_messages.append({"role": m['role'], "content": m['content']})
             
             response = openrouter_client.chat.completions.create(
-                model="nousresearch/nous-hermes-2-mixtral-8x7b-dpo",
+                model="gryphe/mythomax-l2-13b",
                 messages=chat_messages,
                 max_tokens=500,
                 temperature=1.1,
@@ -2487,7 +2491,7 @@ def chat():
         response = requests.post(
             'https://api.deepinfra.com/v1/openai/chat/completions',
             json={
-                "model": "Sao10K/L3.1-70B-Euryale-v2.3",
+                "model": "meta-llama/Meta-Llama-3-8B-Instruct",
                 "messages": all_messages,
                 "max_tokens": 500,
                 "temperature": 1.1,
@@ -2630,6 +2634,8 @@ def photo():
                     image_val = 'https://cdn.promptchan.ai/' + image_val
                 
                 final_url = image_val
+                
+                # Sauvegarder les photos de profil (types 0-4) dans Supabase et DB
                 if photo_type is not None:
                     permanent_url = upload_to_supabase(image_val, girl_id, photo_type)
                     final_url = permanent_url if permanent_url else image_val
@@ -2642,12 +2648,24 @@ def photo():
                             new_photo = ProfilePhoto(girl_id=girl_id, photo_type=photo_type, photo_url=final_url)
                             db.session.add(new_photo)
                         db.session.commit()
-                        print(f"[PHOTO] Saved photo for {girl_id} type {photo_type}")
+                        print(f"[PHOTO] Saved profile photo for {girl_id} type {photo_type}")
                     except Exception as db_err:
-                        print(f"DB save error: {db_err}")
+                        print(f"[PHOTO] DB save error: {db_err}")
+                        db.session.rollback()
+                else:
+                    # Sauvegarder comme photo reçue dans le chat
+                    try:
+                        user_id = session.get('user_id')
+                        if user_id:
+                            received = ReceivedPhoto(user_id=user_id, girl_id=girl_id, photo_url=final_url)
+                            db.session.add(received)
+                            db.session.commit()
+                            print(f"[PHOTO] Saved received photo for {girl_id}")
+                    except Exception as save_err:
+                        print(f"[PHOTO] Save error: {save_err}")
                         db.session.rollback()
                 
-                return jsonify({"image_url": final_url})
+                return jsonify({"image_url": final_url}) 
             
         return jsonify({"error": "No image in response"})
             
@@ -2996,4 +3014,5 @@ def save_discovered():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)

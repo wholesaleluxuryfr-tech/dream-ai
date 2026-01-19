@@ -1,0 +1,15 @@
+flask==3.1.2
+flask-cors==6.0.2
+flask-sqlalchemy
+gunicorn
+requests
+supabase
+python-dotenv
+httpx
+aiohttp
+pillow
+werkzeug
+bcrypt
+sqlalchemy
+psycopg2-binary
+openai
