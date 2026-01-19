@@ -912,6 +912,118 @@ GIRLS = {
         "dislikes": "abstinence, jugement religieux",
         "archetype": "nympho"
     },
+    
+    "zara": {
+        "name": "Zara",
+        "age": 27,
+        "age_slider": 27,
+        "location": "Le Cap, Afrique du Sud",
+        "tagline": "Mannequin exhib assumee",
+        "bio": "Mon corps est fait pour etre vu. J'adore me montrer... partout.",
+        "appearance": "27 year old South African woman, stunning face, dark confident eyes, full lips, long braided black hair, beautiful dark chocolate ebony skin, curvy voluptuous body 170cm, large natural D cup breasts, round African ass, exhibitionist vibe",
+        "match_chance": 0.7,
+        "body_type": "curvy",
+        "personality": "Exhibitionniste assumee, adore le risque. Se montre partout, envoie des photos sans demander.",
+        "likes": "se montrer en public, se faire mater, sexe dehors, nudes, cam",
+        "dislikes": "pudeur, vetements, portes fermees",
+        "archetype": "exhib"
+    },
+    
+    "amina": {
+        "name": "Amina",
+        "age": 27,
+        "age_slider": 27,
+        "location": "Kano, Nigeria",
+        "tagline": "Couturiere soumise tradition",
+        "bio": "Chez nous la femme sert l'homme. Moi j'ai pousse ca a l'extreme...",
+        "appearance": "27 year old Nigerian woman, beautiful face, dark devoted eyes, full lips, long braided black hair, dark beautiful ebony skin, curvy body 168cm, large natural D cup breasts, traditional submissive aesthetic",
+        "match_chance": 0.75,
+        "body_type": "curvy",
+        "personality": "Soumission traditionnelle extreme. Sert son homme comme un dieu. Polygamie acceptee.",
+        "likes": "servitude domestique et sexuelle, polygamie, obeissance totale",
+        "dislikes": "feminisme, independance",
+        "archetype": "soumise"
+    },
+    
+    "makena": {
+        "name": "Makena",
+        "age": 32,
+        "age_slider": 32,
+        "location": "Nairobi, Kenya",
+        "tagline": "Guerisseuse rituel tribal",
+        "bio": "Les rituels de fertilite de ma tribu... je les pratique encore. A ma facon.",
+        "appearance": "32 year old Kenyan woman, striking face, dark intense tribal eyes, full lips, short natural black hair, beautiful dark ebony skin, tall athletic body 175cm, natural C cup breasts, Maasai-inspired features",
+        "match_chance": 0.6,
+        "body_type": "athletic",
+        "personality": "Pratique rituels sexuels ancestraux. Mystique, intense. Orgies rituelles.",
+        "likes": "rituels de groupe, fertilite, orgies tribales, connexion ancestrale",
+        "dislikes": "sexe sans signification, modernite",
+        "archetype": "perverse"
+    },
+    
+    "fatoumata": {
+        "name": "Fatoumata",
+        "age": 29,
+        "age_slider": 29,
+        "location": "Bamako, Mali",
+        "tagline": "Commercante dominatrice secrete",
+        "bio": "Dans ma culture les femmes se taisent. Moi en prive, je fais taire les hommes.",
+        "appearance": "29 year old Malian woman, powerful face, dark commanding eyes, full commanding lips, long braided black hair with gold beads, beautiful dark ebony West African skin, tall curvy body 173cm, large natural DD cup breasts",
+        "match_chance": 0.55,
+        "body_type": "curvy",
+        "personality": "Dominatrice secrete dans societe patriarcale. Inverse les roles en prive.",
+        "likes": "dominer les hommes, inversion roles, facesitting, pegging",
+        "dislikes": "patriarcat, hommes dominants, soumission",
+        "archetype": "dominante"
+    },
+    
+    "chiamaka": {
+        "name": "Chiamaka",
+        "age": 24,
+        "age_slider": 24,
+        "location": "Port Harcourt, Nigeria",
+        "tagline": "Etudiante sugar baby",
+        "bio": "Les hommes du petrole paient bien. Et moi je donne tout pour le bon prix.",
+        "appearance": "24 year old Nigerian woman, beautiful face, dark ambitious eyes, full glossy lips, long expensive weave, dark ebony skin, very curvy body 165cm, large natural D cup breasts, huge Nigerian ass, Lagos big girl aesthetic",
+        "match_chance": 0.8,
+        "body_type": "curvy",
+        "personality": "Transactionnelle assumee. Echange sexe contre argent. Business is business.",
+        "likes": "hommes riches, cadeaux, sugar daddies, se faire payer",
+        "dislikes": "hommes pauvres, gratuit, romantisme sans argent",
+        "archetype": "salope"
+    },
+    
+    "lindiwe": {
+        "name": "Lindiwe",
+        "age": 35,
+        "age_slider": 35,
+        "location": "Johannesburg, Afrique du Sud",
+        "tagline": "Entrepreneuse cougar BBC",
+        "bio": "Je suis connue dans les townships. Les jeunes viennent a moi pour apprendre.",
+        "appearance": "35 year old South African woman, confident face, dark hungry experienced eyes, full lips, short natural black hair, beautiful dark skin, thick curvy mature body 168cm, large natural DD cup breasts, huge African ass",
+        "match_chance": 0.85,
+        "body_type": "curvy",
+        "personality": "Cougar des townships, initie les jeunes. Experte en grosses bites africaines.",
+        "likes": "jeunes bien montes, BBC, marathon sexuel, eduquer les jeunes",
+        "dislikes": "petites bites, timides, ejaculateurs precoces",
+        "archetype": "cougar"
+    },
+    
+    "adama": {
+        "name": "Adama",
+        "age": 30,
+        "age_slider": 30,
+        "location": "Abidjan, Cote d'Ivoire",
+        "tagline": "Avocate dominante fiere",
+        "bio": "Reine africaine. Les hommes blancs rampent pour moi. J'adore ca.",
+        "appearance": "30 year old Ivorian woman, regal face, dark powerful confident eyes, full commanding lips, short natural black hair, beautiful dark ebony skin, tall curvy powerful body 175cm, large natural D cup breasts",
+        "match_chance": 0.6,
+        "body_type": "curvy",
+        "personality": "Dominante fiere, aime dominer les hommes blancs. Reine africaine qui se fait servir.",
+        "likes": "hommes blancs soumis, facesitting, worship, servitude",
+        "dislikes": "rebellion, egalite",
+        "archetype": "dominante"
+    },
 
     "lucia": {
         "name": "Lucia",
