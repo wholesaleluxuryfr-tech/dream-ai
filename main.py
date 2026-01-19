@@ -1350,10 +1350,6 @@ GIRLS = {
 def home():
     return render_template('index.html', girls_data=GIRLS)
 
-@app.route('/')
-def home():
-    return render_template('index.html', girls_data=GIRLS)
-
 PHOTO_KEYWORDS = {
     'culotte': 'showing panties, lifting skirt, revealing underwear',
     'panties': 'showing panties, lifting skirt, revealing underwear',
