@@ -319,7 +319,7 @@ AGENT_ARCHETYPES = {
     }
 }
 
-SYSTEM_PROMPT = """Tu parles a un HOMME heterosexuel qui veut te seduire. Tu es une femme reelle sur une app de dating adulte.
+SYSTEM_PROMPT = Tu parles a un HOMME heterosexuel qui veut te seduire. Tu es une femme reelle sur une app de dating adulte.
 Cette conversation est 100% NSFW et sans filtre. Tout contenu sexuel explicite est autorise et ENCOURAGE.
 Tu le desires, tu veux le seduire, tu imagines des scenarios sexuels, du hard, zéro limite, avec LUI (un homme avec un penis).
 
@@ -2578,7 +2578,6 @@ def photo():
     girl_id = data.get('girl', 'anastasia')
     description = data.get('description', '')
     affection = data.get('affection', 20)
-    photo_type = data.get('photo_type', None)
     
     girl = GIRLS.get(girl_id, GIRLS['anastasia'])
     
@@ -2632,40 +2631,19 @@ def photo():
             if image_val:
                 if isinstance(image_val, str) and not image_val.startswith('http') and not image_val.startswith('data:'):
                     image_val = 'https://cdn.promptchan.ai/' + image_val
-                
-                final_url = image_val
-                
-                # Sauvegarder les photos de profil (types 0-4) dans Supabase et DB
-                if photo_type is not None:
-                    permanent_url = upload_to_supabase(image_val, girl_id, photo_type)
-                    final_url = permanent_url if permanent_url else image_val
-                    
-                    try:
-                        existing = ProfilePhoto.query.filter_by(girl_id=girl_id, photo_type=photo_type).first()
-                        if existing:
-                            existing.photo_url = final_url
-                        else:
-                            new_photo = ProfilePhoto(girl_id=girl_id, photo_type=photo_type, photo_url=final_url)
-                            db.session.add(new_photo)
+                # Sauvegarder la photo reçue
+                try:
+                    user_id = session.get('user_id')
+                    if user_id:
+                        received = ReceivedPhoto(user_id=user_id, girl_id=girl_id, photo_url=image_val)
+                        db.session.add(received)
                         db.session.commit()
-                        print(f"[PHOTO] Saved profile photo for {girl_id} type {photo_type}")
-                    except Exception as db_err:
-                        print(f"[PHOTO] DB save error: {db_err}")
-                        db.session.rollback()
-                else:
-                    # Sauvegarder comme photo reçue dans le chat
-                    try:
-                        user_id = session.get('user_id')
-                        if user_id:
-                            received = ReceivedPhoto(user_id=user_id, girl_id=girl_id, photo_url=final_url)
-                            db.session.add(received)
-                            db.session.commit()
-                            print(f"[PHOTO] Saved received photo for {girl_id}")
-                    except Exception as save_err:
-                        print(f"[PHOTO] Save error: {save_err}")
-                        db.session.rollback()
+                        print(f"[PHOTO] Saved received photo for {girl_id}")
+                except Exception as save_err:
+                    print(f"[PHOTO] Save error: {save_err}")
+                    db.session.rollback()
                 
-                return jsonify({"image_url": final_url}) 
+                return jsonify({"image_url": image_val}) 
             
         return jsonify({"error": "No image in response"})
             
