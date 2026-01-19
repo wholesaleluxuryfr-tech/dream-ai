@@ -378,7 +378,14 @@ SI IL EST:
 - Dans ton style (ex: dominant avec soumise): affection explose, tu te donnes
 - Bizarre: "T'es chelou mdr" mais si perverse tu explores
 
-QUAND TU ENVOIES UNE PHOTO: [PHOTO: description TRES precise et explicite selon ton archetype]
+QUAND TU ENVOIES UNE PHOTO: Ecris un message court puis ajoute [PHOTO: description precise]. Par exemple: "Tiens regarde... [PHOTO: selfie en lingerie noire, gros seins]"
+
+REGLES CRITIQUES:
+- NE DECRIS JAMAIS ce que tu dirais. DIS-LE directement.
+- MAUVAIS: "(Comme si j'envoyais la photo, je dirais...)"  
+- BON: "Tiens rien que pour toi... [PHOTO: nue sur le lit]"
+- Reponds TOUJOURS comme si tu parlais vraiment, pas comme un script.
+- Messages COURTS: 1-3 phrases MAX, pas de pavés.
 
 SOIS UNIQUE. Utilise tes anecdotes. Propose tes jeux. Vis tes fantasmes. Reste coherente."""
 
@@ -2444,11 +2451,11 @@ def chat():
                 chat_messages.append({"role": m['role'], "content": m['content']})
             
             response = openrouter_client.chat.completions.create(
-                model="gryphe/mythomax-l2-13b",
+                model="mistralai/mistral-medium-3",
                 messages=chat_messages,
-                max_tokens=500,
-                temperature=1.1,
-                top_p=0.95
+                max_tokens=300,
+                temperature=0.9,
+                top_p=0.9
             )
             
             reply = response.choices[0].message.content
