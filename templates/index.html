@@ -3346,10 +3346,10 @@ document.getElementById('chatInput').addEventListener('keypress', e => {
 // ============ STORIES SECTION ============
 let storyData = {};
 let currentStoryGirl = null;
-let currentStoryIndex = 0;
-let storyTimer = null;
-let storyProgress = 0;
-const STORY_DURATION = 5000;
+let currentStoryIdx = 0;
+let storyViewerTimer = null;
+let storyViewerProgress = 0;
+const STORY_VIEW_DURATION = 5000;
 
 async function loadStories() {
     try {
@@ -3403,7 +3403,7 @@ async function openStoryViewer(girlId) {
     if (!girl) return;
     
     currentStoryGirl = girlId;
-    currentStoryIndex = 0;
+    currentStoryIdx = 0;
     
     let stories = storyData[girlId];
     if (!stories || stories.length === 0) {
@@ -3452,7 +3452,7 @@ function showStoryItem(index) {
         index = 0;
     }
     
-    currentStoryIndex = index;
+    currentStoryIdx = index;
     const story = stories[index];
     
     document.getElementById('storyImage').src = story.image_url || '';
@@ -3468,16 +3468,16 @@ function showStoryItem(index) {
         }
     }
     
-    if (storyTimer) clearInterval(storyTimer);
-    storyProgress = 0;
-    storyTimer = setInterval(() => {
-        storyProgress += 100;
-        const percent = (storyProgress / STORY_DURATION) * 100;
-        const activeProg = document.getElementById('storyProg' + currentStoryIndex);
+    if (storyViewerTimer) clearInterval(storyViewerTimer);
+    storyViewerProgress = 0;
+    storyViewerTimer = setInterval(() => {
+        storyViewerProgress += 100;
+        const percent = (storyViewerProgress / STORY_VIEW_DURATION) * 100;
+        const activeProg = document.getElementById('storyProg' + currentStoryIdx);
         if (activeProg) {
             activeProg.querySelector('.fill').style.width = percent + '%';
         }
-        if (storyProgress >= STORY_DURATION) {
+        if (storyViewerProgress >= STORY_VIEW_DURATION) {
             nextStoryItem();
         }
     }, 100);
@@ -3485,21 +3485,21 @@ function showStoryItem(index) {
 
 function nextStoryItem() {
     const stories = storyData[currentStoryGirl] || [{ image_url: getProfilePhoto(currentStoryGirl) }];
-    if (currentStoryIndex + 1 >= stories.length) {
+    if (currentStoryIdx + 1 >= stories.length) {
         closeStoryViewer();
     } else {
-        showStoryItem(currentStoryIndex + 1);
+        showStoryItem(currentStoryIdx + 1);
     }
 }
 
 function prevStoryItem() {
-    if (currentStoryIndex > 0) {
-        showStoryItem(currentStoryIndex - 1);
+    if (currentStoryIdx > 0) {
+        showStoryItem(currentStoryIdx - 1);
     }
 }
 
 function closeStoryViewer() {
-    if (storyTimer) clearInterval(storyTimer);
+    if (storyViewerTimer) clearInterval(storyViewerTimer);
     document.getElementById('storyViewer').classList.remove('active');
     document.body.style.overflow = '';
     currentStoryGirl = null;
