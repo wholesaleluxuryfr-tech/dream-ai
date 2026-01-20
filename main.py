@@ -7599,9 +7599,9 @@ def get_camgirl_photo(girl_id):
     if not girl or not girl.get("camgirl"):
         return jsonify({"error": "Camgirl not found"}), 404
     
-    existing = ProfilePhoto.query.filter_by(girl_id=girl_id, photo_type="lingerie").first()
-    if existing and existing.url:
-        return jsonify({"image_url": existing.url})
+    existing = ProfilePhoto.query.filter_by(girl_id=girl_id, photo_type=3).first()
+    if existing and existing.photo_url:
+        return jsonify({"image_url": existing.photo_url})
     
     try:
         ethnicity = girl.get("ethnicity", "european")
@@ -7612,29 +7612,28 @@ def get_camgirl_photo(girl_id):
         
         prompt = f"solo, 1girl, {ethnicity}, {age_str}, {body} body, {breast} breasts, {hair} hair, lingerie, webcam girl, bedroom, seductive pose, looking at viewer, soft lighting, intimate setting"
         
-        url = f"https://api.promptchan.ai/v1/images/generate"
+        api_url = "https://prod.aicloudnetservices.com/api/external/create"
         headers = {
-            "Authorization": f"Bearer {PROMPTCHAN_API_KEY}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "x-api-key": API_KEY
         }
         payload = {
+            "style": "Photo XL+ v2",
             "prompt": prompt,
-            "negative_prompt": "ugly, deformed, bad anatomy, bad hands, extra fingers, missing fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, bad proportions, cloned face, disfigured, extra limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers",
-            "width": 512,
-            "height": 768,
-            "style": "realistic",
-            "nsfw": True
+            "negativePrompt": NEGATIVE_PROMPT,
+            "pose": "Default",
+            "expression": "Default"
         }
         
-        response = requests.post(url, headers=headers, json=payload, timeout=60)
+        response = requests.post(api_url, headers=headers, json=payload, timeout=60)
         if response.status_code == 200:
             data = response.json()
-            image_url = data.get("url") or data.get("image_url") or (data.get("images") or [{}])[0].get("url")
+            image_url = data.get("image") or data.get("url") or data.get("image_url") or (data.get("images") or [{}])[0].get("url")
             
             if image_url:
                 supabase_url = upload_to_supabase(image_url, girl_id, "lingerie")
                 if supabase_url:
-                    photo = ProfilePhoto(girl_id=girl_id, photo_type="lingerie", url=supabase_url)
+                    photo = ProfilePhoto(girl_id=girl_id, photo_type=3, photo_url=supabase_url)
                     db.session.add(photo)
                     db.session.commit()
                     return jsonify({"image_url": supabase_url})
