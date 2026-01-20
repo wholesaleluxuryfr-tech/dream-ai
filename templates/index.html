@@ -274,6 +274,74 @@
         .story-nav-right { right: 0; }
         .btn-stories { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
         
+        /* STORIES SECTION - Instagram Style */
+        .stories-section { padding: 0.75rem 0; border-bottom: 1px solid #1a1a1f; }
+        .stories-scroll { display: flex; gap: 0.75rem; padding: 0 1rem; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+        .stories-scroll::-webkit-scrollbar { display: none; }
+        .story-circle { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; cursor: pointer; flex-shrink: 0; }
+        .story-avatar { width: 60px; height: 60px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+        .story-avatar.no-story { background: #333; }
+        .story-avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: #12121a; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; color: #e91e63; overflow: hidden; border: 2px solid #0a0a0c; }
+        .story-avatar-inner img { width: 100%; height: 100%; object-fit: cover; }
+        .story-username { font-size: 0.65rem; color: #aaa; max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
+        
+        /* CAMGIRLS PAGE */
+        .camgirls-container { padding: 1rem; }
+        .camgirls-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .camgirl-card { position: relative; background: #12121a; border-radius: 15px; overflow: hidden; cursor: pointer; transition: transform 0.2s; }
+        .camgirl-card:active { transform: scale(0.97); }
+        .camgirl-card-img { aspect-ratio: 3/4; background: linear-gradient(135deg, #1a1a2e, #0d0d12); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: rgba(233,30,99,0.3); }
+        .camgirl-card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .camgirl-live-badge { position: absolute; top: 10px; left: 10px; background: #ff0000; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .camgirl-viewers { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; }
+        .camgirl-card-info { padding: 0.75rem; }
+        .camgirl-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.2rem; }
+        .camgirl-tagline { color: #888; font-size: 0.75rem; }
+        
+        /* CAMGIRL MODAL */
+        .camgirl-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        .camgirl-modal-content { width: 100%; max-width: 500px; height: 100%; display: flex; flex-direction: column; background: #0a0a0c; }
+        .camgirl-modal-header { display: flex; align-items: center; padding: 1rem; border-bottom: 1px solid #1a1a1f; }
+        .camgirl-close { color: white; font-size: 1.5rem; cursor: pointer; margin-right: 1rem; }
+        .live-indicator { background: #ff0000; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; animation: pulse 1.5s infinite; margin-right: auto; }
+        .camgirl-video { aspect-ratio: 16/9; background: #12121a; display: flex; align-items: center; justify-content: center; }
+        .camgirl-video img { width: 100%; height: 100%; object-fit: cover; }
+        .camgirl-info { padding: 1rem; text-align: center; }
+        .camgirl-info h3 { font-size: 1.2rem; margin-bottom: 0.3rem; }
+        .camgirl-info p { color: #888; font-size: 0.85rem; }
+        .tip-menu { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem 1rem; justify-content: center; }
+        .tip-btn { background: linear-gradient(135deg, #e91e63, #9c27b0); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.75rem; cursor: pointer; transition: transform 0.2s; }
+        .tip-btn:active { transform: scale(0.95); }
+        .tip-btn span { font-weight: 700; }
+        .camgirl-chat { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; }
+        .cam-msg { background: rgba(255,255,255,0.05); padding: 0.5rem 0.75rem; border-radius: 10px; font-size: 0.8rem; }
+        .cam-msg.tip { background: rgba(233,30,99,0.2); border: 1px solid rgba(233,30,99,0.3); }
+        .cam-msg .user { color: #e91e63; font-weight: 600; }
+        
+        /* CHARACTER CREATION */
+        .btn-create-char { background: linear-gradient(135deg, #9c27b0, #673ab7); color: white; width: 100%; padding: 1rem; border: none; border-radius: 15px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .btn-create-char:active { transform: scale(0.98); }
+        .character-creator-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: flex; align-items: center; justify-content: center; overflow-y: auto; padding: 1rem; }
+        .creator-content { width: 100%; max-width: 400px; background: #12121a; border-radius: 20px; max-height: 90vh; overflow-y: auto; }
+        .creator-header { display: flex; align-items: center; padding: 1rem; border-bottom: 1px solid #1a1a1f; position: sticky; top: 0; background: #12121a; z-index: 10; }
+        .creator-header h2 { flex: 1; font-size: 1.1rem; margin: 0; }
+        .creator-close { font-size: 1.5rem; cursor: pointer; color: #888; }
+        .creator-form { padding: 1rem; }
+        .creator-field { margin-bottom: 1rem; }
+        .creator-field label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 0.4rem; }
+        .creator-input, .creator-select { width: 100%; padding: 0.75rem; background: #0a0a0c; border: 1px solid #333; border-radius: 10px; color: white; font-size: 0.9rem; }
+        .creator-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; }
+        .creator-input:focus, .creator-select:focus { outline: none; border-color: #e91e63; }
+        
+        /* GAMES BUTTON IN CHAT */
+        .games-btn { background: linear-gradient(135deg, #ff6b6b, #e91e63); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; }
+        .games-menu { background: #12121a; border-radius: 15px; padding: 0.5rem; margin: 0.5rem 0; }
+        .game-item { padding: 0.75rem 1rem; border-radius: 10px; cursor: pointer; transition: background 0.2s; }
+        .game-item:active { background: rgba(233,30,99,0.2); }
+        .game-name { font-weight: 600; font-size: 0.9rem; }
+        .game-desc { color: #888; font-size: 0.75rem; margin-top: 0.2rem; }
+        
         /* BOTTOM NAVIGATION */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0a0a0c; border-top: 1px solid #1a1a1f; display: flex; justify-content: space-around; padding: 0.5rem 0; padding-bottom: calc(0.5rem + env(safe-area-inset-bottom)); z-index: 500; backdrop-filter: blur(20px); }
         .nav-item { display: flex; flex-direction: column; align-items: center; padding: 0.5rem 1rem; cursor: pointer; transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.15s ease; border: none; background: none; will-change: transform; }
@@ -498,6 +566,10 @@
         </div>
     </div>
     
+    <div class="stories-section" id="storiesSection">
+        <div class="stories-scroll" id="storiesScroll"></div>
+    </div>
+    
     <div class="filter-section">
         <div class="filter-row">
             <button class="filter-btn active" onclick="setAgeFilter('all')" id="filterAgeAll">Tous</button>
@@ -584,6 +656,32 @@
     </div>
 </div>
 
+<div class="page page-with-nav" id="pageCamgirls">
+    <div class="header">
+        <div class="logo">Camgirls Live</div>
+    </div>
+    <div class="camgirls-container">
+        <div class="camgirls-grid" id="camgirlsGrid"></div>
+    </div>
+</div>
+
+<div class="camgirl-modal" id="camgirlModal" style="display:none;">
+    <div class="camgirl-modal-content">
+        <div class="camgirl-modal-header">
+            <span class="camgirl-close" onclick="closeCamgirlModal()">&times;</span>
+            <div class="live-indicator">LIVE</div>
+            <span class="camgirl-viewers" id="camgirlViewers">0 viewers</span>
+        </div>
+        <div class="camgirl-video" id="camgirlVideo"></div>
+        <div class="camgirl-info">
+            <h3 id="camgirlName"></h3>
+            <p id="camgirlTagline"></p>
+        </div>
+        <div class="tip-menu" id="tipMenu"></div>
+        <div class="camgirl-chat" id="camgirlChat"></div>
+    </div>
+</div>
+
 <div class="page page-with-nav" id="pageGallery">
     <div class="header">
         <div class="logo">Galerie</div>
@@ -658,8 +756,103 @@
                 <span class="settings-item-arrow">→</span>
             </div>
         </div>
+        <div class="settings-section">
+            <div class="settings-section-title">Creer</div>
+            <div class="settings-item" onclick="openCharacterCreator()">
+                <div class="settings-item-left">
+                    <span class="settings-item-icon">✨</span>
+                    <span class="settings-item-text">Creer ta fille ideale</span>
+                </div>
+                <span class="settings-item-arrow">→</span>
+            </div>
+            <div class="settings-item" onclick="navigateTo('matches')">
+                <div class="settings-item-left">
+                    <span class="settings-item-icon">💕</span>
+                    <span class="settings-item-text">Voir tes matchs</span>
+                </div>
+                <span class="settings-item-arrow">→</span>
+            </div>
+        </div>
         <button class="btn-reset" onclick="resetAllData()">Reinitialiser les donnees</button>
         <button class="btn-logout" onclick="logout()">Se deconnecter</button>
+    </div>
+</div>
+
+<div class="character-creator-modal" id="characterCreatorModal" style="display:none;">
+    <div class="creator-content">
+        <div class="creator-header">
+            <span class="creator-close" onclick="closeCharacterCreator()">&times;</span>
+            <h2>Creer ta fille ideale</h2>
+        </div>
+        <div class="creator-form" id="creatorForm">
+            <div class="creator-field">
+                <label>Prenom</label>
+                <input type="text" id="charName" placeholder="Son prenom..." class="creator-input">
+            </div>
+            <div class="creator-field">
+                <label>Age (18-50)</label>
+                <input type="number" id="charAge" min="18" max="50" value="25" class="creator-input">
+            </div>
+            <div class="creator-field">
+                <label>Origine</label>
+                <select id="charEthnicity" class="creator-select">
+                    <option value="europeenne">Europeenne</option>
+                    <option value="africaine">Africaine</option>
+                    <option value="asiatique">Asiatique</option>
+                    <option value="latine">Latine</option>
+                    <option value="arabe">Arabe</option>
+                    <option value="indienne">Indienne</option>
+                    <option value="metisse">Metisse</option>
+                </select>
+            </div>
+            <div class="creator-field">
+                <label>Silhouette</label>
+                <select id="charBody" class="creator-select">
+                    <option value="petite">Petite</option>
+                    <option value="mince">Mince</option>
+                    <option value="athletic">Athletique</option>
+                    <option value="curvy">Curvy</option>
+                    <option value="voluptueuse">Voluptueuse</option>
+                    <option value="bbw">BBW</option>
+                </select>
+            </div>
+            <div class="creator-field">
+                <label>Poitrine</label>
+                <select id="charBreast" class="creator-select">
+                    <option value="A">Petite (A)</option>
+                    <option value="B">Moyenne (B)</option>
+                    <option value="C">Genereuse (C)</option>
+                    <option value="D">Grande (D)</option>
+                    <option value="DD">Tres grande (DD+)</option>
+                </select>
+            </div>
+            <div class="creator-field">
+                <label>Cheveux</label>
+                <select id="charHair" class="creator-select">
+                    <option value="blonde">Blonde</option>
+                    <option value="brune">Brune</option>
+                    <option value="rousse">Rousse</option>
+                    <option value="noire">Noire</option>
+                    <option value="chatain">Chatain</option>
+                    <option value="rose">Rose</option>
+                    <option value="bleue">Bleue</option>
+                </select>
+            </div>
+            <div class="creator-field">
+                <label>Personnalite</label>
+                <select id="charArchetype" class="creator-select">
+                    <option value="soumise">Soumise et docile</option>
+                    <option value="dominante">Dominante</option>
+                    <option value="nympho">Nymphomane</option>
+                    <option value="timide">Timide</option>
+                    <option value="exhib">Exhibitionniste</option>
+                    <option value="fetichiste">Fetichiste</option>
+                    <option value="romantique">Romantique</option>
+                    <option value="cougar">Cougar</option>
+                </select>
+            </div>
+            <button class="btn-create-char" onclick="createCharacter()">Creer ma fille</button>
+        </div>
     </div>
 </div>
 
@@ -673,9 +866,9 @@
         <span class="nav-label">Messages</span>
         <span class="nav-badge" id="msgBadge">0</span>
     </button>
-    <button class="nav-item" onclick="navigateTo('matches')" id="navMatches">
-        <span class="nav-icon">💕</span>
-        <span class="nav-label">Matchs</span>
+    <button class="nav-item" onclick="navigateTo('camgirls')" id="navCamgirls">
+        <span class="nav-icon">📹</span>
+        <span class="nav-label">Cam Live</span>
     </button>
     <button class="nav-item" onclick="navigateTo('gallery')" id="navGallery">
         <span class="nav-icon">📸</span>
@@ -2908,6 +3101,339 @@ async function generatePhoto(description, msgObj) {
 document.getElementById('chatInput').addEventListener('keypress', e => {
     if (e.key === 'Enter') sendMessage();
 });
+
+// ============ STORIES SECTION ============
+async function loadStories() {
+    try {
+        const res = await fetch('/api/stories');
+        const data = await res.json();
+        renderStoriesCircles(data.stories || []);
+    } catch(e) {
+        console.log("Stories load error:", e);
+        renderStoriesCircles([]);
+    }
+}
+
+function renderStoriesCircles(stories) {
+    const container = document.getElementById('storiesScroll');
+    if (!container) return;
+    
+    const matchedGirls = Object.keys(matches).slice(0, 10);
+    
+    let html = '';
+    matchedGirls.forEach(girlId => {
+        const girl = GIRLS[girlId];
+        if (!girl) return;
+        const hasStory = stories.some(s => s.girl_id === girlId);
+        const initial = girl.name ? girl.name[0].toUpperCase() : '?';
+        
+        html += `<div class="story-circle" onclick="viewStory('${girlId}')">
+            <div class="story-avatar ${hasStory ? '' : 'no-story'}">
+                <div class="story-avatar-inner">${initial}</div>
+            </div>
+            <span class="story-username">${girl.name || 'Inconnue'}</span>
+        </div>`;
+    });
+    
+    container.innerHTML = html || '<p style="color:#666;font-size:0.8rem;padding:0.5rem;">Match avec des filles pour voir leurs stories</p>';
+}
+
+async function viewStory(girlId) {
+    const girl = GIRLS[girlId];
+    if (!girl) return;
+    showToast("Story de " + girl.name + " en cours...");
+}
+
+// ============ CAMGIRLS SECTION ============
+let camgirlsData = [];
+let currentCamgirl = null;
+
+async function loadCamgirls() {
+    try {
+        const res = await fetch('/api/camgirls');
+        const data = await res.json();
+        camgirlsData = data.camgirls || [];
+        renderCamgirls();
+    } catch(e) {
+        console.log("Camgirls load error:", e);
+    }
+}
+
+function renderCamgirls() {
+    const grid = document.getElementById('camgirlsGrid');
+    if (!grid) return;
+    
+    let html = '';
+    camgirlsData.forEach(cam => {
+        const viewers = Math.floor(Math.random() * 400) + 50;
+        const girl = GIRLS[cam.girl_id];
+        const initial = cam.name ? cam.name[0].toUpperCase() : '?';
+        
+        html += `<div class="camgirl-card" onclick="openCamgirl('${cam.girl_id}')">
+            <div class="camgirl-card-img">${initial}</div>
+            <div class="camgirl-live-badge">LIVE</div>
+            <div class="camgirl-viewers">${viewers} viewers</div>
+            <div class="camgirl-card-info">
+                <div class="camgirl-name">${cam.name}</div>
+                <div class="camgirl-tagline">${cam.tagline || ''}</div>
+            </div>
+        </div>`;
+    });
+    
+    grid.innerHTML = html || '<p style="color:#666;text-align:center;padding:2rem;">Aucune camgirl en ligne</p>';
+}
+
+async function openCamgirl(girlId) {
+    currentCamgirl = girlId;
+    const cam = camgirlsData.find(c => c.girl_id === girlId);
+    if (!cam) return;
+    
+    document.getElementById('camgirlModal').style.display = 'flex';
+    document.getElementById('camgirlName').textContent = cam.name;
+    document.getElementById('camgirlTagline').textContent = cam.tagline || '';
+    
+    const viewers = Math.floor(Math.random() * 400) + 50;
+    document.getElementById('camgirlViewers').textContent = viewers + ' viewers';
+    
+    const girl = GIRLS[girlId];
+    const initial = cam.name ? cam.name[0].toUpperCase() : '?';
+    document.getElementById('camgirlVideo').innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;color:rgba(233,30,99,0.3);">${initial}</div>`;
+    
+    renderTipMenu(cam.tip_menu || {});
+    
+    document.getElementById('camgirlChat').innerHTML = `
+        <div class="cam-msg"><span class="user">System:</span> Bienvenue dans le show de ${cam.name}!</div>
+        <div class="cam-msg"><span class="user">${cam.name}:</span> Coucou tout le monde!</div>
+    `;
+}
+
+function renderTipMenu(tipMenu) {
+    const container = document.getElementById('tipMenu');
+    const actionNames = {
+        "flash_seins": "Flash Seins",
+        "flash_fesses": "Flash Fesses",
+        "strip_complet": "Strip Complet",
+        "toy_show": "Toy Show",
+        "prive_5min": "Prive 5min",
+        "prive_10min": "Prive 10min",
+        "ahegao": "Ahegao",
+        "costume_change": "Costume",
+        "no_panties": "No Panties",
+        "twerk": "Twerk",
+        "pole_dance": "Pole Dance",
+        "oil_show": "Oil Show",
+        "squirt_show": "Squirt",
+        "reponse": "Reponse",
+        "ordre_perso": "Ordre Perso",
+        "humiliation": "Humiliation",
+        "prive_domination": "Domination",
+        "conseil_sexe": "Conseil",
+        "strip_elegant": "Strip Elegant",
+        "dirty_talk_mature": "Dirty Talk",
+        "roleplay_mom": "Roleplay"
+    };
+    
+    let html = '';
+    for (const [action, tokens] of Object.entries(tipMenu)) {
+        const name = actionNames[action] || action;
+        html += `<button class="tip-btn" onclick="sendTip('${action}', ${tokens})">
+            ${name} <span>${tokens} tk</span>
+        </button>`;
+    }
+    container.innerHTML = html;
+}
+
+async function sendTip(action, tokens) {
+    if (!currentCamgirl) return;
+    
+    const chatEl = document.getElementById('camgirlChat');
+    chatEl.innerHTML += `<div class="cam-msg tip"><span class="user">Toi:</span> A envoye ${tokens} tokens pour ${action}!</div>`;
+    
+    try {
+        const res = await fetch('/api/send_tip', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                girl_id: currentCamgirl,
+                action: action,
+                tokens: tokens
+            })
+        });
+        const data = await res.json();
+        if (data.response) {
+            chatEl.innerHTML += `<div class="cam-msg"><span class="user">${camgirlsData.find(c => c.girl_id === currentCamgirl)?.name || 'Elle'}:</span> ${data.response}</div>`;
+        }
+    } catch(e) {
+        console.log("Tip error:", e);
+    }
+    
+    chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+function closeCamgirlModal() {
+    document.getElementById('camgirlModal').style.display = 'none';
+    currentCamgirl = null;
+}
+
+// ============ GALLERY PRIVEE ============
+async function loadPrivateGallery() {
+    try {
+        const res = await fetch('/api/gallery');
+        const data = await res.json();
+        renderPrivateGallery(data.gallery || {});
+    } catch(e) {
+        console.log("Gallery load error:", e);
+        renderPrivateGallery({});
+    }
+}
+
+function renderPrivateGallery(gallery) {
+    const container = document.getElementById('photosGallery');
+    const noPhotos = document.getElementById('noPhotosText');
+    if (!container) return;
+    
+    const hasPhotos = Object.keys(gallery).length > 0;
+    
+    if (!hasPhotos) {
+        container.innerHTML = '';
+        if (noPhotos) noPhotos.style.display = 'block';
+        return;
+    }
+    
+    if (noPhotos) noPhotos.style.display = 'none';
+    
+    let html = '<h2>Ta Galerie Privee</h2>';
+    
+    for (const [girlId, photos] of Object.entries(gallery)) {
+        const girl = GIRLS[girlId];
+        const name = girl?.name || girlId;
+        
+        html += `<div class="gallery-section">
+            <div class="gallery-section-title">${name} (${photos.length} photos)</div>
+            <div class="photos-grid">`;
+        
+        photos.forEach(photo => {
+            html += `<div class="gallery-photo" onclick="viewFullPhoto('${photo}')">
+                <img src="${photo}" alt="Photo" loading="lazy">
+            </div>`;
+        });
+        
+        html += `</div></div>`;
+    }
+    
+    container.innerHTML = html;
+}
+
+function viewFullPhoto(url) {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:3000;display:flex;align-items:center;justify-content:center;';
+    overlay.innerHTML = `<img src="${url}" style="max-width:95%;max-height:95%;object-fit:contain;">
+        <button onclick="this.parentElement.remove()" style="position:absolute;top:20px;right:20px;background:none;border:none;color:white;font-size:2rem;cursor:pointer;">X</button>`;
+    document.body.appendChild(overlay);
+}
+
+// ============ ORIGINAL INIT EXTENSION ============
+const origNavigateTo = window.navigateTo;
+window.navigateTo = function(page) {
+    if (page === 'camgirls') {
+        loadCamgirls();
+    }
+    if (page === 'gallery') {
+        loadPrivateGallery();
+    }
+    
+    const pageMap = {
+        'discover': 'pageDiscover',
+        'messages': 'pageMessages',
+        'matches': 'pageMatches',
+        'camgirls': 'pageCamgirls',
+        'gallery': 'pageGallery',
+        'settings': 'pageSettings'
+    };
+    
+    const pageId = pageMap[page];
+    if (!pageId) return;
+    
+    document.querySelectorAll('.page').forEach(p => {
+        p.classList.remove('active', 'page-enter', 'page-exit');
+        p.style.display = 'none';
+    });
+    
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    
+    const navBtn = document.getElementById('nav' + page.charAt(0).toUpperCase() + page.slice(1));
+    if (navBtn) navBtn.classList.add('active');
+    
+    const pageEl = document.getElementById(pageId);
+    if (pageEl) {
+        pageEl.style.display = 'block';
+        pageEl.classList.add('active', 'page-enter');
+    }
+};
+
+// ============ CHARACTER CREATOR ============
+function openCharacterCreator() {
+    document.getElementById('characterCreatorModal').style.display = 'flex';
+}
+
+function closeCharacterCreator() {
+    document.getElementById('characterCreatorModal').style.display = 'none';
+}
+
+async function createCharacter() {
+    const name = document.getElementById('charName').value.trim();
+    const age = parseInt(document.getElementById('charAge').value);
+    const ethnicity = document.getElementById('charEthnicity').value;
+    const body = document.getElementById('charBody').value;
+    const breast = document.getElementById('charBreast').value;
+    const hair = document.getElementById('charHair').value;
+    const archetype = document.getElementById('charArchetype').value;
+    
+    if (!name) {
+        showToast("Entre un prenom");
+        return;
+    }
+    if (age < 18 || age > 50) {
+        showToast("Age entre 18 et 50");
+        return;
+    }
+    
+    showToast("Creation en cours...");
+    
+    try {
+        const res = await fetch('/api/character/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: name,
+                age: age,
+                ethnicity: ethnicity,
+                body_type: body,
+                breast_size: breast,
+                hair_color: hair,
+                archetype: archetype
+            })
+        });
+        
+        const data = await res.json();
+        if (data.success) {
+            showToast(name + " a ete creee!");
+            closeCharacterCreator();
+            GIRLS[data.girl_id] = data.girl;
+            navigateTo('discover');
+        } else {
+            showToast(data.error || "Erreur de creation");
+        }
+    } catch(e) {
+        console.log("Character creation error:", e);
+        showToast("Erreur de connexion");
+    }
+}
+
+// Load stories on init
+setTimeout(() => {
+    loadStories();
+}, 1000);
 
 init();
 </script>
