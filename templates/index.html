@@ -1077,6 +1077,18 @@ const REGION_MAP = {
 let currentGirl = null;
 let chatHistory = {};
 let affectionLevels = {};
+
+function loadChatHistory(girlId) {
+    try {
+        const stored = localStorage.getItem('chat_' + girlId);
+        if (stored) {
+            return JSON.parse(stored);
+        }
+    } catch (e) {
+        console.error('Erreur chargement chat:', e);
+    }
+    return [];
+}
 let profilePhotos = JSON.parse(localStorage.getItem('profilePhotos') || '{}');
 let receivedPhotos = {};
 let currentOverlayPhotos = [];
