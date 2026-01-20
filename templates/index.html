@@ -2473,7 +2473,9 @@ function showMatchAnimation(girlId) {
             }
         }
         
-        document.getElementById('matchOverlay').style.display = 'flex';
+        const overlay = document.getElementById('matchOverlay');
+        overlay.dataset.girlId = girlId;
+        overlay.style.display = 'flex';
         isProcessingSwipe = false;
         girlMessagesFirst(girlId);
     } catch (e) {
@@ -2579,24 +2581,23 @@ function doubleTapLike(e) {
 
 function goToMatchChat() {
     try {
-        document.getElementById('matchOverlay').style.display = 'none';
+        const overlay = document.getElementById('matchOverlay');
+        const girlId = overlay.dataset.girlId;
+        overlay.style.display = 'none';
         
-        if (!matches || matches.length === 0) {
+        if (!girlId || !GIRLS[girlId]) {
+            console.error('goToMatchChat: girlId invalide', girlId);
             navigateTo('matches');
             return;
         }
         
-        const lastMatch = matches[matches.length - 1];
-        if (!lastMatch || !GIRLS[lastMatch]) {
-            navigateTo('matches');
-            return;
-        }
-        
-        currentGirl = lastMatch;
+        currentGirl = girlId;
         startChat();
         renderMatches();
     } catch (e) {
         console.error('Erreur goToMatchChat:', e);
+        document.getElementById('matchOverlay').style.display = 'none';
+        document.getElementById('bottomNav').style.display = 'flex';
         navigateTo('matches');
     }
 }
