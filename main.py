@@ -5241,6 +5241,25 @@ GIRLS = {
         "archetype": "cougar",
         "camgirl": True,
         "tip_menu": {"conseil_sexe": 20, "strip_elegant": 100, "dirty_talk_mature": 80, "roleplay_mom": 300, "prive_20min": 500}
+    },
+    
+    "camgirl_emma": {
+        "name": "Emma_Sensuelle",
+        "age": 21,
+        "age_slider": 21,
+        "location": "Paris, France",
+        "tagline": "Douce et coquine",
+        "bio": "Coucou! Je suis Emma, 21 ans. J'adore me faire plaisir devant la cam... Tu veux regarder?",
+        "appearance": "21 year old French camgirl, sweet innocent face with seductive smile, bright blue eyes, full soft pink lips, long straight silky blonde hair, fair porcelain skin, slim petite body 165cm, medium natural B cup perky breasts with pink nipples, small tight ass, wearing black crop top or lingerie, cozy bedroom with white sheets, natural lighting, webcam angle",
+        "match_chance": 0.85,
+        "body_type": "slim",
+        "personality": "CAMGIRL: Douce et naturelle. Timide au debut puis tres ouverte. Aime le plaisir simple et sincere.",
+        "likes": "compliments sinceres, ambiance douce, orgasmes naturels, connexion intime",
+        "dislikes": "vulgarite gratuite, mecs pressants, demandes bizarres",
+        "fantasmes": "Me caresser doucement pour toi. Orgasme reel ensemble. Masturbation mutuelle. Te regarder dans les yeux en jouissant.",
+        "archetype": "romantique",
+        "camgirl": True,
+        "tip_menu": {"sourire": 10, "bisou_cam": 20, "flash_seins": 50, "masturbation": 200, "orgasme_reel": 400}
     }
 }
 
@@ -6768,6 +6787,12 @@ CAMGIRL_VIDEOS = {
             {"id": 4, "title": "Massage seins", "action": "titty play oil massage", "decor": "lit satin", "tokens": 300, "duration": "4min"},
             {"id": 5, "title": "Gode anal mature", "action": "anal dildo solo", "decor": "chambre luxe", "tokens": 400, "duration": "5min"}
         ]
+    },
+    "camgirl_emma": {
+        "name": "Emma_Sensuelle",
+        "videos": [
+            {"id": 1, "title": "Masturbation douce", "action": "gentle masturbation", "decor": "chambre cozy", "tokens": 200, "duration": "15sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_videos/emma_blonde_masturbation_01.mp4"}
+        ]
     }
 }
 
@@ -7541,13 +7566,15 @@ def get_camgirls():
     camgirls = []
     for girl_id, girl in GIRLS.items():
         if girl.get("camgirl"):
+            videos = CAMGIRL_VIDEOS.get(girl_id, {}).get("videos", [])
             camgirls.append({
                 "girl_id": girl_id,
                 "name": girl.get("name"),
                 "age": girl.get("age"),
                 "location": girl.get("location"),
                 "tagline": girl.get("tagline"),
-                "tip_menu": girl.get("tip_menu", {})
+                "tip_menu": girl.get("tip_menu", {}),
+                "videos": videos
             })
     return jsonify({"camgirls": camgirls})
 
