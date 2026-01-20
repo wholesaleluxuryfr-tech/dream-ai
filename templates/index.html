@@ -3045,9 +3045,14 @@ function closeStories() {
 
 function startChat() {
     try {
-        console.log("Tentative ouverture chat pour:", currentGirl);
+        showDebug('startChat: ' + currentGirl);
+        
+        // Force hide match overlay
+        var matchOverlay = document.getElementById('matchOverlay');
+        if (matchOverlay) matchOverlay.style.display = 'none';
         
         if (!currentGirl) {
+            showDebug('startChat: no currentGirl');
             navigateTo('matches');
             return;
         }
@@ -3075,14 +3080,16 @@ function startChat() {
             renderMessages();
         }
         
+        showDebug('startChat: calling showPage');
         showPage('chat');
         
         setTimeout(function() {
             var input = document.getElementById('chatInput');
             if (input) input.focus();
         }, 100);
+        showDebug('startChat: done');
     } catch (e) {
-        console.error('Erreur startChat:', e);
+        showDebug('ERREUR startChat: ' + e.message);
         navigateTo('matches');
     }
 }
