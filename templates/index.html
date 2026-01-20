@@ -95,8 +95,8 @@
         .nav-tab.active { background: #e91e63; color: white; }
         
         /* SWIPE PAGE - GPU ACCELERATED */
-        .swipe-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1rem; position: relative; perspective: 1000px; overflow: hidden; }
-        .swipe-card { width: 100%; max-width: 350px; height: calc(100vh - 320px); min-height: 350px; max-height: 500px; background: #12121a; border-radius: 25px; overflow: hidden; position: absolute; box-shadow: 0 10px 30px rgba(0,0,0,0.5); will-change: transform, opacity; transform: translate3d(0, 0, 0); transition: none; backface-visibility: hidden; -webkit-backface-visibility: hidden; touch-action: pan-y; user-select: none; }
+        .swipe-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0.5rem; position: relative; perspective: 1000px; overflow: visible; min-height: 400px; }
+        .swipe-card { width: 95%; max-width: 350px; height: calc(100vh - 380px); min-height: 380px; max-height: 480px; background: #12121a; border-radius: 25px; overflow: hidden; position: absolute; box-shadow: 0 10px 30px rgba(0,0,0,0.5); will-change: transform, opacity; transform: translate3d(0, 0, 0); transition: none; backface-visibility: hidden; -webkit-backface-visibility: hidden; touch-action: pan-y; user-select: none; }
         .swipe-card.animating { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-out; }
         .swipe-card.swipe-left { transform: translate3d(-120vw, 0, 0) rotate(-30deg); opacity: 0; }
         .swipe-card.swipe-right { transform: translate3d(120vw, 0, 0) rotate(30deg); opacity: 0; }
@@ -446,9 +446,9 @@
         .install-banner-close { background: none; border: none; color: rgba(255,255,255,0.7); font-size: 1.2rem; cursor: pointer; margin-left: 0.5rem; }
         
         /* FILTER BUTTONS */
-        .filter-section { padding: 0.5rem 1rem; background: #0a0a0c; border-bottom: 1px solid #1a1a1f; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-        .filter-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
-        .filter-btn { padding: 0.4rem 0.8rem; background: #12121a; border: 1px solid #1a1a1f; border-radius: 20px; color: #888; font-size: 0.75rem; cursor: pointer; flex-shrink: 0; transition: all 0.15s ease; }
+        .filter-section { padding: 0.3rem 0.5rem; background: #0a0a0c; border-bottom: 1px solid #1a1a1f; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+        .filter-row { display: flex; gap: 0.3rem; margin-bottom: 0.3rem; flex-wrap: nowrap; }
+        .filter-btn { padding: 0.3rem 0.6rem; background: #12121a; border: 1px solid #1a1a1f; border-radius: 15px; color: #888; font-size: 0.7rem; cursor: pointer; flex-shrink: 0; transition: all 0.15s ease; }
         .filter-btn.active { background: #e91e63; color: white; border-color: #e91e63; }
         .filter-btn:active { transform: scale(0.95); }
         
