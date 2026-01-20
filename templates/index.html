@@ -296,15 +296,43 @@
         .btn-stories { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
         
         /* STORIES SECTION - Instagram Style */
-        .stories-section { padding: 0.75rem 0; border-bottom: 1px solid #1a1a1f; }
-        .stories-scroll { display: flex; gap: 0.75rem; padding: 0 1rem; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+        .stories-section { padding: 0.75rem 0; border-bottom: 1px solid #1a1a1f; background: linear-gradient(180deg, #0a0a0c 0%, #0d0d10 100%); }
+        .stories-scroll { display: flex; gap: 1rem; padding: 0.5rem 1rem; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
         .stories-scroll::-webkit-scrollbar { display: none; }
-        .story-circle { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; cursor: pointer; flex-shrink: 0; }
-        .story-avatar { width: 60px; height: 60px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-        .story-avatar.no-story { background: #333; }
-        .story-avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: #12121a; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; color: #e91e63; overflow: hidden; border: 2px solid #0a0a0c; }
+        .story-circle { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; cursor: pointer; flex-shrink: 0; transition: transform 0.2s; }
+        .story-circle:active { transform: scale(0.95); }
+        .story-avatar { width: 68px; height: 68px; border-radius: 50%; padding: 3px; background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); box-shadow: 0 2px 10px rgba(233,30,99,0.3); }
+        .story-avatar.viewed { background: #444; box-shadow: none; }
+        .story-avatar.no-story { background: #333; box-shadow: none; }
+        .story-avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: #12121a; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.3rem; color: #e91e63; overflow: hidden; border: 3px solid #0a0a0c; }
         .story-avatar-inner img { width: 100%; height: 100%; object-fit: cover; }
-        .story-username { font-size: 0.65rem; color: #aaa; max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
+        .story-username { font-size: 0.7rem; color: #ccc; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; font-weight: 500; }
+        
+        /* FULL SCREEN STORY VIEWER */
+        .story-viewer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 4000; display: none; flex-direction: column; }
+        .story-viewer.active { display: flex; }
+        .story-viewer-header { position: absolute; top: 0; left: 0; right: 0; z-index: 10; padding: 10px; background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%); }
+        .story-progress-bar { display: flex; gap: 3px; margin-bottom: 10px; }
+        .story-progress-item { flex: 1; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
+        .story-progress-item .fill { height: 100%; width: 0%; background: white; transition: width 0.1s linear; }
+        .story-progress-item.done .fill { width: 100%; }
+        .story-progress-item.active .fill { width: var(--progress, 0%); }
+        .story-user-info { display: flex; align-items: center; gap: 10px; }
+        .story-user-avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; border: 2px solid white; }
+        .story-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .story-user-name { color: white; font-weight: 600; font-size: 0.9rem; }
+        .story-user-time { color: rgba(255,255,255,0.6); font-size: 0.75rem; margin-left: 8px; }
+        .story-close-btn { position: absolute; top: 55px; right: 15px; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; z-index: 20; }
+        .story-image-container { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+        .story-image { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .story-nav-area { position: absolute; top: 0; bottom: 0; width: 30%; cursor: pointer; }
+        .story-nav-left { left: 0; }
+        .story-nav-right { right: 0; }
+        .story-reply-bar { position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 100%); display: flex; align-items: center; gap: 10px; }
+        .story-reply-input { flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 25px; padding: 12px 20px; color: white; font-size: 0.9rem; }
+        .story-reply-input::placeholder { color: rgba(255,255,255,0.5); }
+        .story-reply-send { background: linear-gradient(135deg, #e91e63, #9c27b0); border: none; color: white; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .story-reply-send svg { width: 20px; height: 20px; }
         
         /* CAMGIRLS PAGE - Candy AI Style */
         .camgirls-container { padding: 0; }
@@ -1062,14 +1090,26 @@
     <p>Passe au profil suivant</p>
 </div>
 
-<div id="storyOverlay">
-    <div class="story-progress" id="storyProgress"></div>
-    <button class="story-close" onclick="closeStories()">X</button>
-    <div class="story-content">
-        <div class="story-nav story-nav-left" onclick="prevStory()"></div>
-        <img class="story-img" id="storyImg" src="">
-        <div class="story-nav story-nav-right" onclick="nextStory()"></div>
-        <div class="story-text"><span id="storyText"></span></div>
+<div class="story-viewer" id="storyViewer">
+    <div class="story-viewer-header">
+        <div class="story-progress-bar" id="storyProgressBar"></div>
+        <div class="story-user-info">
+            <div class="story-user-avatar" id="storyUserAvatar"></div>
+            <span class="story-user-name" id="storyUserName"></span>
+            <span class="story-user-time" id="storyUserTime"></span>
+        </div>
+    </div>
+    <button class="story-close-btn" onclick="closeStoryViewer()">X</button>
+    <div class="story-image-container">
+        <div class="story-nav-area story-nav-left" onclick="prevStoryItem()"></div>
+        <img class="story-image" id="storyImage" src="">
+        <div class="story-nav-area story-nav-right" onclick="nextStoryItem()"></div>
+    </div>
+    <div class="story-reply-bar">
+        <input type="text" class="story-reply-input" id="storyReplyInput" placeholder="Envoyer un message...">
+        <button class="story-reply-send" onclick="sendStoryReply()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
     </div>
 </div>
 <script>
@@ -3304,33 +3344,52 @@ document.getElementById('chatInput').addEventListener('keypress', e => {
 });
 
 // ============ STORIES SECTION ============
+let storyData = {};
+let currentStoryGirl = null;
+let currentStoryIndex = 0;
+let storyTimer = null;
+let storyProgress = 0;
+const STORY_DURATION = 5000;
+
 async function loadStories() {
     try {
         const res = await fetch('/api/stories');
         const data = await res.json();
-        renderStoriesCircles(data.stories || []);
+        storyData = {};
+        (data.stories || []).forEach(s => {
+            if (!storyData[s.girl_id]) storyData[s.girl_id] = [];
+            storyData[s.girl_id].push(s);
+        });
+        renderStoriesCircles();
     } catch(e) {
         console.log("Stories load error:", e);
-        renderStoriesCircles([]);
+        renderStoriesCircles();
     }
 }
 
-function renderStoriesCircles(stories) {
+function renderStoriesCircles() {
     const container = document.getElementById('storiesScroll');
     if (!container) return;
     
-    const matchedGirls = Object.keys(matches).slice(0, 10);
+    const matchedGirls = Object.keys(matches).slice(0, 15);
+    const viewedStories = JSON.parse(localStorage.getItem('viewedStories') || '{}');
     
     let html = '';
     matchedGirls.forEach(girlId => {
         const girl = GIRLS[girlId];
         if (!girl) return;
-        const hasStory = stories.some(s => s.girl_id === girlId);
+        const hasStory = storyData[girlId] && storyData[girlId].length > 0;
+        const isViewed = viewedStories[girlId];
+        const photo = getProfilePhoto(girlId);
         const initial = girl.name ? girl.name[0].toUpperCase() : '?';
         
-        html += `<div class="story-circle" onclick="viewStory('${girlId}')">
-            <div class="story-avatar ${hasStory ? '' : 'no-story'}">
-                <div class="story-avatar-inner">${initial}</div>
+        const avatarClass = hasStory ? (isViewed ? 'viewed' : '') : 'no-story';
+        const avatarContent = photo ? 
+            `<img src="${photo}" alt="${girl.name}">` : initial;
+        
+        html += `<div class="story-circle" onclick="openStoryViewer('${girlId}')">
+            <div class="story-avatar ${avatarClass}">
+                <div class="story-avatar-inner">${avatarContent}</div>
             </div>
             <span class="story-username">${girl.name || 'Inconnue'}</span>
         </div>`;
@@ -3339,10 +3398,128 @@ function renderStoriesCircles(stories) {
     container.innerHTML = html || '<p style="color:#666;font-size:0.8rem;padding:0.5rem;">Match avec des filles pour voir leurs stories</p>';
 }
 
-async function viewStory(girlId) {
+async function openStoryViewer(girlId) {
     const girl = GIRLS[girlId];
     if (!girl) return;
-    showToast("Story de " + girl.name + " en cours...");
+    
+    currentStoryGirl = girlId;
+    currentStoryIndex = 0;
+    
+    let stories = storyData[girlId];
+    if (!stories || stories.length === 0) {
+        const photo = getProfilePhoto(girlId);
+        if (photo) {
+            stories = [{ image_url: photo, time: 'il y a 2h' }];
+        } else {
+            showToast(girl.name + " n'a pas de story");
+            return;
+        }
+    }
+    
+    const viewer = document.getElementById('storyViewer');
+    const progressBar = document.getElementById('storyProgressBar');
+    const avatarEl = document.getElementById('storyUserAvatar');
+    const nameEl = document.getElementById('storyUserName');
+    
+    const photo = getProfilePhoto(girlId);
+    avatarEl.innerHTML = photo ? `<img src="${photo}">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e91e63;color:white;font-weight:700;">${girl.name[0]}</div>`;
+    nameEl.textContent = girl.name;
+    
+    let progressHtml = '';
+    for (let i = 0; i < stories.length; i++) {
+        progressHtml += `<div class="story-progress-item" id="storyProg${i}"><div class="fill"></div></div>`;
+    }
+    progressBar.innerHTML = progressHtml;
+    
+    viewer.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    showStoryItem(0);
+    
+    const viewedStories = JSON.parse(localStorage.getItem('viewedStories') || '{}');
+    viewedStories[girlId] = true;
+    localStorage.setItem('viewedStories', JSON.stringify(viewedStories));
+    renderStoriesCircles();
+}
+
+function showStoryItem(index) {
+    const stories = storyData[currentStoryGirl] || [{ image_url: getProfilePhoto(currentStoryGirl), time: 'il y a 2h' }];
+    if (index >= stories.length) {
+        closeStoryViewer();
+        return;
+    }
+    if (index < 0) {
+        index = 0;
+    }
+    
+    currentStoryIndex = index;
+    const story = stories[index];
+    
+    document.getElementById('storyImage').src = story.image_url || '';
+    document.getElementById('storyUserTime').textContent = story.time || 'il y a 2h';
+    
+    for (let i = 0; i < stories.length; i++) {
+        const prog = document.getElementById('storyProg' + i);
+        if (prog) {
+            prog.classList.remove('done', 'active');
+            prog.querySelector('.fill').style.width = '0%';
+            if (i < index) prog.classList.add('done');
+            if (i === index) prog.classList.add('active');
+        }
+    }
+    
+    if (storyTimer) clearInterval(storyTimer);
+    storyProgress = 0;
+    storyTimer = setInterval(() => {
+        storyProgress += 100;
+        const percent = (storyProgress / STORY_DURATION) * 100;
+        const activeProg = document.getElementById('storyProg' + currentStoryIndex);
+        if (activeProg) {
+            activeProg.querySelector('.fill').style.width = percent + '%';
+        }
+        if (storyProgress >= STORY_DURATION) {
+            nextStoryItem();
+        }
+    }, 100);
+}
+
+function nextStoryItem() {
+    const stories = storyData[currentStoryGirl] || [{ image_url: getProfilePhoto(currentStoryGirl) }];
+    if (currentStoryIndex + 1 >= stories.length) {
+        closeStoryViewer();
+    } else {
+        showStoryItem(currentStoryIndex + 1);
+    }
+}
+
+function prevStoryItem() {
+    if (currentStoryIndex > 0) {
+        showStoryItem(currentStoryIndex - 1);
+    }
+}
+
+function closeStoryViewer() {
+    if (storyTimer) clearInterval(storyTimer);
+    document.getElementById('storyViewer').classList.remove('active');
+    document.body.style.overflow = '';
+    currentStoryGirl = null;
+}
+
+function sendStoryReply() {
+    const input = document.getElementById('storyReplyInput');
+    const msg = input.value.trim();
+    if (!msg || !currentStoryGirl) return;
+    
+    const girl = GIRLS[currentStoryGirl];
+    if (girl) {
+        closeStoryViewer();
+        openChat(currentStoryGirl);
+        setTimeout(() => {
+            document.getElementById('chatInput').value = msg;
+            sendMessage();
+        }, 300);
+    }
+    input.value = '';
 }
 
 // ============ CAMGIRLS SECTION ============
