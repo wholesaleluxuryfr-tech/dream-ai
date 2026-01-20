@@ -5,7 +5,7 @@ import bcrypt
 import base64
 import hashlib
 import io
-from flask import Flask, request, jsonify, Response, session, render_template
+from flask import Flask, request, jsonify, Response, session, render_template, send_file
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from datetime import datetime
@@ -5107,6 +5107,10 @@ GIRLS = {
 @app.route('/')
 def home():
     return render_template('index.html', girls_data=GIRLS)
+
+@app.route('/download/main.py')
+def download_main():
+    return send_file('main.py', as_attachment=True, download_name='main.py')
 
 PHOTO_KEYWORDS = {
     'culotte': 'showing panties, lifting skirt, revealing underwear',
