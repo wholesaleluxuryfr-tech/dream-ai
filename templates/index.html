@@ -335,6 +335,13 @@
         .tip-btn { background: linear-gradient(135deg, #e91e63, #9c27b0); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.75rem; cursor: pointer; transition: transform 0.2s; }
         .tip-btn:active { transform: scale(0.95); }
         .tip-btn span { font-weight: 700; }
+        .camgirl-videos-list { padding: 0.5rem 1rem; display: flex; gap: 0.5rem; overflow-x: auto; }
+        .camgirl-video-thumb { flex-shrink: 0; width: 100px; height: 75px; background: #1a1a2e; border-radius: 8px; overflow: hidden; cursor: pointer; position: relative; border: 2px solid transparent; transition: all 0.2s; }
+        .camgirl-video-thumb:hover { border-color: var(--primary-color); }
+        .camgirl-video-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .camgirl-video-thumb .play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 30px; height: 30px; background: rgba(0,0,0,0.7); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; }
+        .camgirl-video-thumb .video-tokens { position: absolute; bottom: 4px; right: 4px; background: var(--primary-color); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; }
+        .camgirl-video-thumb .video-title { position: absolute; bottom: 4px; left: 4px; color: white; font-size: 0.55rem; text-shadow: 0 1px 2px rgba(0,0,0,0.8); max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .camgirl-chat { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; }
         .cam-msg { background: rgba(255,255,255,0.05); padding: 0.5rem 0.75rem; border-radius: 10px; font-size: 0.8rem; }
         .cam-msg.tip { background: rgba(233,30,99,0.2); border: 1px solid rgba(233,30,99,0.3); }
@@ -698,6 +705,7 @@
             <h3 id="camgirlName"></h3>
             <p id="camgirlTagline"></p>
         </div>
+        <div class="camgirl-videos-list" id="camgirlVideosList"></div>
         <div class="tip-menu" id="tipMenu"></div>
         <div class="camgirl-chat" id="camgirlChat"></div>
     </div>
@@ -3396,12 +3404,51 @@ async function openCamgirl(girlId) {
         }
     } catch(e) { console.log("Cam photo error:", e); }
     
+    renderCamgirlVideos(cam.videos || []);
     renderTipMenu(cam.tip_menu || {});
     
     document.getElementById('camgirlChat').innerHTML = `
         <div class="cam-msg"><span class="user">System:</span> Bienvenue dans le show de ${cam.name}!</div>
         <div class="cam-msg"><span class="user">${cam.name}:</span> Coucou tout le monde!</div>
     `;
+}
+
+function renderCamgirlVideos(videos) {
+    const container = document.getElementById('camgirlVideosList');
+    if (!videos || videos.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    let html = '';
+    videos.forEach((video, index) => {
+        const hasVideo = video.video_url ? true : false;
+        const lockIcon = hasVideo ? '&#9658;' : '&#128274;';
+        html += `<div class="camgirl-video-thumb" onclick="playCamgirlVideo(${index})">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#0d0d12);display:flex;align-items:center;justify-content:center;">
+                <span style="font-size:1.5rem;color:rgba(233,30,99,0.5);">${lockIcon}</span>
+            </div>
+            <div class="video-title">${video.title}</div>
+            <div class="video-tokens">${video.tokens} tk</div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+function playCamgirlVideo(index) {
+    const cam = camgirlsData.find(c => c.girl_id === currentCamgirl);
+    if (!cam || !cam.videos || !cam.videos[index]) return;
+    
+    const video = cam.videos[index];
+    const videoDiv = document.getElementById('camgirlVideo');
+    const chatEl = document.getElementById('camgirlChat');
+    
+    if (video.video_url) {
+        videoDiv.innerHTML = `<video src="${video.video_url}" controls autoplay playsinline style="width:100%;height:100%;object-fit:cover;"></video>`;
+        chatEl.innerHTML += `<div class="cam-msg tip"><span class="user">System:</span> Video "${video.title}" en lecture!</div>`;
+    } else {
+        chatEl.innerHTML += `<div class="cam-msg"><span class="user">${cam.name}:</span> Cette video n'est pas encore disponible... Envoie des tokens pour la debloquer!</div>`;
+    }
 }
 
 function renderTipMenu(tipMenu) {
