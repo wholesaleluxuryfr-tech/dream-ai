@@ -3377,15 +3377,15 @@ function renderStoriesCircles() {
     let html = '';
     matchedGirls.forEach(girlId => {
         const girl = GIRLS[girlId];
-        if (!girl) return;
-        const hasStory = storyData[girlId] && storyData[girlId].length > 0;
-        const isViewed = viewedStories[girlId];
+        if (!girl || girl.camgirl) return;
         const photo = getProfilePhoto(girlId);
+        if (!photo) return;
+        
+        const isViewed = viewedStories[girlId];
         const initial = girl.name ? girl.name[0].toUpperCase() : '?';
         
-        const avatarClass = hasStory ? (isViewed ? 'viewed' : '') : 'no-story';
-        const avatarContent = photo ? 
-            `<img src="${photo}" alt="${girl.name}">` : initial;
+        const avatarClass = isViewed ? 'viewed' : '';
+        const avatarContent = `<img src="${photo}" alt="${girl.name}">`;
         
         html += `<div class="story-circle" onclick="openStoryViewer('${girlId}')">
             <div class="story-avatar ${avatarClass}">
