@@ -6792,6 +6792,16 @@ CAMGIRL_VIDEOS = {
         "name": "Emma_Sensuelle",
         "videos": [
             {"id": 1, "title": "Masturbation douce", "action": "gentle masturbation", "decor": "chambre cozy", "tokens": 200, "duration": "15sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_videos/emma_blonde_masturbation_01.mp4"}
+        ],
+        "photos": [
+            {"id": 1, "title": "Portrait sourire", "tokens": 0, "url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/emma_photos/emma_portrait_smile.jpg"},
+            {"id": 2, "title": "Tenue casual", "tokens": 0, "url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/emma_photos/emma_casual_jeans.jpg"},
+            {"id": 3, "title": "Salle de sport", "tokens": 0, "url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/emma_photos/emma_gym_workout.jpg"},
+            {"id": 4, "title": "Robe de soiree", "tokens": 0, "url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/emma_photos/emma_evening_dress.jpg"},
+            {"id": 5, "title": "Lingerie noire", "tokens": 0, "url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/emma_photos/emma_lingerie_black.jpg"},
+            {"id": 6, "title": "Topless au lit", "tokens": 100, "url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/emma_photos/emma_topless_bed.jpg"},
+            {"id": 7, "title": "Orgasme", "tokens": 300, "url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/emma_photos/emma_orgasm_face.jpg"},
+            {"id": 8, "title": "Vue explicite", "tokens": 400, "url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/emma_photos/emma_spread_explicit.jpg"}
         ]
     }
 }
@@ -7566,15 +7576,19 @@ def get_camgirls():
     camgirls = []
     for girl_id, girl in GIRLS.items():
         if girl.get("camgirl"):
-            videos = CAMGIRL_VIDEOS.get(girl_id, {}).get("videos", [])
+            camgirl_data = CAMGIRL_VIDEOS.get(girl_id, {})
+            videos = camgirl_data.get("videos", [])
+            photos = camgirl_data.get("photos", [])
             camgirls.append({
                 "girl_id": girl_id,
                 "name": girl.get("name"),
                 "age": girl.get("age"),
                 "location": girl.get("location"),
                 "tagline": girl.get("tagline"),
+                "bio": girl.get("bio"),
                 "tip_menu": girl.get("tip_menu", {}),
-                "videos": videos
+                "videos": videos,
+                "photos": photos
             })
     return jsonify({"camgirls": camgirls})
 
