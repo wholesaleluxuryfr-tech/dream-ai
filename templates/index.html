@@ -104,7 +104,9 @@
         .swipe-card.current-card { z-index: 10; opacity: 1; }
         .swipe-card-img { height: 70%; background: #1a1a2e; display: flex; align-items: center; justify-content: center; font-size: 6rem; font-weight: 800; color: rgba(233,30,99,0.2); overflow: hidden; position: relative; }
         .swipe-card-img img { width: 100%; height: 100%; object-fit: cover; will-change: transform; }
-        .swipe-initial, .profile-initial, .card-initial, .msg-initial { font-size: inherit; font-weight: 800; color: rgba(233,30,99,0.3); }
+        .swipe-initial { font-size: 8rem; font-weight: 800; color: rgba(233,30,99,0.3); }
+        .profile-initial { font-size: 5rem; font-weight: 800; color: rgba(233,30,99,0.3); }
+        .card-initial, .msg-initial { font-size: 1.5rem; font-weight: 800; color: rgba(233,30,99,0.3); }
         .swipe-card-info { padding: 1.5rem; }
         .swipe-card-name { font-size: 1.5rem; font-weight: 700; }
         .swipe-card-location { color: #888; font-size: 0.9rem; margin-top: 0.3rem; }
@@ -2577,8 +2579,19 @@ function quickChat(girlId) {
     currentGirl = girlId;
     const g = GIRLS[girlId];
     if (!g) return;
-    document.getElementById('chatGirlName').textContent = g.name;
-    loadChatHistory(girlId);
+    
+    document.getElementById('chatName').textContent = g.name;
+    
+    const chatAvatar = document.getElementById('chatInitials');
+    const photo = getProfilePhoto(girlId);
+    if (photo) {
+        chatAvatar.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+    } else {
+        chatAvatar.innerHTML = `<span>${INITIALS[girlId]}</span>`;
+    }
+    
+    if (!chatHistory[girlId]) chatHistory[girlId] = loadChatHistory(girlId);
+    renderMessages();
     showPage('chat');
 }
 
@@ -3227,9 +3240,14 @@ function renderCamgirls() {
         const viewers = Math.floor(Math.random() * 400) + 50;
         const girl = GIRLS[cam.girl_id];
         const initial = cam.name ? cam.name[0].toUpperCase() : '?';
+        const photo = getProfilePhoto(cam.girl_id);
+        
+        const imgContent = photo ? 
+            `<img src="${photo}" alt="${cam.name}" style="width:100%;height:100%;object-fit:cover;">` :
+            `<span style="font-size:3rem;color:rgba(233,30,99,0.3);">${initial}</span>`;
         
         html += `<div class="camgirl-card" onclick="openCamgirl('${cam.girl_id}')">
-            <div class="camgirl-card-img">${initial}</div>
+            <div class="camgirl-card-img">${imgContent}</div>
             <div class="camgirl-live-badge">LIVE</div>
             <div class="camgirl-viewers">${viewers} viewers</div>
             <div class="camgirl-card-info">
@@ -3240,6 +3258,12 @@ function renderCamgirls() {
     });
     
     grid.innerHTML = html || '<p style="color:#666;text-align:center;padding:2rem;">Aucune camgirl en ligne</p>';
+    
+    camgirlsData.forEach(cam => {
+        if (!getProfilePhoto(cam.girl_id)) {
+            queuePhotoGeneration(cam.girl_id);
+        }
+    });
 }
 
 async function openCamgirl(girlId) {

@@ -6665,10 +6665,17 @@ def profile_photo():
         )
         
         print(f"[PROFILE] Girl: {girl_id}, Type: {photo_config['type']}, Pose: {photo_config['pose']}")
+        print(f"[PROFILE] API Response status: {response.status_code}")
+        
+        if response.status_code == 401:
+            print(f"[PROFILE] ERROR: API key invalid or expired!")
+            return jsonify({"error": "API key expired", "status": 401})
         
         if response.ok:
             result = response.json()
-            image_val = result.get('image', result.get('image_url', ''))
+            print(f"[PROFILE] API Result keys: {result.keys()}")
+            image_val = result.get('image', result.get('image_url', result.get('data', {}).get('image', '')))
+            print(f"[PROFILE] Image value: {str(image_val)[:100] if image_val else 'None'}")
             
             if image_val:
                 if isinstance(image_val, str) and not image_val.startswith('http') and not image_val.startswith('data:'):
