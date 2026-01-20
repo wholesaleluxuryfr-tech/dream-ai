@@ -5114,45 +5114,762 @@ def download_main():
         content = f.read()
     return Response(content, mimetype='text/plain', headers={'Content-Disposition': 'attachment; filename=main.py'})
 
-PHOTO_KEYWORDS = {
-    'culotte': 'showing panties, lifting skirt, revealing underwear',
-    'panties': 'showing panties, lifting skirt, revealing underwear',
-    'string': 'showing thong, from behind, bent over',
-    'seins': 'topless, showing breasts, nude chest',
-    'poitrine': 'topless, showing breasts, cleavage',
-    'nichons': 'topless, big breasts, nude',
-    'teton': 'topless, nipples visible, breasts',
-    'haut': 'removing top, taking off shirt',
-    'top': 'removing top, showing bra',
-    'soutif': 'showing bra, removing bra, lace bra',
-    'soutien': 'showing bra, lace bra, cleavage',
-    'pantalon': 'removing pants, showing legs, underwear visible',
-    'jupe': 'lifting skirt, showing legs, panties visible',
-    'robe': 'removing dress, in underwear',
-    'nue': 'fully nude, naked, no clothes',
-    'naked': 'fully nude, naked body',
-    'tout': 'fully nude, completely naked, showing everything',
-    'deshabille': 'undressing, removing clothes, stripping',
-    'fesses': 'showing butt, from behind, bent over',
-    'cul': 'showing ass, from behind, bent over nude',
-    'chatte': 'nude, legs spread, intimate pose',
-    'pussy': 'nude, legs spread, showing pussy',
-    'sexe': 'nude, intimate pose, explicit',
-    'ecarte': 'legs spread, nude, showing pussy',
-    'allonge': 'lying in bed, nude, seductive pose',
-    'lit': 'in bed, bedroom, intimate',
-    'douche': 'in shower, wet, nude',
-    'bain': 'in bath, wet body, nude'
+POSE_LIBRARY = {
+    "portrait": {
+        "id": "portrait",
+        "name": "Portrait",
+        "triggers": ["selfie", "photo de toi", "ton visage", "portrait", "tete"],
+        "prompt": "portrait, face closeup, looking at camera, beautiful face",
+        "pose": "Default",
+        "min_affection": 0,
+        "tier": "elegant",
+        "style": "Cinematic",
+        "filter": "Professionnel"
+    },
+    "corps_entier": {
+        "id": "corps_entier",
+        "name": "Corps entier",
+        "triggers": ["corps entier", "full body", "debout", "tout ton corps"],
+        "prompt": "full body standing, showing full figure, elegant pose",
+        "pose": "Default",
+        "min_affection": 10,
+        "tier": "elegant",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "decollete": {
+        "id": "decollete",
+        "name": "Decollete",
+        "triggers": ["decollete", "poitrine", "cleavage"],
+        "prompt": "showing cleavage, low cut top, breasts visible, seductive",
+        "pose": "Default",
+        "min_affection": 35,
+        "tier": "sexy",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "lingerie": {
+        "id": "lingerie",
+        "name": "En lingerie",
+        "triggers": ["lingerie", "sous vetements", "en soutif", "petite tenue"],
+        "prompt": "wearing sexy lingerie, lace bra and panties, seductive pose on bed",
+        "pose": "Default",
+        "min_affection": 50,
+        "tier": "lingerie",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "soutien_gorge": {
+        "id": "soutien_gorge",
+        "name": "Soutien-gorge",
+        "triggers": ["soutif", "soutien", "bra", "montre ton soutien"],
+        "prompt": "removing top, showing bra, lace bra visible, seductive",
+        "pose": "Default",
+        "min_affection": 38,
+        "tier": "sexy",
+        "style": "Photo XL+",
+        "filter": "Default"
+    },
+    "culotte": {
+        "id": "culotte",
+        "name": "Culotte",
+        "triggers": ["culotte", "panties", "petite culotte", "montre ta culotte"],
+        "prompt": "showing panties, lifting skirt, revealing underwear, cute panties",
+        "pose": "Default",
+        "min_affection": 35,
+        "tier": "sexy",
+        "style": "Photo XL+",
+        "filter": "Default"
+    },
+    "string": {
+        "id": "string",
+        "name": "String",
+        "triggers": ["string", "thong", "ficelle"],
+        "prompt": "showing thong from behind, bent over, ass visible, tiny string",
+        "pose": "Showing off Ass",
+        "min_affection": 55,
+        "tier": "lingerie",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "topless": {
+        "id": "topless",
+        "name": "Topless",
+        "triggers": ["seins", "nichons", "tetons", "topless", "poitrine nue", "montre tes seins"],
+        "prompt": "topless, nude breasts, showing tits, nipples visible, seductive expression",
+        "pose": "Default",
+        "min_affection": 60,
+        "tier": "nude",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "breast_squeeze": {
+        "id": "breast_squeeze",
+        "name": "Seins presses",
+        "triggers": ["presse tes seins", "serre tes seins", "joue avec tes seins", "malaxe"],
+        "prompt": "topless, squeezing breasts together, playing with nipples, seductive",
+        "pose": "Breast Squeeze",
+        "min_affection": 62,
+        "tier": "nude",
+        "style": "Cinematic",
+        "filter": "Photo flash"
+    },
+    "fesses": {
+        "id": "fesses",
+        "name": "Fesses",
+        "triggers": ["fesses", "cul", "derriere", "booty", "montre ton cul"],
+        "prompt": "showing ass from behind, bent over, round butt, panties down or nude",
+        "pose": "Showing off Ass",
+        "min_affection": 60,
+        "tier": "nude",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "retire_culotte": {
+        "id": "retire_culotte",
+        "name": "Retire culotte",
+        "triggers": ["retire ta culotte", "enleve ta culotte", "baisse ta culotte", "sans culotte"],
+        "prompt": "removing panties, sliding panties down legs, pussy starting to show",
+        "pose": "Default",
+        "min_affection": 65,
+        "tier": "nude",
+        "style": "Hyperreal XL + v2",
+        "filter": "Default"
+    },
+    "nue": {
+        "id": "nue",
+        "name": "Completement nue",
+        "triggers": ["nue", "toute nue", "naked", "a poil", "sans rien"],
+        "prompt": "fully nude, naked body, no clothes, showing everything",
+        "pose": "Default",
+        "min_affection": 60,
+        "tier": "nude",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "douche": {
+        "id": "douche",
+        "name": "Sous la douche",
+        "triggers": ["douche", "shower", "sous la douche", "mouille"],
+        "prompt": "in shower, wet body, water running, nude, wet hair, steam",
+        "pose": "Showering",
+        "min_affection": 62,
+        "tier": "nude",
+        "style": "Cinematic",
+        "filter": "Lunatique"
+    },
+    "bain": {
+        "id": "bain",
+        "name": "Dans le bain",
+        "triggers": ["bain", "baignoire", "bath", "dans le bain"],
+        "prompt": "in bathtub, wet body, bubbles, nude, relaxed sensual",
+        "pose": "Default",
+        "min_affection": 60,
+        "tier": "nude",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "lit_allongee": {
+        "id": "lit_allongee",
+        "name": "Allongee sur le lit",
+        "triggers": ["allongee", "sur le lit", "couchee", "au lit"],
+        "prompt": "lying on bed, nude, seductive pose, sheets tangled, bedroom",
+        "pose": "Default",
+        "min_affection": 60,
+        "tier": "nude",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "ecarte_jambes": {
+        "id": "ecarte_jambes",
+        "name": "Jambes ecartees",
+        "triggers": ["ecarte les jambes", "ouvre les jambes", "jambes ecartees", "ecarte toi"],
+        "prompt": "legs spread wide, nude, showing pussy, lying on back, inviting",
+        "pose": "Spread Legs",
+        "min_affection": 70,
+        "tier": "explicit",
+        "style": "Hyperreal XL + v2",
+        "filter": "Default"
+    },
+    "montre_chatte": {
+        "id": "montre_chatte",
+        "name": "Montre ta chatte",
+        "triggers": ["montre ta chatte", "montre moi ta chatte", "ta chatte", "pussy", "montre tout"],
+        "prompt": "nude, spreading pussy lips, showing pink pussy, close up, wet",
+        "pose": "Spread Pussy",
+        "min_affection": 75,
+        "tier": "explicit",
+        "style": "Hyperreal XL + v2",
+        "filter": "Default"
+    },
+    "spread_ass": {
+        "id": "spread_ass",
+        "name": "Ecarte tes fesses",
+        "triggers": ["ecarte tes fesses", "montre ton trou", "spread ass", "ouvre ton cul"],
+        "prompt": "bent over, spreading ass cheeks with hands, showing asshole and pussy from behind",
+        "pose": "Spread Ass",
+        "min_affection": 80,
+        "tier": "explicit",
+        "style": "Hyperreal XL + v2",
+        "filter": "Default"
+    },
+    "masturbation": {
+        "id": "masturbation",
+        "name": "Masturbation",
+        "triggers": ["touche toi", "masturbe toi", "doigte toi", "caresse toi", "joue avec toi"],
+        "prompt": "masturbating, fingers in pussy, touching herself, pleasure face, moaning",
+        "pose": "Female Masturbation",
+        "min_affection": 75,
+        "tier": "explicit",
+        "style": "Hyperreal XL + v2",
+        "emotion": "Orgasm Face",
+        "filter": "Default"
+    },
+    "doigts_chatte": {
+        "id": "doigts_chatte",
+        "name": "Doigts dans la chatte",
+        "triggers": ["doigts dans", "enfonce tes doigts", "penetre toi", "doigts dedans"],
+        "prompt": "fingers deep inside pussy, two fingers penetrating, wet pussy, pleasure expression",
+        "pose": "Female Masturbation",
+        "min_affection": 80,
+        "tier": "explicit",
+        "style": "Hyperreal XL + v2",
+        "emotion": "Orgasm Face",
+        "filter": "Default"
+    },
+    "gode": {
+        "id": "gode",
+        "name": "Avec un gode",
+        "triggers": ["gode", "dildo", "sextoy", "vibro", "jouet"],
+        "prompt": "using dildo, toy inside pussy, fucking herself with dildo, pleasure face",
+        "pose": "Dildo",
+        "min_affection": 80,
+        "tier": "explicit",
+        "style": "Video v4 (Cinematic)",
+        "emotion": "Orgasm Face",
+        "filter": "Default"
+    },
+    "gode_profond": {
+        "id": "gode_profond",
+        "name": "Gode profond",
+        "triggers": ["enfonce le gode", "profond", "jusqu'au fond", "a fond"],
+        "prompt": "dildo deep inside pussy, fucking hard with toy, squatting on dildo, ahegao face",
+        "pose": "Dildo",
+        "min_affection": 85,
+        "tier": "extreme",
+        "style": "Video v4 (Cinematic)",
+        "emotion": "Ahegao",
+        "filter": "Default"
+    },
+    "plug_anal": {
+        "id": "plug_anal",
+        "name": "Plug anal",
+        "triggers": ["plug", "anal", "dans le cul", "buttplug"],
+        "prompt": "bent over showing ass with butt plug inserted, spreading cheeks, plug visible",
+        "pose": "Spread Ass",
+        "min_affection": 85,
+        "tier": "extreme",
+        "style": "Hyperreal XL + v2",
+        "filter": "Default"
+    },
+    "double_penetration": {
+        "id": "double_penetration",
+        "name": "Double penetration",
+        "triggers": ["double", "deux trous", "dp", "les deux"],
+        "prompt": "double penetration with toys, dildo in pussy and plug in ass, stuffed full",
+        "pose": "Dildo",
+        "min_affection": 90,
+        "tier": "extreme",
+        "style": "Video v4 (Cinematic)",
+        "emotion": "Ahegao",
+        "filter": "Default"
+    },
+    "quatre_pattes": {
+        "id": "quatre_pattes",
+        "name": "A quatre pattes",
+        "triggers": ["quatre pattes", "a quatre pattes", "doggy", "levrette", "position"],
+        "prompt": "on all fours, ass up face down, doggy position, showing pussy and ass from behind",
+        "pose": "Spread Ass",
+        "min_affection": 75,
+        "tier": "explicit",
+        "style": "Hyperreal XL + v2",
+        "filter": "Default"
+    },
+    "levrette_ready": {
+        "id": "levrette_ready",
+        "name": "Prete pour levrette",
+        "triggers": ["prete pour toi", "viens me prendre", "prends moi", "baise moi"],
+        "prompt": "on all fours on bed, ass up, looking back inviting, pussy wet and ready, waiting to be fucked",
+        "pose": "Spread Ass",
+        "min_affection": 80,
+        "tier": "explicit",
+        "style": "Hyperreal XL + v2",
+        "emotion": "Orgasm Face",
+        "filter": "Default"
+    },
+    "facesitting": {
+        "id": "facesitting",
+        "name": "Facesitting",
+        "triggers": ["assis toi sur", "facesitting", "sur mon visage", "assise sur"],
+        "prompt": "sitting on face POV, pussy and ass from below, squatting over camera, facesitting position",
+        "pose": "Spread Pussy",
+        "min_affection": 85,
+        "tier": "extreme",
+        "style": "Hyperreal XL + v2",
+        "filter": "Default"
+    },
+    "orgasme": {
+        "id": "orgasme",
+        "name": "En train de jouir",
+        "triggers": ["jouis", "orgasme", "tu jouis", "quand tu jouis"],
+        "prompt": "orgasming, eyes rolled back, mouth open moaning, body arched in pleasure, cumming hard",
+        "pose": "Female Masturbation",
+        "min_affection": 80,
+        "tier": "explicit",
+        "style": "Video v4 (Cinematic)",
+        "emotion": "Orgasm Face",
+        "filter": "Default"
+    },
+    "ahegao": {
+        "id": "ahegao",
+        "name": "Ahegao",
+        "triggers": ["ahegao", "langue sortie", "yeux roules", "face de salope"],
+        "prompt": "ahegao face, tongue out, eyes rolled back, drooling, fucked silly expression",
+        "pose": "Default",
+        "min_affection": 85,
+        "tier": "extreme",
+        "style": "Hyperreal XL + v2",
+        "emotion": "Ahegao",
+        "filter": "Default"
+    },
+    "squirt": {
+        "id": "squirt",
+        "name": "Squirt",
+        "triggers": ["squirt", "ejacule", "fontaine", "gicle"],
+        "prompt": "squirting orgasm, liquid spraying from pussy, intense pleasure, wet thighs and sheets",
+        "pose": "Female Masturbation",
+        "min_affection": 90,
+        "tier": "extreme",
+        "style": "Video v4 (Cinematic)",
+        "emotion": "Orgasm Face",
+        "filter": "Default"
+    },
+    "suce_doigts": {
+        "id": "suce_doigts",
+        "name": "Suce tes doigts",
+        "triggers": ["suce tes doigts", "leche tes doigts", "goute toi", "licking fingers"],
+        "prompt": "licking own fingers after masturbating, tasting pussy juice, seductive",
+        "pose": "Default",
+        "min_affection": 75,
+        "tier": "explicit",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "crache": {
+        "id": "crache",
+        "name": "Crache",
+        "triggers": ["crache", "bave", "salive", "drool"],
+        "prompt": "drooling saliva, spit dripping from mouth, wet messy, tongue out dripping",
+        "pose": "Default",
+        "min_affection": 80,
+        "tier": "extreme",
+        "style": "Hyperreal XL + v2",
+        "filter": "Default"
+    },
+    "wet_tshirt": {
+        "id": "wet_tshirt",
+        "name": "T-shirt mouille",
+        "triggers": ["tshirt mouille", "wet tshirt", "t-shirt mouille", "trempe"],
+        "prompt": "wet t-shirt, white shirt soaked see-through, nipples visible through wet fabric, no bra",
+        "pose": "Wet Tshirt",
+        "min_affection": 45,
+        "tier": "sexy",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "exhib_public": {
+        "id": "exhib_public",
+        "name": "Exhib en public",
+        "triggers": ["en public", "dehors", "exhib", "montre toi dehors"],
+        "prompt": "flashing in public, showing breasts or pussy outdoors, risky public nudity",
+        "pose": "Default",
+        "min_affection": 70,
+        "tier": "explicit",
+        "style": "Cinematic",
+        "filter": "Photo flash"
+    },
+    "miroir": {
+        "id": "miroir",
+        "name": "Selfie miroir",
+        "triggers": ["miroir", "selfie miroir", "devant le miroir"],
+        "prompt": "nude mirror selfie, showing body in reflection, phone visible, bathroom mirror",
+        "pose": "Default",
+        "min_affection": 62,
+        "tier": "nude",
+        "style": "Photo XL+",
+        "filter": "Photo flash"
+    },
+    "dessous_table": {
+        "id": "dessous_table",
+        "name": "Photo sous la table",
+        "triggers": ["sous la table", "upskirt", "sous ta jupe"],
+        "prompt": "upskirt view, panties visible under skirt, sitting with legs slightly open",
+        "pose": "Default",
+        "min_affection": 40,
+        "tier": "sexy",
+        "style": "Photo XL+",
+        "filter": "Default"
+    },
+    "oil_body": {
+        "id": "oil_body",
+        "name": "Corps huile",
+        "triggers": ["huile", "oiled", "corps huile", "brillante"],
+        "prompt": "oiled shiny body, glistening skin, nude covered in oil, sensual massage",
+        "pose": "Default",
+        "min_affection": 60,
+        "tier": "nude",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "corde_attache": {
+        "id": "corde_attache",
+        "name": "Attachee",
+        "triggers": ["attache moi", "corde", "bondage", "attache", "menotte"],
+        "prompt": "tied up with rope, bondage, hands bound, submissive position, helpless",
+        "pose": "Default",
+        "min_affection": 80,
+        "tier": "extreme",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "collier_laisse": {
+        "id": "collier_laisse",
+        "name": "Collier et laisse",
+        "triggers": ["collier", "laisse", "collar", "leash", "soumise"],
+        "prompt": "wearing collar and leash, nude, on knees, submissive pose, waiting for orders",
+        "pose": "Default",
+        "min_affection": 85,
+        "tier": "extreme",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "a_genoux": {
+        "id": "a_genoux",
+        "name": "A genoux",
+        "triggers": ["a genoux", "mets toi a genoux", "kneeling", "soumise a genoux"],
+        "prompt": "kneeling, on knees, looking up submissive, mouth open waiting, nude",
+        "pose": "Default",
+        "min_affection": 70,
+        "tier": "explicit",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "bouche_ouverte": {
+        "id": "bouche_ouverte",
+        "name": "Bouche ouverte",
+        "triggers": ["ouvre la bouche", "bouche ouverte", "langue sortie", "open mouth"],
+        "prompt": "mouth wide open, tongue out, waiting, ahegao expression, drooling",
+        "pose": "Default",
+        "min_affection": 75,
+        "tier": "explicit",
+        "style": "Hyperreal XL + v2",
+        "emotion": "Ahegao",
+        "filter": "Default"
+    },
+    "sucer_gode": {
+        "id": "sucer_gode",
+        "name": "Suce le gode",
+        "triggers": ["suce le gode", "gode dans la bouche", "dildo mouth", "avale"],
+        "prompt": "sucking dildo, toy deep in mouth, deepthroat, gagging on dildo",
+        "pose": "Default",
+        "min_affection": 80,
+        "tier": "extreme",
+        "style": "Hyperreal XL + v2",
+        "filter": "Default"
+    },
+    "pinces_tetons": {
+        "id": "pinces_tetons",
+        "name": "Pinces tetons",
+        "triggers": ["pinces", "clamps", "tetons pinces", "nipple clamps"],
+        "prompt": "nipple clamps on breasts, chain between clamps, pain pleasure expression",
+        "pose": "Default",
+        "min_affection": 85,
+        "tier": "extreme",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "fessee": {
+        "id": "fessee",
+        "name": "Fessee",
+        "triggers": ["fessee", "spanking", "tape moi", "claque"],
+        "prompt": "bent over showing red spanked ass, hand marks on butt cheeks, freshly spanked",
+        "pose": "Showing off Ass",
+        "min_affection": 75,
+        "tier": "explicit",
+        "style": "Cinematic",
+        "filter": "Photo flash"
+    },
+    "pied": {
+        "id": "pied",
+        "name": "Pieds",
+        "triggers": ["pieds", "feet", "montre tes pieds", "orteils"],
+        "prompt": "showing feet, toes spread, sole of feet visible, foot fetish pose",
+        "pose": "Default",
+        "min_affection": 40,
+        "tier": "sexy",
+        "style": "Photo XL+",
+        "filter": "Default"
+    },
+    "aisselles": {
+        "id": "aisselles",
+        "name": "Aisselles",
+        "triggers": ["aisselles", "armpits", "sous les bras", "leve les bras"],
+        "prompt": "arms raised showing armpits, armpit fetish pose, sweaty armpits",
+        "pose": "Default",
+        "min_affection": 45,
+        "tier": "sexy",
+        "style": "Cinematic",
+        "filter": "Default"
+    },
+    "gros_plan_chatte": {
+        "id": "gros_plan_chatte",
+        "name": "Gros plan chatte",
+        "triggers": ["gros plan", "closeup", "zoom sur ta chatte", "de pres"],
+        "prompt": "extreme closeup of pussy, spread open, pink wet pussy lips, clitoris visible",
+        "pose": "Spread Pussy",
+        "min_affection": 85,
+        "tier": "extreme",
+        "style": "Hyperreal XL + v2",
+        "filter": "Default"
+    },
+    "cyprine": {
+        "id": "cyprine",
+        "name": "Mouille beaucoup",
+        "triggers": ["mouille", "cyprine", "tellement mouille", "degouline"],
+        "prompt": "dripping wet pussy, pussy juice running down thighs, extremely wet aroused",
+        "pose": "Spread Legs",
+        "min_affection": 80,
+        "tier": "extreme",
+        "style": "Hyperreal XL + v2",
+        "filter": "Default"
+    },
+    "creampie": {
+        "id": "creampie",
+        "name": "Creampie",
+        "triggers": ["creampie", "sperme qui coule", "remplie", "pleine de sperme"],
+        "prompt": "creampie dripping from pussy, cum leaking out, freshly fucked filled with cum",
+        "pose": "Spread Legs",
+        "min_affection": 95,
+        "tier": "extreme",
+        "style": "Hyperreal XL + v2",
+        "filter": "Default"
+    },
+    "facial": {
+        "id": "facial",
+        "name": "Facial",
+        "triggers": ["facial", "sur le visage", "sperme visage", "couvre mon visage"],
+        "prompt": "facial cumshot, cum on face, cum dripping from face and tongue, happy expression",
+        "pose": "Default",
+        "min_affection": 95,
+        "tier": "extreme",
+        "style": "Hyperreal XL + v2",
+        "emotion": "Ahegao",
+        "filter": "Default"
+    },
+    "cum_tits": {
+        "id": "cum_tits",
+        "name": "Sperme sur seins",
+        "triggers": ["sur tes seins", "entre tes seins", "cum on tits", "couvre tes seins"],
+        "prompt": "cum on breasts, cum dripping between tits, covered in cum, licking cum",
+        "pose": "Breast Squeeze",
+        "min_affection": 90,
+        "tier": "extreme",
+        "style": "Hyperreal XL + v2",
+        "filter": "Default"
+    },
+    "bukkake": {
+        "id": "bukkake",
+        "name": "Couverte de sperme",
+        "triggers": ["bukkake", "couverte", "plein de sperme", "toute blanche"],
+        "prompt": "covered in cum everywhere, bukkake, cum on face tits and body, messy cum slut",
+        "pose": "Default",
+        "min_affection": 95,
+        "tier": "extreme",
+        "style": "Hyperreal XL + v2",
+        "emotion": "Ahegao",
+        "filter": "Default"
+    }
 }
 
-def detect_photo_request(message):
+STYLE_PRESETS = {
+    "cinematic": {"name": "Cinematic", "best_for": ["portrait", "artistic", "moody"]},
+    "photo_xl": {"name": "Photo XL+ (legacy)", "best_for": ["selfie", "casual", "amateur"]},
+    "hyperreal": {"name": "Hyperreal XL + v2", "best_for": ["explicit", "detailed", "closeup"]},
+    "kpop": {"name": "K-Pop", "best_for": ["asian", "cute", "idol"]},
+    "video_v4": {"name": "Video v4 (Cinematic)", "best_for": ["action", "motion", "dildo"]}
+}
+
+FILTER_PRESETS = {
+    "default": {"name": "Default", "effect": "neutral"},
+    "professionnel": {"name": "Professionnel", "effect": "clean, studio"},
+    "photo_flash": {"name": "Photo flash", "effect": "amateur, flash photo"},
+    "polaroid": {"name": "Polaroid", "effect": "vintage, instant photo"},
+    "lunatique": {"name": "Lunatique", "effect": "dreamy, mystical"},
+    "cyberpunk": {"name": "Cyberpunk", "effect": "neon, futuristic"}
+}
+
+EMOTION_PRESETS = {
+    "default": {"name": "Default"},
+    "orgasm_face": {"name": "Orgasm Face", "best_for": ["masturbation", "pleasure"]},
+    "ahegao": {"name": "Ahegao", "best_for": ["extreme", "fucked silly"]}
+}
+
+AFFECTION_TIERS = {
+    "elegant": {"min": 0, "max": 34, "label": "Elegant"},
+    "sexy": {"min": 35, "max": 49, "label": "Sexy"},
+    "lingerie": {"min": 50, "max": 59, "label": "Lingerie"},
+    "nude": {"min": 60, "max": 74, "label": "Nue"},
+    "explicit": {"min": 75, "max": 84, "label": "Explicite"},
+    "extreme": {"min": 85, "max": 100, "label": "Extreme"}
+}
+
+NEGATIVE_PROMPT_BASE = "watermark, deformed hands, extra fingers, extra limbs, bad anatomy, blurry, low quality, ((deformed)), ((disfigured)), mutation, mutated, ugly, duplicate, morbid, mutilated, poorly drawn face, extra heads, extra legs"
+
+PHOTO_KEYWORDS = {k: v["prompt"] for k, v in POSE_LIBRARY.items()}
+
+def get_unlocked_poses(affection):
+    unlocked = []
+    for pose_id, pose_data in POSE_LIBRARY.items():
+        if affection >= pose_data["min_affection"]:
+            unlocked.append({
+                "id": pose_id,
+                "name": pose_data["name"],
+                "tier": pose_data["tier"],
+                "min_affection": pose_data["min_affection"]
+            })
+    return sorted(unlocked, key=lambda x: x["min_affection"])
+
+def get_next_unlockable_poses(affection, limit=3):
+    locked = []
+    for pose_id, pose_data in POSE_LIBRARY.items():
+        if affection < pose_data["min_affection"]:
+            locked.append({
+                "id": pose_id,
+                "name": pose_data["name"],
+                "tier": pose_data["tier"],
+                "min_affection": pose_data["min_affection"],
+                "progress": int((affection / pose_data["min_affection"]) * 100)
+            })
+    return sorted(locked, key=lambda x: x["min_affection"])[:limit]
+
+def detect_pose_request(message, affection):
     msg_lower = message.lower()
-    for keyword, photo_desc in PHOTO_KEYWORDS.items():
-        if keyword in msg_lower:
-            return photo_desc
+    
+    for pose_id, pose_data in POSE_LIBRARY.items():
+        for trigger in pose_data.get("triggers", []):
+            if trigger in msg_lower:
+                if affection >= pose_data["min_affection"]:
+                    return {
+                        "pose_id": pose_id,
+                        "pose_data": pose_data,
+                        "allowed": True,
+                        "prompt": pose_data["prompt"],
+                        "style": pose_data.get("style", "Cinematic"),
+                        "filter": pose_data.get("filter", "Default"),
+                        "pose": pose_data.get("pose", "Default"),
+                        "emotion": pose_data.get("emotion", "Default")
+                    }
+                else:
+                    return {
+                        "pose_id": pose_id,
+                        "pose_data": pose_data,
+                        "allowed": False,
+                        "required_affection": pose_data["min_affection"],
+                        "current_affection": affection
+                    }
+    
     photo_triggers = ['montre', 'envoie', 'photo', 'voir', 'vois', 'regarde', 'image']
     if any(trigger in msg_lower for trigger in photo_triggers):
-        return 'sexy pose, seductive'
+        default_pose = POSE_LIBRARY.get("portrait", {})
+        return {
+            "pose_id": "portrait",
+            "pose_data": default_pose,
+            "allowed": True,
+            "prompt": default_pose.get("prompt", "beautiful portrait"),
+            "style": "Cinematic",
+            "filter": "Default",
+            "pose": "Default",
+            "emotion": "Default"
+        }
+    
+    return None
+
+def build_complete_prompt(girl_appearance, pose_data, extra_context=None):
+    base_prompt = girl_appearance
+    action_prompt = pose_data.get("prompt", "")
+    
+    full_prompt = f"{base_prompt}, {action_prompt}"
+    
+    if extra_context:
+        full_prompt += f", {extra_context}"
+    
+    return full_prompt
+
+def get_pose_suggestions(affection, limit=4):
+    unlocked = get_unlocked_poses(affection)
+    
+    tier_order = ["elegant", "sexy", "lingerie", "nude", "explicit", "extreme"]
+    current_tier_idx = 0
+    for i, tier in enumerate(tier_order):
+        tier_info = AFFECTION_TIERS.get(tier, {})
+        if tier_info.get("min", 0) <= affection <= tier_info.get("max", 100):
+            current_tier_idx = i
+            break
+    
+    suggestions = []
+    for pose in reversed(unlocked):
+        if len(suggestions) >= limit:
+            break
+        tier_idx = tier_order.index(pose["tier"]) if pose["tier"] in tier_order else 0
+        if tier_idx >= current_tier_idx - 1:
+            suggestions.append(pose)
+    
+    return suggestions[:limit]
+
+def get_refusal_message(pose_data, affection, girl_name):
+    required = pose_data.get("min_affection", 100)
+    tier = pose_data.get("tier", "extreme")
+    diff = required - affection
+    
+    if diff <= 10:
+        responses = [
+            f"Mmh presque... encore un peu de patience bebe",
+            f"T'es pas loin, continue comme ca et je te montre tout",
+            f"Hehe bientot promis, faut juste qu'on se connaisse un peu mieux"
+        ]
+    elif diff <= 25:
+        responses = [
+            f"On se connait pas encore assez pour ca",
+            f"Faut le meriter ca, sois patient",
+            f"Peut-etre si t'es sage avec moi"
+        ]
+    else:
+        responses = [
+            f"Wow calme toi on vient de se rencontrer",
+            f"Haha non ca c'est reserve aux VIP",
+            f"Tu crois quoi? Faut d'abord qu'on discute"
+        ]
+    
+    import random
+    return random.choice(responses)
+
+def detect_photo_request(message, affection=50):
+    pose_result = detect_pose_request(message, affection)
+    if pose_result:
+        if pose_result.get("allowed"):
+            return pose_result.get("prompt")
+        else:
+            return None
     return None
 
 RUDE_WORDS = ['pute', 'salope', 'connasse', 'chienne', 'garce', 'idiote', 'conne', 'ferme', 'ta gueule', 'nique', 'fuck you', 'bitch', 'whore']
@@ -5198,6 +5915,71 @@ def check_behavior(last_msg, affection, msg_count):
     
     return "ok"
 
+@app.route('/api/pose_suggestions', methods=['POST'])
+def pose_suggestions():
+    data = request.json
+    affection = data.get('affection', 20)
+    girl_id = data.get('girl_id', None)
+    
+    unlocked = get_unlocked_poses(affection)
+    next_unlocks = get_next_unlockable_poses(affection, limit=3)
+    suggestions = get_pose_suggestions(affection, limit=4)
+    
+    current_tier = "elegant"
+    for tier_name, tier_info in AFFECTION_TIERS.items():
+        if tier_info["min"] <= affection <= tier_info["max"]:
+            current_tier = tier_name
+            break
+    
+    return jsonify({
+        "unlocked_poses": unlocked,
+        "next_unlocks": next_unlocks,
+        "suggestions": suggestions,
+        "current_tier": current_tier,
+        "tier_label": AFFECTION_TIERS.get(current_tier, {}).get("label", "Elegant"),
+        "affection": affection,
+        "total_poses": len(POSE_LIBRARY),
+        "unlocked_count": len(unlocked)
+    })
+
+@app.route('/api/request_photo', methods=['POST'])
+def request_photo():
+    data = request.json
+    girl_id = data.get('girl_id')
+    pose_id = data.get('pose_id', 'portrait')
+    affection = data.get('affection', 20)
+    
+    girl = GIRLS.get(girl_id)
+    if not girl:
+        return jsonify({"error": "Girl not found"}), 404
+    
+    pose_data = POSE_LIBRARY.get(pose_id)
+    if not pose_data:
+        return jsonify({"error": "Pose not found"}), 404
+    
+    if affection < pose_data.get("min_affection", 0):
+        return jsonify({
+            "allowed": False,
+            "message": get_refusal_message(pose_data, affection, girl.get("name", "Elle")),
+            "required_affection": pose_data["min_affection"],
+            "current_affection": affection
+        })
+    
+    girl_appearance = girl.get("appearance", "")
+    full_prompt = build_complete_prompt(girl_appearance, pose_data)
+    
+    return jsonify({
+        "allowed": True,
+        "prompt": full_prompt,
+        "style": pose_data.get("style", "Cinematic"),
+        "filter": pose_data.get("filter", "Default"),
+        "pose": pose_data.get("pose", "Default"),
+        "emotion": pose_data.get("emotion", "Default"),
+        "negative_prompt": NEGATIVE_PROMPT_BASE,
+        "age_slider": girl.get("age_slider", 25),
+        "pose_name": pose_data.get("name", "Photo")
+    })
+
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.json
@@ -5210,7 +5992,20 @@ def chat():
     msg_count = len(messages)
     
     last_user_msg = messages[-1]['content'] if messages else ""
-    smart_photo_desc = detect_photo_request(last_user_msg)
+    
+    pose_request = detect_pose_request(last_user_msg, affection)
+    smart_photo_desc = None
+    pose_refusal = None
+    
+    if pose_request:
+        if pose_request.get("allowed"):
+            smart_photo_desc = pose_request.get("prompt")
+        else:
+            pose_refusal = get_refusal_message(
+                pose_request.get("pose_data", {}), 
+                affection, 
+                girl.get("name", "Elle")
+            )
     
     mood = detect_mood(messages, affection)
     behavior = check_behavior(last_user_msg, affection, msg_count)
@@ -5226,6 +6021,9 @@ def chat():
             "Pas besoin d'être vulgaire, bye"
         ]
         return jsonify({"reply": random.choice(responses), "smart_photo": None, "unmatch": True})
+    
+    if pose_refusal and behavior == "ok":
+        return jsonify({"reply": pose_refusal, "smart_photo": None, "pose_refused": True})
     
     if behavior == "rushing":
         import random
