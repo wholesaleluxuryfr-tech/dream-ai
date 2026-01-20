@@ -2515,7 +2515,25 @@ function doubleTapLike(e) {
 function goToMatchChat() {
     document.getElementById('matchOverlay').style.display = 'none';
     const lastMatch = matches[matches.length - 1];
-    showProfile(lastMatch);
+    if (!lastMatch || !GIRLS[lastMatch]) {
+        navigateTo('matches');
+        return;
+    }
+    currentGirl = lastMatch;
+    const g = GIRLS[lastMatch];
+    
+    document.getElementById('chatName').textContent = g.name;
+    const chatAvatar = document.getElementById('chatInitials');
+    const photo = getProfilePhoto(lastMatch);
+    if (photo) {
+        chatAvatar.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+    } else {
+        chatAvatar.innerHTML = `<span>${INITIALS[lastMatch] || g.name[0]}</span>`;
+    }
+    
+    if (!chatHistory[lastMatch]) chatHistory[lastMatch] = loadChatHistory(lastMatch);
+    renderMessages();
+    showPage('chat');
     renderMatches();
 }
 
@@ -2622,7 +2640,11 @@ function goBackFromProfile() {
 }
 
 function goBackFromChat() {
-    showPage('profile');
+    if (currentGirl && matches.includes(currentGirl)) {
+        showProfile(currentGirl);
+    } else {
+        navigateTo('messages');
+    }
 }
 
 function showProfile(id) {
