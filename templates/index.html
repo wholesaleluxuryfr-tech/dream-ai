@@ -2723,10 +2723,24 @@ function init() {
 let lastNavTab = 'discover';
 
 function showPage(page) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    showDebug('showPage: ' + page);
+    
+    // Reset ALL pages completely
+    document.querySelectorAll('.page').forEach(p => {
+        p.classList.remove('active', 'page-enter', 'page-exit');
+        p.style.display = 'none';
+    });
+    
     const pageId = 'page' + page.charAt(0).toUpperCase() + page.slice(1);
     const pageEl = document.getElementById(pageId);
-    if (pageEl) pageEl.classList.add('active');
+    
+    if (pageEl) {
+        pageEl.style.display = 'flex';
+        pageEl.classList.add('active');
+        showDebug('showPage: activated ' + pageId);
+    } else {
+        showDebug('showPage: page not found ' + pageId);
+    }
     
     const bottomNav = document.getElementById('bottomNav');
     if (bottomNav) {
