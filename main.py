@@ -7420,6 +7420,58 @@ def get_camgirls():
     return jsonify({"camgirls": camgirls})
 
 
+@app.route('/api/camgirl_photo/<girl_id>', methods=['GET'])
+def get_camgirl_photo(girl_id):
+    girl = GIRLS.get(girl_id)
+    if not girl or not girl.get("camgirl"):
+        return jsonify({"error": "Camgirl not found"}), 404
+    
+    existing = ProfilePhoto.query.filter_by(girl_id=girl_id, photo_type="lingerie").first()
+    if existing and existing.url:
+        return jsonify({"image_url": existing.url})
+    
+    try:
+        ethnicity = girl.get("ethnicity", "european")
+        body = girl.get("body_type", "curvy")
+        age_str = f"{girl.get('age', 25)} years old"
+        hair = girl.get("hair_color", "brunette")
+        breast = girl.get("breast_size", "C cup")
+        
+        prompt = f"solo, 1girl, {ethnicity}, {age_str}, {body} body, {breast} breasts, {hair} hair, lingerie, webcam girl, bedroom, seductive pose, looking at viewer, soft lighting, intimate setting"
+        
+        url = f"https://api.promptchan.ai/v1/images/generate"
+        headers = {
+            "Authorization": f"Bearer {PROMPTCHAN_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "prompt": prompt,
+            "negative_prompt": "ugly, deformed, bad anatomy, bad hands, extra fingers, missing fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, bad proportions, cloned face, disfigured, extra limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers",
+            "width": 512,
+            "height": 768,
+            "style": "realistic",
+            "nsfw": True
+        }
+        
+        response = requests.post(url, headers=headers, json=payload, timeout=60)
+        if response.status_code == 200:
+            data = response.json()
+            image_url = data.get("url") or data.get("image_url") or (data.get("images") or [{}])[0].get("url")
+            
+            if image_url:
+                supabase_url = upload_to_supabase(image_url, girl_id, "lingerie")
+                if supabase_url:
+                    photo = ProfilePhoto(girl_id=girl_id, photo_type="lingerie", url=supabase_url)
+                    db.session.add(photo)
+                    db.session.commit()
+                    return jsonify({"image_url": supabase_url})
+                return jsonify({"image_url": image_url})
+    except Exception as e:
+        print(f"Camgirl photo error: {e}")
+    
+    return jsonify({"image_url": None})
+
+
 @app.route('/api/tip_menu', methods=['GET'])
 def get_tip_menu():
     girl_id = request.args.get('girl_id')

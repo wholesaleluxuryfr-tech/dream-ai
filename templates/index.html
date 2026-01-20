@@ -96,7 +96,7 @@
         
         /* SWIPE PAGE - GPU ACCELERATED */
         .swipe-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1rem; position: relative; perspective: 1000px; overflow: hidden; }
-        .swipe-card { width: 100%; max-width: 350px; height: 500px; background: #12121a; border-radius: 25px; overflow: hidden; position: absolute; box-shadow: 0 10px 30px rgba(0,0,0,0.5); will-change: transform, opacity; transform: translate3d(0, 0, 0); transition: none; backface-visibility: hidden; -webkit-backface-visibility: hidden; touch-action: pan-y; user-select: none; }
+        .swipe-card { width: 100%; max-width: 350px; height: calc(100vh - 280px); min-height: 400px; max-height: 550px; background: #12121a; border-radius: 25px; overflow: hidden; position: absolute; box-shadow: 0 10px 30px rgba(0,0,0,0.5); will-change: transform, opacity; transform: translate3d(0, 0, 0); transition: none; backface-visibility: hidden; -webkit-backface-visibility: hidden; touch-action: pan-y; user-select: none; }
         .swipe-card.animating { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-out; }
         .swipe-card.swipe-left { transform: translate3d(-120vw, 0, 0) rotate(-30deg); opacity: 0; }
         .swipe-card.swipe-right { transform: translate3d(120vw, 0, 0) rotate(30deg); opacity: 0; }
@@ -2538,10 +2538,13 @@ function showPage(page) {
     const pageEl = document.getElementById(pageId);
     if (pageEl) pageEl.classList.add('active');
     
-    if (['profile', 'chat'].includes(page)) {
-        document.getElementById('bottomNav').style.display = 'none';
-    } else {
-        document.getElementById('bottomNav').style.display = 'flex';
+    const bottomNav = document.getElementById('bottomNav');
+    if (bottomNav) {
+        if (['profile', 'chat'].includes(page)) {
+            bottomNav.style.display = 'none';
+        } else {
+            bottomNav.style.display = 'flex';
+        }
     }
 }
 
@@ -3195,9 +3198,17 @@ async function openCamgirl(girlId) {
     const viewers = Math.floor(Math.random() * 400) + 50;
     document.getElementById('camgirlViewers').textContent = viewers + ' viewers';
     
-    const girl = GIRLS[girlId];
     const initial = cam.name ? cam.name[0].toUpperCase() : '?';
-    document.getElementById('camgirlVideo').innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;color:rgba(233,30,99,0.3);">${initial}</div>`;
+    const videoDiv = document.getElementById('camgirlVideo');
+    videoDiv.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;color:rgba(233,30,99,0.3);background:#0a0a0c;">${initial}</div>`;
+    
+    try {
+        const res = await fetch('/api/camgirl_photo/' + girlId);
+        const data = await res.json();
+        if (data.image_url) {
+            videoDiv.innerHTML = `<img src="${data.image_url}" style="width:100%;height:100%;object-fit:cover;" alt="${cam.name}">`;
+        }
+    } catch(e) { console.log("Cam photo error:", e); }
     
     renderTipMenu(cam.tip_menu || {});
     
