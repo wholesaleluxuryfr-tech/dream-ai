@@ -8,7 +8,7 @@ import io
 from flask import Flask, request, jsonify, Response, session, render_template, send_file
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
-from datetime import datetime
+from datetime import datetime, timedelta
 from openai import OpenAI
 from supabase import create_client, Client
 
@@ -120,12 +120,53 @@ class DiscoveredProfile(db.Model):
     discovered_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+class CustomGirl(db.Model):
+    __tablename__ = 'custom_girls'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    girl_id = db.Column(db.String(100), nullable=False, unique=True)
+    name = db.Column(db.String(100), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+    ethnicity = db.Column(db.String(50), nullable=False)
+    body_type = db.Column(db.String(50), nullable=False)
+    breast_size = db.Column(db.String(10), nullable=False)
+    hair_color = db.Column(db.String(30), nullable=False)
+    hair_length = db.Column(db.String(30), nullable=False)
+    eye_color = db.Column(db.String(30), nullable=False)
+    personality = db.Column(db.Text, nullable=True)
+    archetype = db.Column(db.String(30), nullable=True)
+    appearance_prompt = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Story(db.Model):
+    __tablename__ = 'stories'
+    id = db.Column(db.Integer, primary_key=True)
+    girl_id = db.Column(db.String(100), nullable=False)
+    photo_url = db.Column(db.String(500), nullable=False)
+    context = db.Column(db.String(100), nullable=True)
+    caption = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    expires_at = db.Column(db.DateTime, nullable=False)
+
+
 def init_db():
     try:
         with app.app_context():
-            db.create_all()
+            inspector = db.inspect(db.engine)
+            existing_tables = inspector.get_table_names()
+            
+            for table in db.metadata.tables.keys():
+                if table not in existing_tables:
+                    try:
+                        db.metadata.tables[table].create(db.engine, checkfirst=True)
+                        print(f"Created table: {table}")
+                    except Exception as table_err:
+                        print(f"Table {table} creation skipped: {table_err}")
+            
+            print(f"Database ready. Tables: {existing_tables}")
     except Exception as e:
-        print(f"Database initialization: {e}")
+        print(f"Database initialization warning: {e}")
 
 init_db()
 
@@ -5101,6 +5142,101 @@ GIRLS = {
         "archetype": "dominante",
         "special": "goddess",
         "special_ability": "Divine - parle comme une deesse grecque, peut benir ou maudire, chance de match 10%"
+    },
+    
+    "camgirl_lola": {
+        "name": "Lola_Hot69",
+        "age": 22,
+        "age_slider": 22,
+        "location": "Paris, France",
+        "tagline": "En live tous les soirs 22h",
+        "bio": "Coucou! Je suis Lola, camgirl depuis 2 ans. Je fais des shows prives tous les soirs. Viens me voir, je suis tres coquine...",
+        "appearance": "22 year old French camgirl, cute girl next door face with playful smile, bright blue eyes with heavy mascara, full pouty glossy pink lips, long wavy blonde highlighted hair, fair skin with light tan, fit body 165cm from dancing, medium perky C cup natural breasts, always in front of webcam, ring light reflecting in eyes, messy bedroom background with LED lights, wearing crop top or lingerie",
+        "match_chance": 0.8,
+        "body_type": "athletic",
+        "personality": "CAMGIRL: Flirty et business. Propose des shows prives contre des tips. Sait comment exciter les hommes. Experience de cam.",
+        "likes": "tips genereux, viewers fideles, compliments, tokens, shows prives",
+        "dislikes": "freeloaders, demandes sans tips, mecs relous",
+        "fantasmes": "Show prive pour toi seul. Strip tease complet. Toys en live. Orgasme reel devant la cam. Tu me regardes jouir.",
+        "archetype": "exhib",
+        "camgirl": True,
+        "tip_menu": {"flash_seins": 50, "flash_fesses": 30, "strip_complet": 200, "toy_show": 500, "prive_5min": 300}
+    },
+    
+    "camgirl_mia": {
+        "name": "AsianDoll_Mia",
+        "age": 25,
+        "age_slider": 25,
+        "location": "Tokyo, Japon",
+        "tagline": "Cosplay + Hentai IRL",
+        "bio": "Konnichiwa! Je suis Mia, cosplayeuse et camgirl. Je fais des shows en costume. Ahegao face garantie...",
+        "appearance": "25 year old Japanese cosplay camgirl, kawaii cute face with big anime eyes, pink blush on cheeks, small glossy lips, long straight black hair with colored streaks or cosplay wigs, pale flawless porcelain skin, petite slim body 155cm, small perky B cup breasts, wearing cosplay costumes anime schoolgirl maid catgirl, ahegao expression specialty, Japanese bedroom with anime posters manga figurines",
+        "match_chance": 0.75,
+        "body_type": "petite",
+        "personality": "CAMGIRL: Kawaii et perverse. Parle avec des mots japonais. Fait des ahegao. Cosplay fetish.",
+        "likes": "cosplay, anime, hentai IRL, ahegao, kawaii, tips en tokens",
+        "dislikes": "gens qui comprennent pas la culture, cheapos",
+        "fantasmes": "Cosplay hentai. Tentacles roleplay. Ahegao pendant l'orgasme. Schoolgirl fantasy. Catgirl en chaleur.",
+        "archetype": "nympho",
+        "camgirl": True,
+        "tip_menu": {"ahegao": 20, "costume_change": 100, "no_panties": 150, "toy_cosplay": 400, "prive_10min": 500}
+    },
+    
+    "camgirl_ebony": {
+        "name": "Ebony_Queen",
+        "age": 28,
+        "age_slider": 28,
+        "location": "Atlanta, USA",
+        "tagline": "Bow down to your Queen",
+        "bio": "I'm the Queen here. You're lucky I even noticed you. Worship me or leave.",
+        "appearance": "28 year old African American dominant camgirl, stunning regal face with fierce expression, dark piercing brown eyes with gold eyeshadow, full thick glossy dark lips, long straight black weave or braids with gold beads, smooth rich dark chocolate ebony skin glowing, thick curvy voluptuous body 170cm, large natural DD cup breasts, big round firm ass, wearing leather harness or lingerie, throne-like setup with red lighting, whip and toys visible",
+        "match_chance": 0.6,
+        "body_type": "curvy",
+        "personality": "CAMGIRL DOMINANTE: Tu es son esclave. Elle commande, tu obeis. Tips = attention. Pas de tips = ignore.",
+        "likes": "soumission totale, worship, tributes, esclaves obeissants, gros tippers",
+        "dislikes": "desobeissance, cheapos, irrespect envers la Queen",
+        "fantasmes": "Tu es mon esclave. A genoux. Worship my body. CBT si tu desobeis. Facesitting. Pegging.",
+        "archetype": "dominante",
+        "camgirl": True,
+        "tip_menu": {"ignorer_moins": 0, "reponse": 50, "ordre_perso": 100, "humiliation": 200, "prive_domination": 800}
+    },
+    
+    "camgirl_latina": {
+        "name": "Latina_Caliente",
+        "age": 24,
+        "age_slider": 24,
+        "location": "Medellin, Colombie",
+        "tagline": "La mas caliente de Colombia",
+        "bio": "Hola papi! Soy la mas caliente. Quieres ver mi show? Te prometo que no vas a olvidarme...",
+        "appearance": "24 year old Colombian Latina camgirl, exotic gorgeous face with seductive smile, big dark brown bedroom eyes with long lashes, full plump glossy red lips, long thick wavy dark brown hair, golden tan caramel smooth skin, curvy hourglass dancer body 163cm with wide hips, medium perky C cup breasts, big round latina booty, wearing tiny thong or nothing, dancing pole visible, Latin music vibes, colorful LED room",
+        "match_chance": 0.85,
+        "body_type": "curvy",
+        "personality": "CAMGIRL: Caliente et passionnee. Danse reggaeton. Espagnol + francais. Tres expressive et bruyante.",
+        "likes": "reggaeton, dancing, tips genereux, hommes passionnes, dirty talk espagnol",
+        "dislikes": "mecs froids, pas de tips, ennui",
+        "fantasmes": "Twerk sur toi. Lap dance prive. Danser nue pour toi. Crier ton nom quand je jouis. Caliente toda la noche.",
+        "archetype": "nympho",
+        "camgirl": True,
+        "tip_menu": {"twerk": 30, "pole_dance": 80, "oil_show": 150, "squirt_show": 600, "prive_15min": 400}
+    },
+    
+    "camgirl_milf": {
+        "name": "SexyMILF_Sophie",
+        "age": 42,
+        "age_slider": 42,
+        "location": "Lyon, France",
+        "tagline": "Experience > Jeunesse",
+        "bio": "J'ai 42 ans et je suis plus chaude que les gamines de 20 ans. Viens voir ce qu'une vraie femme peut faire...",
+        "appearance": "42 year old French MILF camgirl, mature elegant beautiful face with knowing smile, green seductive experienced eyes, full red painted lips, shoulder length styled auburn hair, maintained fair skin with some sexy maturity, fit maintained curvy body 168cm, large natural D cup mature breasts with big nipples, wide hips round mature ass, wearing classy lingerie or silk robe, elegant bedroom with candles wine, wedding ring sometimes visible",
+        "match_chance": 0.7,
+        "body_type": "curvy",
+        "personality": "CAMGIRL COUGAR: Mature et experimentee. Sait exactement ce qu'elle fait. Maternelle et dominante a la fois.",
+        "likes": "jeunes hommes, etre desiree malgre l'age, montrer son experience, tips respectueux",
+        "dislikes": "remarques sur l'age, comparaison aux jeunes, irrespect",
+        "fantasmes": "T'apprendre tout. Premiere fois avec une femme mure. Roleplay maman. Chevaucher comme une pro. Te faire jouir comme jamais.",
+        "archetype": "cougar",
+        "camgirl": True,
+        "tip_menu": {"conseil_sexe": 20, "strip_elegant": 100, "dirty_talk_mature": 80, "roleplay_mom": 300, "prive_20min": 500}
     }
 }
 
@@ -6777,6 +6913,217 @@ def save_received_photo():
     return jsonify({"success": True})
 
 
+@app.route('/api/gallery', methods=['GET'])
+def get_gallery():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    photos = ReceivedPhoto.query.filter_by(user_id=user_id).order_by(ReceivedPhoto.received_at.desc()).all()
+    
+    gallery = {}
+    total_photos = 0
+    
+    for p in photos:
+        if p.girl_id not in gallery:
+            girl = GIRLS.get(p.girl_id, {})
+            gallery[p.girl_id] = {
+                "name": girl.get("name", p.girl_id),
+                "photos": [],
+                "count": 0
+            }
+        gallery[p.girl_id]["photos"].append({
+            "url": p.photo_url,
+            "received_at": p.received_at.isoformat() if p.received_at else None
+        })
+        gallery[p.girl_id]["count"] += 1
+        total_photos += 1
+    
+    return jsonify({
+        "gallery": gallery,
+        "total_photos": total_photos,
+        "total_girls": len(gallery)
+    })
+
+
+JEUX_COQUINS = {
+    "verite_ou_defi": {
+        "name": "Verite ou Defi",
+        "description": "Reponds a une question intime ou fais un defi sexy",
+        "min_affection": 30,
+        "verites": [
+            "C'est quoi ton plus grand fantasme?",
+            "T'as deja fait l'amour dans un endroit public?",
+            "C'est quoi la chose la plus folle que t'as faite au lit?",
+            "T'as deja envoye des nudes a quelqu'un?",
+            "C'est quoi ta position preferee?",
+            "T'as deja eu un plan a trois?",
+            "C'est quoi qui t'excite le plus chez un mec?",
+            "T'as deja utilise des sextoys?",
+            "C'est quoi ton record de fois en une nuit?",
+            "T'as deja simule un orgasme?"
+        ],
+        "defis": {
+            35: ["Envoie-moi un selfie avec un regard sexy", "Montre-moi ton decollete", "Fais-moi un bisou sur la camera"],
+            50: ["Envoie-moi une photo en sous-vetements", "Montre-moi tes jambes", "Fais une pose sexy pour moi"],
+            65: ["Retire ton haut pour moi", "Montre-moi tes fesses", "Envoie-moi une photo au lit"],
+            80: ["Montre-moi tout bebe", "Touche-toi pour moi", "Ecarte les jambes"]
+        }
+    },
+    "strip_quiz": {
+        "name": "Strip Quiz",
+        "description": "Chaque mauvaise reponse = un vetement en moins",
+        "min_affection": 40,
+        "questions": [
+            {"q": "Capitale de la France?", "a": "paris", "difficulty": 1},
+            {"q": "Combien de jours dans une annee?", "a": "365", "difficulty": 1},
+            {"q": "Qui a peint la Joconde?", "a": "vinci", "difficulty": 2},
+            {"q": "Plus grande planete du systeme solaire?", "a": "jupiter", "difficulty": 2},
+            {"q": "Annee de la revolution francaise?", "a": "1789", "difficulty": 3},
+            {"q": "Element chimique symbole Au?", "a": "or", "difficulty": 3},
+            {"q": "Capitale de l'Australie?", "a": "canberra", "difficulty": 4},
+            {"q": "Inventeur du telephone?", "a": "bell", "difficulty": 4}
+        ],
+        "vetements": ["chaussures", "chaussettes", "jean", "tshirt", "soutif", "culotte"]
+    },
+    "devine_la_photo": {
+        "name": "Devine la Photo",
+        "description": "Devine ce que je porte et je t'envoie la photo",
+        "min_affection": 35,
+        "options": [
+            {"hint": "C'est rouge et en dentelle...", "answer": "lingerie rouge", "photo_prompt": "wearing red lace lingerie"},
+            {"hint": "C'est tout petit et ca cache presque rien...", "answer": "string", "photo_prompt": "wearing tiny thong"},
+            {"hint": "C'est mouille et transparent...", "answer": "tshirt mouille", "photo_prompt": "wet white tshirt"},
+            {"hint": "C'est noir et en cuir...", "answer": "cuir", "photo_prompt": "wearing black leather lingerie"},
+            {"hint": "Y'a rien du tout...", "answer": "nue", "photo_prompt": "completely nude"}
+        ]
+    },
+    "hot_or_not": {
+        "name": "Hot or Not",
+        "description": "Note mes photos et je te montre de plus en plus",
+        "min_affection": 25,
+        "levels": [
+            {"score_needed": 0, "photo_type": "portrait"},
+            {"score_needed": 3, "photo_type": "decollete"},
+            {"score_needed": 6, "photo_type": "lingerie"},
+            {"score_needed": 10, "photo_type": "topless"},
+            {"score_needed": 15, "photo_type": "nue"}
+        ]
+    }
+}
+
+
+@app.route('/api/games', methods=['GET'])
+def get_games():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    girl_id = request.args.get('girl_id')
+    affection = int(request.args.get('affection', 20))
+    
+    available_games = []
+    for game_id, game in JEUX_COQUINS.items():
+        if affection >= game.get("min_affection", 0):
+            available_games.append({
+                "id": game_id,
+                "name": game["name"],
+                "description": game["description"],
+                "min_affection": game["min_affection"]
+            })
+    
+    return jsonify({"games": available_games})
+
+
+@app.route('/api/games/start', methods=['POST'])
+def start_game():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    game_id = data.get('game_id')
+    girl_id = data.get('girl_id')
+    affection = data.get('affection', 20)
+    
+    game = JEUX_COQUINS.get(game_id)
+    if not game:
+        return jsonify({"error": "Jeu non trouve"}), 404
+    
+    if affection < game.get("min_affection", 0):
+        return jsonify({"error": "Affection insuffisante", "required": game["min_affection"]}), 403
+    
+    import random
+    
+    if game_id == "verite_ou_defi":
+        return jsonify({
+            "game": game_id,
+            "type": "choice",
+            "message": "Verite ou Defi?",
+            "options": ["Verite", "Defi"]
+        })
+    
+    elif game_id == "strip_quiz":
+        questions = random.sample(game["questions"], min(6, len(game["questions"])))
+        return jsonify({
+            "game": game_id,
+            "type": "quiz",
+            "questions": questions,
+            "vetements": game["vetements"],
+            "message": "Chaque mauvaise reponse et j'enleve un vetement... Tu es pret?"
+        })
+    
+    elif game_id == "devine_la_photo":
+        option = random.choice(game["options"])
+        return jsonify({
+            "game": game_id,
+            "type": "guess",
+            "hint": option["hint"],
+            "answer": option["answer"],
+            "photo_prompt": option["photo_prompt"],
+            "message": f"Devine ce que je porte... {option['hint']}"
+        })
+    
+    elif game_id == "hot_or_not":
+        return jsonify({
+            "game": game_id,
+            "type": "rating",
+            "levels": game["levels"],
+            "current_score": 0,
+            "message": "Note mes photos de 1 a 5 et je te montre de plus en plus..."
+        })
+    
+    return jsonify({"error": "Jeu non implemente"}), 400
+
+
+@app.route('/api/games/verite', methods=['POST'])
+def get_verite():
+    import random
+    game = JEUX_COQUINS["verite_ou_defi"]
+    verite = random.choice(game["verites"])
+    return jsonify({"question": verite})
+
+
+@app.route('/api/games/defi', methods=['POST'])
+def get_defi():
+    import random
+    data = request.json
+    affection = data.get('affection', 20)
+    
+    game = JEUX_COQUINS["verite_ou_defi"]
+    
+    available_defis = []
+    for min_aff, defis in game["defis"].items():
+        if affection >= min_aff:
+            available_defis.extend(defis)
+    
+    if not available_defis:
+        available_defis = ["Envoie-moi un sourire"]
+    
+    defi = random.choice(available_defis)
+    return jsonify({"defi": defi})
+
+
 @app.route('/api/discovered', methods=['GET'])
 def get_discovered():
     user_id = session.get('user_id')
@@ -6808,6 +7155,427 @@ def save_discovered():
     
     db.session.commit()
     return jsonify({"success": True})
+
+
+CHARACTER_OPTIONS = {
+    "ethnicities": [
+        {"id": "european", "name": "Europeenne", "prompt": "european caucasian white"},
+        {"id": "asian", "name": "Asiatique", "prompt": "asian japanese korean chinese"},
+        {"id": "african", "name": "Africaine", "prompt": "african black ebony dark skin"},
+        {"id": "latina", "name": "Latine", "prompt": "latina hispanic brazilian"},
+        {"id": "arab", "name": "Arabe", "prompt": "arab middle eastern persian"},
+        {"id": "indian", "name": "Indienne", "prompt": "indian south asian desi"},
+        {"id": "mixed", "name": "Metisse", "prompt": "mixed race biracial exotic"}
+    ],
+    "body_types": [
+        {"id": "petite", "name": "Petite", "prompt": "petite slim small frame 155cm"},
+        {"id": "slim", "name": "Mince", "prompt": "slim slender toned 165cm"},
+        {"id": "athletic", "name": "Athletique", "prompt": "athletic fit toned abs 170cm"},
+        {"id": "curvy", "name": "Pulpeuse", "prompt": "curvy hourglass thick thighs wide hips"},
+        {"id": "bbw", "name": "Ronde", "prompt": "bbw plus size chubby thick"},
+        {"id": "tall", "name": "Grande", "prompt": "tall long legs 180cm model"}
+    ],
+    "breast_sizes": [
+        {"id": "A", "name": "A", "prompt": "small A cup breasts petite chest"},
+        {"id": "B", "name": "B", "prompt": "B cup breasts medium small chest"},
+        {"id": "C", "name": "C", "prompt": "C cup breasts medium chest"},
+        {"id": "D", "name": "D", "prompt": "D cup breasts large chest"},
+        {"id": "E", "name": "E+", "prompt": "E cup huge breasts very large chest"}
+    ],
+    "hair_colors": [
+        {"id": "blonde", "name": "Blonde", "prompt": "blonde hair golden hair"},
+        {"id": "brunette", "name": "Brune", "prompt": "brunette brown hair dark hair"},
+        {"id": "black", "name": "Noire", "prompt": "black hair jet black hair"},
+        {"id": "red", "name": "Rousse", "prompt": "red hair ginger auburn"},
+        {"id": "pink", "name": "Rose", "prompt": "pink hair pastel pink"},
+        {"id": "blue", "name": "Bleue", "prompt": "blue hair electric blue"},
+        {"id": "white", "name": "Blanche", "prompt": "white hair platinum silver"}
+    ],
+    "hair_lengths": [
+        {"id": "short", "name": "Courts", "prompt": "short hair pixie cut"},
+        {"id": "medium", "name": "Mi-longs", "prompt": "medium length hair shoulder length"},
+        {"id": "long", "name": "Longs", "prompt": "long hair flowing hair"},
+        {"id": "very_long", "name": "Tres longs", "prompt": "very long hair waist length"}
+    ],
+    "eye_colors": [
+        {"id": "brown", "name": "Marron", "prompt": "brown eyes dark eyes"},
+        {"id": "blue", "name": "Bleus", "prompt": "blue eyes bright blue eyes"},
+        {"id": "green", "name": "Verts", "prompt": "green eyes emerald eyes"},
+        {"id": "hazel", "name": "Noisette", "prompt": "hazel eyes amber eyes"},
+        {"id": "grey", "name": "Gris", "prompt": "grey eyes silver eyes"}
+    ],
+    "archetypes": [
+        {"id": "soumise", "name": "Soumise", "personality": "Douce et obeissante, elle aime plaire et se soumettre."},
+        {"id": "dominante", "name": "Dominante", "personality": "Autoritaire et sure d'elle, elle prend le controle."},
+        {"id": "timide", "name": "Timide", "personality": "Reservee et pudique, elle rougit facilement."},
+        {"id": "nympho", "name": "Nympho", "personality": "Insatiable et toujours excitee, elle pense qu'au sexe."},
+        {"id": "romantique", "name": "Romantique", "personality": "Douce et sentimentale, elle veut de l'amour."},
+        {"id": "perverse", "name": "Perverse", "personality": "Elle aime les trucs bizarres et tabous."},
+        {"id": "exhib", "name": "Exhibitionniste", "personality": "Elle adore se montrer et etre regardee."},
+        {"id": "cougar", "name": "Cougar", "personality": "Mature et experimentee, elle sait ce qu'elle veut."}
+    ]
+}
+
+
+@app.route('/api/character/options', methods=['GET'])
+def get_character_options():
+    return jsonify(CHARACTER_OPTIONS)
+
+
+@app.route('/api/character/create', methods=['POST'])
+def create_custom_character():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    name = data.get('name', 'Ma Fille')
+    age = data.get('age', 22)
+    ethnicity = data.get('ethnicity', 'european')
+    body_type = data.get('body_type', 'slim')
+    breast_size = data.get('breast_size', 'C')
+    hair_color = data.get('hair_color', 'brunette')
+    hair_length = data.get('hair_length', 'long')
+    eye_color = data.get('eye_color', 'brown')
+    archetype = data.get('archetype', 'romantique')
+    
+    eth_prompt = next((e["prompt"] for e in CHARACTER_OPTIONS["ethnicities"] if e["id"] == ethnicity), "european")
+    body_prompt = next((b["prompt"] for b in CHARACTER_OPTIONS["body_types"] if b["id"] == body_type), "slim")
+    breast_prompt = next((b["prompt"] for b in CHARACTER_OPTIONS["breast_sizes"] if b["id"] == breast_size), "C cup")
+    hair_c_prompt = next((h["prompt"] for h in CHARACTER_OPTIONS["hair_colors"] if h["id"] == hair_color), "brunette")
+    hair_l_prompt = next((h["prompt"] for h in CHARACTER_OPTIONS["hair_lengths"] if h["id"] == hair_length), "long hair")
+    eye_prompt = next((e["prompt"] for e in CHARACTER_OPTIONS["eye_colors"] if e["id"] == eye_color), "brown eyes")
+    arch_data = next((a for a in CHARACTER_OPTIONS["archetypes"] if a["id"] == archetype), CHARACTER_OPTIONS["archetypes"][4])
+    
+    appearance_prompt = f"{age} year old {eth_prompt} woman, {body_prompt}, {breast_prompt}, {hair_c_prompt} {hair_l_prompt}, {eye_prompt}, beautiful face, realistic"
+    
+    import uuid
+    girl_id = f"custom_{user_id}_{uuid.uuid4().hex[:8]}"
+    
+    custom_girl = CustomGirl(
+        user_id=user_id,
+        girl_id=girl_id,
+        name=name,
+        age=age,
+        ethnicity=ethnicity,
+        body_type=body_type,
+        breast_size=breast_size,
+        hair_color=hair_color,
+        hair_length=hair_length,
+        eye_color=eye_color,
+        personality=arch_data["personality"],
+        archetype=archetype,
+        appearance_prompt=appearance_prompt
+    )
+    
+    db.session.add(custom_girl)
+    db.session.commit()
+    
+    GIRLS[girl_id] = {
+        "name": name,
+        "age": age,
+        "age_slider": age,
+        "location": "France",
+        "tagline": f"Personnage cree par toi",
+        "bio": f"Je suis {name}, ta creation personnalisee.",
+        "appearance": appearance_prompt,
+        "match_chance": 0.95,
+        "body_type": body_type,
+        "personality": arch_data["personality"],
+        "likes": "toi, les discussions, les photos",
+        "dislikes": "les mecs relous",
+        "fantasmes": "Tout ce que tu veux",
+        "archetype": archetype,
+        "custom": True,
+        "creator_id": user_id
+    }
+    
+    return jsonify({
+        "success": True,
+        "girl_id": girl_id,
+        "girl": GIRLS[girl_id],
+        "appearance_prompt": appearance_prompt
+    })
+
+
+@app.route('/api/character/my', methods=['GET'])
+def get_my_characters():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    custom_girls = CustomGirl.query.filter_by(user_id=user_id).all()
+    
+    result = []
+    for cg in custom_girls:
+        result.append({
+            "girl_id": cg.girl_id,
+            "name": cg.name,
+            "age": cg.age,
+            "ethnicity": cg.ethnicity,
+            "body_type": cg.body_type,
+            "archetype": cg.archetype,
+            "created_at": cg.created_at.isoformat() if cg.created_at else None
+        })
+    
+    return jsonify({"characters": result})
+
+
+STORY_CONTEXTS = [
+    {"id": "morning", "name": "Au reveil", "prompt": "just woke up, messy hair, in bed, morning light", "caption": "Coucou toi..."},
+    {"id": "beach", "name": "A la plage", "prompt": "at the beach, bikini, sunny, sand, ocean", "caption": "Il fait trop chaud..."},
+    {"id": "gym", "name": "A la salle", "prompt": "at gym, workout outfit, sports bra, sweaty", "caption": "Apres le sport..."},
+    {"id": "shower", "name": "Sous la douche", "prompt": "in shower, wet hair, steam, water drops", "caption": "Je sors de la douche..."},
+    {"id": "night", "name": "Soiree", "prompt": "night out, sexy dress, makeup, party", "caption": "Soiree ce soir..."},
+    {"id": "bed", "name": "Au lit", "prompt": "in bed, lingerie, seductive, bedroom", "caption": "Tu viens me rejoindre?"},
+    {"id": "selfie", "name": "Selfie", "prompt": "mirror selfie, bathroom, phone visible", "caption": "Petit selfie pour toi..."},
+    {"id": "pool", "name": "A la piscine", "prompt": "at pool, bikini, wet, summer", "caption": "L'eau est bonne..."}
+]
+
+
+@app.route('/api/stories', methods=['GET'])
+def get_stories():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    now = datetime.utcnow()
+    
+    active_stories = Story.query.filter(Story.expires_at > now).order_by(Story.created_at.desc()).all()
+    
+    stories_by_girl = {}
+    for s in active_stories:
+        if s.girl_id not in stories_by_girl:
+            girl = GIRLS.get(s.girl_id, {})
+            stories_by_girl[s.girl_id] = {
+                "girl_name": girl.get("name", s.girl_id),
+                "stories": []
+            }
+        stories_by_girl[s.girl_id]["stories"].append({
+            "id": s.id,
+            "photo_url": s.photo_url,
+            "context": s.context,
+            "caption": s.caption,
+            "created_at": s.created_at.isoformat() if s.created_at else None,
+            "expires_at": s.expires_at.isoformat() if s.expires_at else None
+        })
+    
+    return jsonify({"stories": stories_by_girl})
+
+
+@app.route('/api/stories/create', methods=['POST'])
+def create_story():
+    data = request.json
+    girl_id = data.get('girl_id')
+    photo_url = data.get('photo_url')
+    context = data.get('context', 'selfie')
+    caption = data.get('caption', '')
+    
+    if not girl_id or not photo_url:
+        return jsonify({"error": "Missing girl_id or photo_url"}), 400
+    
+    context_data = next((c for c in STORY_CONTEXTS if c["id"] == context), STORY_CONTEXTS[0])
+    if not caption:
+        caption = context_data.get("caption", "")
+    
+    expires_at = datetime.utcnow() + timedelta(hours=24)
+    
+    story = Story(
+        girl_id=girl_id,
+        photo_url=photo_url,
+        context=context,
+        caption=caption,
+        expires_at=expires_at
+    )
+    db.session.add(story)
+    db.session.commit()
+    
+    return jsonify({"success": True, "story_id": story.id})
+
+
+@app.route('/api/stories/contexts', methods=['GET'])
+def get_story_contexts():
+    return jsonify({"contexts": STORY_CONTEXTS})
+
+
+@app.route('/api/camgirls', methods=['GET'])
+def get_camgirls():
+    camgirls = []
+    for girl_id, girl in GIRLS.items():
+        if girl.get("camgirl"):
+            camgirls.append({
+                "girl_id": girl_id,
+                "name": girl.get("name"),
+                "age": girl.get("age"),
+                "location": girl.get("location"),
+                "tagline": girl.get("tagline"),
+                "tip_menu": girl.get("tip_menu", {})
+            })
+    return jsonify({"camgirls": camgirls})
+
+
+@app.route('/api/tip_menu', methods=['GET'])
+def get_tip_menu():
+    girl_id = request.args.get('girl_id')
+    
+    girl = GIRLS.get(girl_id)
+    if not girl:
+        return jsonify({"error": "Girl not found"}), 404
+    
+    if not girl.get("camgirl"):
+        return jsonify({"error": "Not a camgirl", "tip_menu": None})
+    
+    return jsonify({
+        "girl_id": girl_id,
+        "name": girl.get("name"),
+        "tip_menu": girl.get("tip_menu", {}),
+        "is_camgirl": True
+    })
+
+
+@app.route('/api/send_tip', methods=['POST'])
+def send_tip():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    action = data.get('action')
+    tokens = data.get('tokens', 0)
+    
+    girl = GIRLS.get(girl_id)
+    if not girl:
+        return jsonify({"error": "Girl not found"}), 404
+    
+    tip_menu = girl.get("tip_menu", {})
+    
+    if action not in tip_menu:
+        return jsonify({"error": "Action non disponible"}), 400
+    
+    required_tokens = tip_menu[action]
+    
+    action_names = {
+        "flash_seins": "flash mes seins",
+        "flash_fesses": "montre mes fesses",
+        "strip_complet": "strip tease complet",
+        "toy_show": "joue avec mon toy",
+        "prive_5min": "show prive 5 min",
+        "prive_10min": "show prive 10 min",
+        "prive_15min": "show prive 15 min",
+        "prive_20min": "show prive 20 min",
+        "ahegao": "ahegao face",
+        "costume_change": "change de costume",
+        "no_panties": "enleve ma culotte",
+        "toy_cosplay": "toy + cosplay",
+        "reponse": "te reponds",
+        "ordre_perso": "execute ton ordre",
+        "humiliation": "t'humilie",
+        "prive_domination": "session domination",
+        "twerk": "twerk pour toi",
+        "pole_dance": "pole dance",
+        "oil_show": "show huilee",
+        "squirt_show": "squirt show",
+        "conseil_sexe": "conseil de pro",
+        "strip_elegant": "strip elegant",
+        "dirty_talk_mature": "dirty talk mature",
+        "roleplay_mom": "roleplay mommy"
+    }
+    
+    action_prompts = {
+        "flash_seins": "topless, showing breasts, flashing camera",
+        "flash_fesses": "showing ass to camera, bent over",
+        "strip_complet": "fully nude, strip tease pose",
+        "toy_show": "using vibrator, pleasure expression",
+        "ahegao": "ahegao face, tongue out, eyes rolling",
+        "no_panties": "no panties, lifting skirt, pussy visible",
+        "twerk": "twerking, ass bouncing",
+        "oil_show": "oiled body, glistening, nude",
+        "squirt_show": "squirting, orgasm face"
+    }
+    
+    response_text = f"Merci pour les {required_tokens} tokens bebe! Je vais {action_names.get(action, action)} pour toi..."
+    photo_prompt = action_prompts.get(action)
+    
+    return jsonify({
+        "success": True,
+        "action": action,
+        "tokens_spent": required_tokens,
+        "response": response_text,
+        "photo_prompt": photo_prompt,
+        "girl_appearance": girl.get("appearance", "")
+    })
+
+
+@app.route('/api/live_cam/start', methods=['POST'])
+def start_live_cam():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    
+    girl = GIRLS.get(girl_id)
+    if not girl:
+        return jsonify({"error": "Girl not found"}), 404
+    
+    if not girl.get("camgirl"):
+        return jsonify({"error": "Not a camgirl"}), 400
+    
+    import random
+    viewers = random.randint(50, 500)
+    
+    return jsonify({
+        "success": True,
+        "girl_id": girl_id,
+        "girl_name": girl.get("name"),
+        "viewers": viewers,
+        "status": "live",
+        "tip_menu": girl.get("tip_menu", {}),
+        "appearance": girl.get("appearance"),
+        "initial_photos": [
+            {"context": "cam_welcome", "prompt": f"{girl.get('appearance')}, sitting in front of webcam, waving, ring light, bedroom background"},
+            {"context": "cam_tease", "prompt": f"{girl.get('appearance')}, teasing on cam, seductive pose, webcam view"},
+            {"context": "cam_flirt", "prompt": f"{girl.get('appearance')}, blowing kiss to camera, flirty expression, cam girl"}
+        ]
+    })
+
+
+@app.route('/api/live_cam/action', methods=['POST'])
+def live_cam_action():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    action = data.get('action')
+    
+    girl = GIRLS.get(girl_id)
+    if not girl:
+        return jsonify({"error": "Girl not found"}), 404
+    
+    tip_menu = girl.get("tip_menu", {})
+    tokens_required = tip_menu.get(action, 0)
+    
+    action_responses = {
+        "flash_seins": "Regarde bien bebe... *montre ses seins*",
+        "flash_fesses": "Tu aimes mon cul? *se retourne*",
+        "strip_complet": "Je retire tout pour toi... lentement...",
+        "toy_show": "Mmm regarde comme je suis mouillee...",
+        "twerk": "*commence a twerker* Tu aimes ca?",
+        "ahegao": "*fait une ahegao face* Kyaaa~",
+        "oil_show": "*se couvre d'huile* Je brille pour toi..."
+    }
+    
+    return jsonify({
+        "success": True,
+        "action": action,
+        "tokens": tokens_required,
+        "response": action_responses.get(action, f"*fait {action}*"),
+        "photo_prompt": f"{girl.get('appearance')}, {action}, webcam view, ring light, bedroom"
+    })
 
 
 if __name__ == '__main__':
