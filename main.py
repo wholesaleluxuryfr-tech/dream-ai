@@ -6718,6 +6718,131 @@ def get_stored_photos(girl_id):
         return jsonify({"photos": {}, "girl_id": girl_id})
 
 
+CAMGIRL_VIDEOS = {
+    "camgirl_lola": {
+        "name": "Lola_Hot69",
+        "videos": [
+            {"id": 1, "title": "Strip jazz sensuel", "action": "slow strip", "decor": "chambre parisienne", "tokens": 100, "duration": "2min"},
+            {"id": 2, "title": "Bain moussant", "action": "bath caresses", "decor": "salle de bain", "tokens": 150, "duration": "3min"},
+            {"id": 3, "title": "JOI francais", "action": "dirty talk POV", "decor": "lit satin", "tokens": 200, "duration": "4min"},
+            {"id": 4, "title": "Vibro orgasme", "action": "vibrator masturbation orgasm", "decor": "chambre romantique", "tokens": 300, "duration": "5min"},
+            {"id": 5, "title": "Doigts penetration", "action": "fingering intense masturbation", "decor": "canape velours", "tokens": 350, "duration": "5min"}
+        ]
+    },
+    "camgirl_mia": {
+        "name": "AsianDoll_Mia",
+        "videos": [
+            {"id": 1, "title": "Cosplay schoolgirl", "action": "shy strip cosplay", "decor": "chambre otaku", "tokens": 100, "duration": "2min"},
+            {"id": 2, "title": "Maid service", "action": "teasing maid outfit", "decor": "cafe maid", "tokens": 150, "duration": "3min"},
+            {"id": 3, "title": "Ahegao faces", "action": "ahegao orgasm expressions", "decor": "studio rose", "tokens": 200, "duration": "3min"},
+            {"id": 4, "title": "Dildo ride", "action": "dildo riding orgasm", "decor": "futon japonais", "tokens": 300, "duration": "5min"},
+            {"id": 5, "title": "Squirt kawaii", "action": "squirting orgasm", "decor": "onsen bath", "tokens": 400, "duration": "5min"}
+        ]
+    },
+    "camgirl_ebony": {
+        "name": "Ebony_Queen",
+        "videos": [
+            {"id": 1, "title": "Queen throne", "action": "verbal domination", "decor": "throne room", "tokens": 100, "duration": "2min"},
+            {"id": 2, "title": "Twerk neon", "action": "hypnotic twerk dance", "decor": "studio neon", "tokens": 150, "duration": "3min"},
+            {"id": 3, "title": "Oil body", "action": "oil massage body", "decor": "chambre dark", "tokens": 200, "duration": "3min"},
+            {"id": 4, "title": "Gode XXL ride", "action": "big dildo riding", "decor": "king size bed", "tokens": 350, "duration": "5min"},
+            {"id": 5, "title": "Anal plug show", "action": "anal toy insertion", "decor": "throne room", "tokens": 400, "duration": "5min"}
+        ]
+    },
+    "camgirl_latina": {
+        "name": "Latina_Caliente",
+        "videos": [
+            {"id": 1, "title": "Reggaeton twerk", "action": "sexy latin dance", "decor": "club latin", "tokens": 100, "duration": "2min"},
+            {"id": 2, "title": "Bikini plage", "action": "outdoor strip bikini", "decor": "plage colombie", "tokens": 150, "duration": "3min"},
+            {"id": 3, "title": "Oil massage", "action": "oil ass massage", "decor": "studio", "tokens": 200, "duration": "3min"},
+            {"id": 4, "title": "Squirt explosif", "action": "powerful squirting orgasm", "decor": "lit", "tokens": 350, "duration": "5min"},
+            {"id": 5, "title": "Double toys", "action": "double penetration toys", "decor": "chambre luxe", "tokens": 450, "duration": "6min"}
+        ]
+    },
+    "camgirl_sophie": {
+        "name": "SexyMILF_Sophie",
+        "videos": [
+            {"id": 1, "title": "Lingerie fine", "action": "elegant strip lingerie", "decor": "chambre boudoir", "tokens": 100, "duration": "2min"},
+            {"id": 2, "title": "Professeure", "action": "teacher roleplay", "decor": "bureau", "tokens": 150, "duration": "3min"},
+            {"id": 3, "title": "Bath wine", "action": "romantic bath candles", "decor": "salle de bain luxe", "tokens": 200, "duration": "3min"},
+            {"id": 4, "title": "Massage seins", "action": "titty play oil massage", "decor": "lit satin", "tokens": 300, "duration": "4min"},
+            {"id": 5, "title": "Gode anal mature", "action": "anal dildo solo", "decor": "chambre luxe", "tokens": 400, "duration": "5min"}
+        ]
+    }
+}
+
+
+@app.route('/api/generate_video_test', methods=['POST'])
+def generate_video_test():
+    """Test video generation with Promptchan API - Lola strip tease"""
+    if not API_KEY:
+        return jsonify({"error": "PROMPTCHAN_KEY not set"}), 400
+    
+    data = request.json or {}
+    camgirl_id = data.get('camgirl', 'camgirl_lola')
+    video_index = data.get('video_index', 0)
+    
+    camgirl = GIRLS.get(camgirl_id, GIRLS.get('camgirl_lola'))
+    camgirl_videos = CAMGIRL_VIDEOS.get(camgirl_id, CAMGIRL_VIDEOS.get('camgirl_lola'))
+    video_config = camgirl_videos['videos'][video_index % len(camgirl_videos['videos'])]
+    
+    video_prompt = f"{camgirl['appearance']}, {video_config['action']}, {video_config['decor']} background, webcam POV, camgirl streaming, ring light, bedroom setup, high quality video"
+    
+    print(f"[VIDEO TEST] Camgirl: {camgirl['name']}")
+    print(f"[VIDEO TEST] Video: {video_config['title']}")
+    print(f"[VIDEO TEST] Prompt: {video_prompt[:200]}...")
+    
+    try:
+        response = requests.post(
+            'https://prod.aicloudnetservices.com/api/external/create',
+            headers={
+                'Content-Type': 'application/json',
+                'x-api-key': API_KEY
+            },
+            json={
+                "style": "Photo XL+ v2",
+                "pose": "Default",
+                "prompt": video_prompt,
+                "quality": "Ultra",
+                "expression": "Smiling",
+                "age_slider": camgirl.get('age_slider', camgirl['age']),
+                "creativity": 50,
+                "restore_faces": True,
+                "seed": -1,
+                "negative_prompt": NEGATIVE_PROMPT,
+                "video": True,
+                "video_length": 4
+            },
+            timeout=120
+        )
+        
+        print(f"[VIDEO TEST] API Response status: {response.status_code}")
+        print(f"[VIDEO TEST] API Response headers: {dict(response.headers)}")
+        
+        if response.status_code == 401:
+            return jsonify({"error": "API key expired", "status": 401}), 401
+        
+        result = response.json()
+        print(f"[VIDEO TEST] API Result: {result}")
+        
+        video_url = result.get('video', result.get('video_url', result.get('data', {}).get('video', '')))
+        image_url = result.get('image', result.get('image_url', ''))
+        
+        return jsonify({
+            "success": True,
+            "camgirl": camgirl['name'],
+            "video_title": video_config['title'],
+            "video_url": video_url,
+            "image_url": image_url,
+            "full_response": result,
+            "prompt_used": video_prompt[:300]
+        })
+        
+    except Exception as e:
+        print(f"[VIDEO TEST] Error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/api/register', methods=['POST'])
 def register():
     try:
