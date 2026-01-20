@@ -37,7 +37,7 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY") or "dream-ai-secret-key-2024"
+app.secret_key = os.environ.get("FLASK_SECRET_KEY") or "dream-ai-secret-key-2024-secure"
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
@@ -47,6 +47,10 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_timeout": 10,
 }
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SESSION_COOKIE_SECURE"] = os.environ.get("FLASK_ENV") == "production"
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 db.init_app(app)
 
 @app.after_request
@@ -6735,6 +6739,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         
+        session.permanent = True
         session['user_id'] = user.id
         
         return jsonify({
@@ -6764,6 +6769,7 @@ def api_login():
         if not bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):
             return jsonify({"error": "Mot de passe incorrect"}), 401
         
+        session.permanent = True
         session['user_id'] = user.id
         
         return jsonify({
