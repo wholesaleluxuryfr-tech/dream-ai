@@ -2688,23 +2688,32 @@ function getTimeAgo(timeStr) {
 }
 
 function quickChat(girlId) {
-    currentGirl = girlId;
-    const g = GIRLS[girlId];
-    if (!g) return;
-    
-    document.getElementById('chatName').textContent = g.name;
-    
-    const chatAvatar = document.getElementById('chatInitials');
-    const photo = getProfilePhoto(girlId);
-    if (photo) {
-        chatAvatar.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
-    } else {
-        chatAvatar.innerHTML = `<span>${INITIALS[girlId]}</span>`;
+    try {
+        showDebug('quickChat: ' + girlId);
+        currentGirl = girlId;
+        const g = GIRLS[girlId];
+        if (!g) {
+            showDebug('quickChat: girl not found');
+            return;
+        }
+        
+        document.getElementById('chatName').textContent = g.name;
+        
+        const chatAvatar = document.getElementById('chatInitials');
+        const photo = getProfilePhoto(girlId);
+        if (photo) {
+            chatAvatar.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+        } else {
+            chatAvatar.innerHTML = `<span>${INITIALS[girlId]}</span>`;
+        }
+        
+        if (!chatHistory[girlId]) chatHistory[girlId] = loadChatHistory(girlId);
+        renderMessages();
+        showPage('chat');
+        showDebug('quickChat: done');
+    } catch(e) {
+        showDebug('ERREUR quickChat: ' + e.message);
     }
-    
-    if (!chatHistory[girlId]) chatHistory[girlId] = loadChatHistory(girlId);
-    renderMessages();
-    showPage('chat');
 }
 
 function init() {
@@ -2742,15 +2751,19 @@ function goBackFromChat() {
 }
 
 function showProfile(id) {
-    if (!matches.includes(id)) {
-        showToast("Tu dois d'abord matcher avec elle!");
-        return;
-    }
-    if (!GIRLS[id]) {
-        showToast("Profil non disponible");
-        return;
-    }
-    currentGirl = id;
+    try {
+        showDebug('showProfile: ' + id);
+        if (!matches.includes(id)) {
+            showDebug('showProfile: not matched');
+            showToast("Tu dois d'abord matcher avec elle!");
+            return;
+        }
+        if (!GIRLS[id]) {
+            showDebug('showProfile: girl not found');
+            showToast("Profil non disponible");
+            return;
+        }
+        currentGirl = id;
     const g = GIRLS[id];
     document.getElementById('profileName').textContent = g.name + ', ' + g.age;
     document.getElementById('profileTagline').textContent = g.tagline;
@@ -2775,6 +2788,10 @@ function showProfile(id) {
     loadProfilePhotos(id);
     
     showPage('profile');
+        showDebug('showProfile: done');
+    } catch(e) {
+        showDebug('ERREUR showProfile: ' + e.message);
+    }
 }
 
 function showToast(msg) {
