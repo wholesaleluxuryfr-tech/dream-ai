@@ -164,6 +164,25 @@
         .girl-card-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; background: linear-gradient(to top, #12121a, transparent); }
         .girl-card-name { font-size: 1rem; font-weight: 700; color: #ffffff; }
         .girl-card-tagline { color: #888888; font-size: 0.75rem; margin-top: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        /* MATCHES LIST */
+        .matches-container { padding: 1rem; padding-bottom: 80px; }
+        .matches-count { font-size: 0.75rem; color: #e91e63; background: rgba(233,30,99,0.2); padding: 0.25rem 0.5rem; border-radius: 10px; }
+        .matches-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .match-item { display: flex; align-items: center; gap: 0.75rem; background: #12121a; border-radius: 15px; padding: 0.75rem; cursor: pointer; transition: background 0.2s; border: 1px solid rgba(255,255,255,0.05); }
+        .match-item:active { background: #1a1a2e; }
+        .match-item-avatar { width: 60px; height: 60px; border-radius: 50%; background: #1a1a2e; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: rgba(233,30,99,0.4); overflow: hidden; flex-shrink: 0; }
+        .match-item-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .match-item-info { flex: 1; min-width: 0; }
+        .match-item-name { font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; }
+        .match-item-online { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; }
+        .match-item-preview { color: #888; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.2rem; }
+        .match-item-time { color: #666; font-size: 0.7rem; margin-top: 0.2rem; }
+        .match-item-actions { display: flex; gap: 0.5rem; }
+        .match-action-btn { width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: transform 0.15s; }
+        .match-action-btn:active { transform: scale(0.9); }
+        .match-action-chat { background: #e91e63; color: white; }
+        .match-action-gallery { background: rgba(233,30,99,0.2); color: #e91e63; }
         .badge-new { position: absolute; top: 10px; right: 10px; background: #e91e63; color: white; padding: 4px 8px; border-radius: 10px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; box-shadow: 0 2px 5px rgba(233, 30, 99, 0.4); z-index: 5; }
         
         /* PROFILE */
@@ -643,11 +662,11 @@
 
 <div class="page page-with-nav" id="pageMatches">
     <div class="header">
-        <div class="logo">Matchs</div>
+        <div class="logo">Tes Matchs</div>
+        <span class="matches-count" id="matchesCount"></span>
     </div>
-    <div class="gallery">
-        <h2>Tes Matchs</h2>
-        <div class="girls-grid" id="matchesGrid"></div>
+    <div class="matches-container">
+        <div class="matches-list" id="matchesList"></div>
         <div id="noMatches" style="text-align:center;color:#666;padding:3rem;display:none;">
             <p style="font-size:3rem;margin-bottom:1rem;">💕</p>
             <p>Pas encore de matchs</p>
@@ -757,18 +776,18 @@
             </div>
         </div>
         <div class="settings-section">
-            <div class="settings-section-title">Creer</div>
+            <div class="settings-section-title">Contenu</div>
+            <div class="settings-item" onclick="navigateTo('gallery')">
+                <div class="settings-item-left">
+                    <span class="settings-item-icon">📸</span>
+                    <span class="settings-item-text">Ma galerie privee</span>
+                </div>
+                <span class="settings-item-arrow">→</span>
+            </div>
             <div class="settings-item" onclick="openCharacterCreator()">
                 <div class="settings-item-left">
                     <span class="settings-item-icon">✨</span>
                     <span class="settings-item-text">Creer ta fille ideale</span>
-                </div>
-                <span class="settings-item-arrow">→</span>
-            </div>
-            <div class="settings-item" onclick="navigateTo('matches')">
-                <div class="settings-item-left">
-                    <span class="settings-item-icon">💕</span>
-                    <span class="settings-item-text">Voir tes matchs</span>
                 </div>
                 <span class="settings-item-arrow">→</span>
             </div>
@@ -861,6 +880,11 @@
         <span class="nav-icon">🔥</span>
         <span class="nav-label">Decouvrir</span>
     </button>
+    <button class="nav-item" onclick="navigateTo('matches')" id="navMatches" style="position:relative;">
+        <span class="nav-icon">💕</span>
+        <span class="nav-label">Matchs</span>
+        <span class="nav-badge" id="matchBadge" style="display:none;">0</span>
+    </button>
     <button class="nav-item" onclick="navigateTo('messages')" id="navMessages" style="position:relative;">
         <span class="nav-icon">💬</span>
         <span class="nav-label">Messages</span>
@@ -868,11 +892,7 @@
     </button>
     <button class="nav-item" onclick="navigateTo('camgirls')" id="navCamgirls">
         <span class="nav-icon">📹</span>
-        <span class="nav-label">Cam Live</span>
-    </button>
-    <button class="nav-item" onclick="navigateTo('gallery')" id="navGallery">
-        <span class="nav-icon">📸</span>
-        <span class="nav-label">Galerie</span>
+        <span class="nav-label">Cam</span>
     </button>
     <button class="nav-item" onclick="navigateTo('settings')" id="navSettings">
         <span class="nav-icon">👤</span>
@@ -2498,32 +2518,68 @@ function goToMatchChat() {
 }
 
 function renderMatches() {
-    const grid = document.getElementById('matchesGrid');
+    const list = document.getElementById('matchesList');
+    const countEl = document.getElementById('matchesCount');
+    
     if (matches.length === 0) {
-        grid.style.display = 'none';
+        list.style.display = 'none';
         document.getElementById('noMatches').style.display = 'block';
+        if (countEl) countEl.textContent = '';
         return;
     }
-    grid.style.display = 'grid';
+    
+    list.style.display = 'flex';
     document.getElementById('noMatches').style.display = 'none';
-    grid.innerHTML = matches.filter(id => GIRLS[id]).map(id => {
+    if (countEl) countEl.textContent = matches.length + ' matchs';
+    
+    list.innerHTML = matches.filter(id => GIRLS[id]).map(id => {
         const g = GIRLS[id];
         const photo = getProfilePhoto(id);
-        const loadingClass = (!photo && !failedPhotos[id]) ? 'photo-loading' : '';
-        const retryBtn = failedPhotos[id] ? `<button class="photo-retry" onclick="event.stopPropagation(); retryPhoto('${id}')">Reessayer</button>` : '';
-        const photoContent = photo ? 
-            `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">` : 
-            `<span class="card-initial">${INITIALS[id]}</span>${retryBtn}`;
+        const initial = g.name ? g.name[0].toUpperCase() : '?';
+        const avatarContent = photo ? 
+            `<img src="${photo}" alt="${g.name}">` : initial;
+        
+        const chatHistory = JSON.parse(localStorage.getItem('chat_' + id) || '[]');
+        const lastMsg = chatHistory.length > 0 ? chatHistory[chatHistory.length - 1] : null;
+        const preview = lastMsg ? (lastMsg.sender === 'user' ? 'Toi: ' : '') + lastMsg.content.substring(0, 40) + '...' : 'Commence la conversation...';
+        const timeAgo = lastMsg ? getTimeAgo(lastMsg.time) : '';
+        
+        const affection = parseInt(affectionLevels[id]) || 20;
+        
         return `
-            <div class="girl-card" onclick="showProfile('${id}')">
-                <div class="girl-card-img ${loadingClass}">${photoContent}</div>
-                <div class="girl-card-info">
-                    <div class="girl-card-name">${g.name}, ${g.age}</div>
-                    <div class="girl-card-tagline">${g.tagline}</div>
+            <div class="match-item" onclick="showProfile('${id}')">
+                <div class="match-item-avatar">${avatarContent}</div>
+                <div class="match-item-info">
+                    <div class="match-item-name">${g.name}, ${g.age} <span class="match-item-online"></span></div>
+                    <div class="match-item-preview">${preview}</div>
+                    <div class="match-item-time">${timeAgo}</div>
+                </div>
+                <div class="match-item-actions">
+                    <button class="match-action-btn match-action-chat" onclick="event.stopPropagation(); quickChat('${id}')">💬</button>
                 </div>
             </div>
         `;
     }).join('');
+}
+
+function getTimeAgo(timeStr) {
+    if (!timeStr) return '';
+    const now = new Date();
+    const then = new Date(timeStr);
+    const diff = Math.floor((now - then) / 1000 / 60);
+    if (diff < 1) return 'A l\'instant';
+    if (diff < 60) return diff + ' min';
+    if (diff < 1440) return Math.floor(diff/60) + 'h';
+    return Math.floor(diff/1440) + 'j';
+}
+
+function quickChat(girlId) {
+    currentGirl = girlId;
+    const g = GIRLS[girlId];
+    if (!g) return;
+    document.getElementById('chatGirlName').textContent = g.name;
+    loadChatHistory(girlId);
+    showPage('chat');
 }
 
 function init() {
