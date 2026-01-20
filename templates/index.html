@@ -2513,28 +2513,27 @@ function doubleTapLike(e) {
 }
 
 function goToMatchChat() {
-    document.getElementById('matchOverlay').style.display = 'none';
-    const lastMatch = matches[matches.length - 1];
-    if (!lastMatch || !GIRLS[lastMatch]) {
+    try {
+        document.getElementById('matchOverlay').style.display = 'none';
+        
+        if (!matches || matches.length === 0) {
+            navigateTo('matches');
+            return;
+        }
+        
+        const lastMatch = matches[matches.length - 1];
+        if (!lastMatch || !GIRLS[lastMatch]) {
+            navigateTo('matches');
+            return;
+        }
+        
+        currentGirl = lastMatch;
+        startChat();
+        renderMatches();
+    } catch (e) {
+        console.error('Erreur goToMatchChat:', e);
         navigateTo('matches');
-        return;
     }
-    currentGirl = lastMatch;
-    const g = GIRLS[lastMatch];
-    
-    document.getElementById('chatName').textContent = g.name;
-    const chatAvatar = document.getElementById('chatInitials');
-    const photo = getProfilePhoto(lastMatch);
-    if (photo) {
-        chatAvatar.innerHTML = `<img src="${photo}" alt="${g.name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
-    } else {
-        chatAvatar.innerHTML = `<span>${INITIALS[lastMatch] || g.name[0]}</span>`;
-    }
-    
-    if (!chatHistory[lastMatch]) chatHistory[lastMatch] = loadChatHistory(lastMatch);
-    renderMessages();
-    showPage('chat');
-    renderMatches();
 }
 
 function renderMatches() {
@@ -2919,42 +2918,47 @@ function closeStories() {
 }
 
 function startChat() {
-    console.log("Tentative ouverture chat pour:", currentGirl);
-    
-    // 1. On force l'ouverture de la page immédiatement (on supprime la condition bloquante)
-    showPage('chat');
-    
-    // 2. Sécurité basique
-    if (!currentGirl) return;
+    try {
+        console.log("Tentative ouverture chat pour:", currentGirl);
+        
+        if (!currentGirl) {
+            navigateTo('matches');
+            return;
+        }
 
-    // 3. Récupération des infos (avec roue de secours si ça bug)
-    var g = GIRLS[currentGirl];
-    if (!g) {
-        g = { name: "Inconnue", age: "20" }; // Profil par défaut pour éviter le crash
-    }
+        var g = GIRLS[currentGirl];
+        if (!g) {
+            g = { name: "Inconnue", age: "20" };
+        }
 
-    // 4. Mise à jour du nom
-    var nameEl = document.getElementById('chatName');
-    if (nameEl) nameEl.textContent = g.name;
-    
-    // 5. Mise à jour de l'avatar (Version simple pour éviter les bugs d'image)
-    var chatAvatar = document.getElementById('chatInitials');
-    if (chatAvatar) {
-        chatAvatar.style.backgroundImage = 'none'; 
-        chatAvatar.textContent = (g.name || "?").charAt(0);
+        var nameEl = document.getElementById('chatName');
+        if (nameEl) nameEl.textContent = g.name;
+        
+        var chatAvatar = document.getElementById('chatInitials');
+        if (chatAvatar) {
+            var photo = getProfilePhoto(currentGirl);
+            if (photo) {
+                chatAvatar.innerHTML = '<img src="' + photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+            } else {
+                chatAvatar.innerHTML = '<span>' + (g.name || "?").charAt(0) + '</span>';
+            }
+        }
+        
+        if (typeof chatHistory !== 'undefined') {
+            if (!chatHistory[currentGirl]) chatHistory[currentGirl] = [];
+            renderMessages();
+        }
+        
+        showPage('chat');
+        
+        setTimeout(function() {
+            var input = document.getElementById('chatInput');
+            if (input) input.focus();
+        }, 100);
+    } catch (e) {
+        console.error('Erreur startChat:', e);
+        navigateTo('matches');
     }
-    
-    // 6. Initialisation de l'historique
-    if (typeof chatHistory !== 'undefined') {
-        if (!chatHistory[currentGirl]) chatHistory[currentGirl] = [];
-        renderMessages();
-    }
-    
-    // 7. Focus clavier
-    setTimeout(function() {
-        var input = document.getElementById('chatInput');
-        if (input) input.focus();
-    }, 100);
 }
 
 
