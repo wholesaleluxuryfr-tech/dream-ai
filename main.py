@@ -5108,9 +5108,11 @@ GIRLS = {
 def home():
     return render_template('index.html', girls_data=GIRLS)
 
-@app.route('/download/main.py')
+@app.route('/download-main')
 def download_main():
-    return send_file('main.py', as_attachment=True, download_name='main.py')
+    with open('main.py', 'r', encoding='utf-8') as f:
+        content = f.read()
+    return Response(content, mimetype='text/plain', headers={'Content-Disposition': 'attachment; filename=main.py'})
 
 PHOTO_KEYWORDS = {
     'culotte': 'showing panties, lifting skirt, revealing underwear',
