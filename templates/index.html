@@ -2425,43 +2425,96 @@ async function syncReceivedPhoto(girlId, photoUrl) {
     } catch(e) { console.log('Sync photo error:', e); }
 }
 function showMatchAnimation(girlId) {
-    playSound('match');
-    const g = GIRLS[girlId];
-    const photo = getProfilePhoto(girlId);
-    
-    const mainPhoto = document.getElementById('matchGirlPhoto');
-    if (photo) {
-        mainPhoto.innerHTML = `<img src="${photo}" alt="${g.name}">`;
-    } else {
-        mainPhoto.innerHTML = `<span class="match-initial">${INITIALS[girlId]}</span>`;
+    try {
+        playSound('match');
+        const g = GIRLS[girlId];
+        if (!g) {
+            isProcessingSwipe = false;
+            showNextCardInstant();
+            return;
+        }
+        const photo = getProfilePhoto(girlId);
+        
+        const mainPhoto = document.getElementById('matchGirlPhoto');
+        if (mainPhoto) {
+            if (photo) {
+                mainPhoto.innerHTML = `<img src="${photo}" alt="${g.name}">`;
+            } else {
+                mainPhoto.innerHTML = `<span class="match-initial">${INITIALS[girlId] || g.name[0]}</span>`;
+            }
+        }
+        
+        const matchName = document.getElementById('matchGirlName');
+        if (matchName) matchName.textContent = g.name + ', ' + g.age;
+        
+        const userPhoto = document.getElementById('matchPhotoUser');
+        if (userPhoto) userPhoto.textContent = (user && user.name) ? user.name.charAt(0).toUpperCase() : 'V';
+        
+        const girlPhotoSmall = document.getElementById('matchPhotoGirl');
+        if (girlPhotoSmall) {
+            if (photo) {
+                girlPhotoSmall.innerHTML = `<img src="${photo}" alt="${g.name}">`;
+            } else {
+                girlPhotoSmall.textContent = INITIALS[girlId] || g.name[0];
+            }
+        }
+        
+        const heartsDiv = document.getElementById('hearts');
+        if (heartsDiv) {
+            heartsDiv.innerHTML = '';
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = '♥';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 2 + 's';
+                heart.style.color = '#e91e63';
+                heartsDiv.appendChild(heart);
+            }
+        }
+        
+        document.getElementById('matchOverlay').style.display = 'flex';
+        isProcessingSwipe = false;
+        girlMessagesFirst(girlId);
+    } catch (e) {
+        console.error('Erreur showMatchAnimation:', e);
+        isProcessingSwipe = false;
+        showNextCardInstant();
     }
-    
-    document.getElementById('matchGirlName').textContent = g.name + ', ' + g.age;
-    
-    document.getElementById('matchPhotoUser').textContent = user.name.charAt(0).toUpperCase();
-    
-    const girlPhotoSmall = document.getElementById('matchPhotoGirl');
-    if (photo) {
-        girlPhotoSmall.innerHTML = `<img src="${photo}" alt="${g.name}">`;
-    } else {
-        girlPhotoSmall.textContent = INITIALS[girlId];
+}
+
+function girlMessagesFirst(girlId) {
+    if (Math.random() < 0.3) {
+        setTimeout(async () => {
+            try {
+                const g = GIRLS[girlId];
+                if (!g) return;
+                
+                const greetings = [
+                    "Hey! J'ai vu qu'on a matché, ca va toi?",
+                    "Coucou! Ton profil m'a bien plu",
+                    "Salut! Tu fais quoi de beau?",
+                    "Hello! J'attendais que tu swipes haha",
+                    "Heyy! Tu as l'air sympa toi"
+                ];
+                const msg = greetings[Math.floor(Math.random() * greetings.length)];
+                
+                if (!chatHistory[girlId]) chatHistory[girlId] = [];
+                chatHistory[girlId].push({
+                    role: 'assistant',
+                    content: msg,
+                    time: getTime()
+                });
+                localStorage.setItem('chat_' + girlId, JSON.stringify(chatHistory[girlId]));
+                
+                unreadMessages[girlId] = (unreadMessages[girlId] || 0) + 1;
+                updateUnreadBadge();
+                playSound('newMessage');
+            } catch(e) {
+                console.error('Erreur girlMessagesFirst:', e);
+            }
+        }, 2000 + Math.random() * 3000);
     }
-    
-    
-    const heartsDiv = document.getElementById('hearts');
-    heartsDiv.innerHTML = '';
-    for (let i = 0; i < 20; i++) {
-        const heart = document.createElement('div');
-        heart.className = 'heart';
-        heart.textContent = '♥';
-        heart.style.left = Math.random() * 100 + '%';
-        heart.style.animationDelay = Math.random() * 2 + 's';
-        heart.style.color = '#e91e63';
-        heartsDiv.appendChild(heart);
-    }
-    
-    document.getElementById('matchOverlay').style.display = 'flex';
-    girlMessagesFirst(girlId);
 }
 
 function showNoMatch() {
