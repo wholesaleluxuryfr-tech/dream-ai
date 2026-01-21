@@ -6796,12 +6796,14 @@ CAMGIRL_VIDEOS = {
             "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_portrait_nude_06.jpeg",
             "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_booty_07.jpeg",
             "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_tshirt_flash_08.jpeg",
-            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_bath_09.jpeg"
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_bath_09.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_bed_pussy_10.jpeg"
         ],
         "videos": [
             {"id": 1, "title": "Strip pole dance", "action": "pole dance strip", "decor": "club", "tokens": 100, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_video_01.mp4"},
             {"id": 2, "title": "Lap dance sexy", "action": "lap dance seductive", "decor": "chambre", "tokens": 200, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_video_02.mp4"},
-            {"id": 3, "title": "Twerk booty", "action": "twerk show", "decor": "studio", "tokens": 150, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_video_03.mp4"}
+            {"id": 3, "title": "Twerk booty", "action": "twerk show", "decor": "studio", "tokens": 150, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_video_03.mp4"},
+            {"id": 4, "title": "Show intime", "action": "pussy show bed", "decor": "chambre hotel", "tokens": 250, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_video_04.mp4"}
         ]
     },
     "camgirl_sophie": {
