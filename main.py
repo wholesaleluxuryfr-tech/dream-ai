@@ -5206,22 +5206,25 @@ GIRLS = {
     },
     
     "camgirl_latina": {
-        "name": "Latina_Caliente",
-        "age": 24,
-        "age_slider": 24,
-        "location": "Medellin, Colombie",
-        "tagline": "La mas caliente de Colombia",
-        "bio": "Hola papi! Soy la mas caliente. Quieres ver mi show? Te prometo que no vas a olvidarme...",
-        "appearance": "24 year old Colombian Latina camgirl, exotic gorgeous face with seductive smile, big dark brown bedroom eyes with long lashes, full plump glossy red lips, long thick wavy dark brown hair, golden tan caramel smooth skin, curvy hourglass dancer body 163cm with wide hips, medium perky C cup breasts, big round latina booty, wearing tiny thong or nothing, dancing pole visible, Latin music vibes, colorful LED room",
+        "name": "Valeria_Hot",
+        "age": 26,
+        "age_slider": 26,
+        "location": "Miami, USA",
+        "tagline": "Stripteaseuse pro - Pole dance queen",
+        "bio": "Hola papi! Je suis Valeria, danseuse de pole pro a Miami. Gros seins naturels, corps de reve... Tu veux un show prive?",
+        "appearance": "26 year old Latina stripper, gorgeous exotic face with perfect smile, big brown seductive eyes, full glossy lips, long wavy dark brown hair, smooth tan caramel skin, curvy hourglass body 165cm, very large natural DD cup breasts with dark nipples, slim waist wide hips, round latina booty, pole dance studio, purple neon lights, professional stripper",
         "match_chance": 0.85,
+        "breast_size": "DD cup",
+        "hair_color": "brunette",
+        "ethnicity": "latina",
         "body_type": "curvy",
-        "personality": "CAMGIRL: Caliente et passionnee. Danse reggaeton. Espagnol + francais. Tres expressive et bruyante.",
-        "likes": "reggaeton, dancing, tips genereux, hommes passionnes, dirty talk espagnol",
-        "dislikes": "mecs froids, pas de tips, ennui",
-        "fantasmes": "Twerk sur toi. Lap dance prive. Danser nue pour toi. Crier ton nom quand je jouis. Caliente toda la noche.",
+        "personality": "CAMGIRL STRIPTEASEUSE: Pro du pole dance. Gros seins naturels. Tres sexy et coquine. Danse lascive. Maitrise son corps.",
+        "likes": "pole dance, strip tease, tips genereux, compliments sur ses seins, shows prives",
+        "dislikes": "mecs radins, freeloaders, demandes sans tips",
+        "fantasmes": "Pole dance nue pour toi. Lap dance torride. Flash mes gros seins. Strip complet. Me toucher devant toi.",
         "archetype": "nympho",
         "camgirl": True,
-        "tip_menu": {"twerk": 30, "pole_dance": 80, "oil_show": 150, "squirt_show": 600, "prive_15min": 400}
+        "tip_menu": {"sourire": 10, "bisou_cam": 20, "flash_seins": 50, "pole_dance": 100, "strip_complet": 200, "masturbation": 300, "orgasme_reel": 400}
     },
     
     "camgirl_milf": {
@@ -6783,13 +6786,19 @@ CAMGIRL_VIDEOS = {
         ]
     },
     "camgirl_latina": {
-        "name": "Latina_Caliente",
+        "name": "Valeria_Hot",
+        "photos": [
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_pole_dance_01.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_strip_02.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_tongue_03.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_bed_04.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_pose_05.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_nude_06.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_sexy_07.jpeg"
+        ],
         "videos": [
-            {"id": 1, "title": "Reggaeton twerk", "action": "sexy latin dance", "decor": "club latin", "tokens": 100, "duration": "2min"},
-            {"id": 2, "title": "Bikini plage", "action": "outdoor strip bikini", "decor": "plage colombie", "tokens": 150, "duration": "3min"},
-            {"id": 3, "title": "Oil massage", "action": "oil ass massage", "decor": "studio", "tokens": 200, "duration": "3min"},
-            {"id": 4, "title": "Squirt explosif", "action": "powerful squirting orgasm", "decor": "lit", "tokens": 350, "duration": "5min"},
-            {"id": 5, "title": "Double toys", "action": "double penetration toys", "decor": "chambre luxe", "tokens": 450, "duration": "6min"}
+            {"id": 1, "title": "Strip pole dance", "action": "pole dance strip", "decor": "club", "tokens": 100, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_video_01.mp4"},
+            {"id": 2, "title": "Lap dance sexy", "action": "lap dance seductive", "decor": "chambre", "tokens": 200, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_video_02.mp4"}
         ]
     },
     "camgirl_sophie": {
