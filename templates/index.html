@@ -361,11 +361,11 @@
         
         /* CAMGIRL MODAL */
         .camgirl-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: flex; align-items: center; justify-content: center; }
-        .camgirl-modal-content { width: 100%; max-width: 500px; height: 100%; display: flex; flex-direction: column; background: #0a0a0c; }
+        .camgirl-modal-content { width: 100%; max-width: 500px; height: 100%; display: flex; flex-direction: column; background: #0a0a0c; overflow-y: auto; }
         .camgirl-modal-header { display: flex; align-items: center; padding: 1rem; border-bottom: 1px solid #1a1a1f; }
         .camgirl-close { color: white; font-size: 1.5rem; cursor: pointer; margin-right: 1rem; }
         .live-indicator { background: #ff0000; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; animation: pulse 1.5s infinite; margin-right: auto; }
-        .camgirl-video { aspect-ratio: 16/9; background: #12121a; display: flex; align-items: center; justify-content: center; }
+        .camgirl-video { aspect-ratio: 4/3; background: #12121a; display: flex; align-items: center; justify-content: center; max-height: 45vh; }
         .camgirl-video img { width: 100%; height: 100%; object-fit: cover; }
         .camgirl-info { padding: 1rem; text-align: center; }
         .camgirl-info h3 { font-size: 1.2rem; margin-bottom: 0.3rem; }
