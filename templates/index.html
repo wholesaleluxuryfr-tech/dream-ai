@@ -2115,6 +2115,7 @@ async function loadUserData() {
             });
             localStorage.setItem('dreamMatches', JSON.stringify(matches));
             localStorage.setItem('affectionLevels', JSON.stringify(affectionLevels));
+            renderStoriesCircles();
         }
         
         const photosData = await photosRes.json();
