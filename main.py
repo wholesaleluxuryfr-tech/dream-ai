@@ -6880,7 +6880,9 @@ CAMGIRL_VIDEOS = {
             "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_jardin_fesses.jpg",
             "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_jardin_seins.jpg",
             "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_jardin_culotte.jpg",
-            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_gode_lit.jpg"
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_gode_lit.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_fellation_pov_01.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_fellation_pov_02.jpg"
         ],
         "videos": [
             {"id": 1, "title": "Lecon privee", "action": "teacher strip roleplay", "decor": "classe", "tokens": 200, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_video_01.mp4"},
@@ -6889,7 +6891,7 @@ CAMGIRL_VIDEOS = {
             {"id": 4, "title": "Gode en classe", "action": "dildo riding teacher desk", "decor": "salle de classe", "tokens": 350, "duration": "5min"},
             {"id": 5, "title": "Orgasme autoritaire", "action": "dominant orgasm commanding", "decor": "chambre elegant", "tokens": 400, "duration": "5min"},
             {"id": 6, "title": "Doigts anal jardin", "action": "anal fingering outdoor garden", "decor": "jardin prive", "tokens": 450, "duration": "5min", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_jardin_anal_video.mp4"},
-            {"id": 7, "title": "Fellation POV baveuse", "action": "fake blowjob POV drooling spit", "decor": "chambre", "tokens": 500, "duration": "5min"}
+            {"id": 7, "title": "Fellation POV baveuse", "action": "fake blowjob POV drooling spit", "decor": "chambre", "tokens": 500, "duration": "5min", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_fellation_pov_video.mp4"}
         ]
     }
 }
