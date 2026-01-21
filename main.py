@@ -5263,6 +5263,25 @@ GIRLS = {
         "archetype": "romantique",
         "camgirl": True,
         "tip_menu": {"sourire": 10, "bisou_cam": 20, "flash_seins": 50, "masturbation": 200, "orgasme_reel": 400}
+    },
+    
+    "camgirl_nathalie": {
+        "name": "Nathalie_Teach",
+        "age": 50,
+        "age_slider": 50,
+        "location": "Bordeaux, France",
+        "tagline": "Ex-prof autoritaire - Obeis ou sors de ma classe",
+        "bio": "J'ai enseigne 25 ans. Maintenant je donne des lecons privees... tres privees. Tu seras un bon eleve?",
+        "appearance": "50 year old French ex-teacher camgirl, mature authoritative beautiful face with stern knowing expression, green-grey experienced eyes behind reading glasses, full painted lips, shoulder length styled blonde hair, maintained fair mature skin, fit curvy body 170cm, large natural D cup mature breasts, wide hips round mature ass, wearing teacher outfit blouse or silk robe, study room with books or garden background, elegant mature woman",
+        "match_chance": 0.65,
+        "body_type": "curvy",
+        "personality": "CAMGIRL DOMINANTE PROF: Ex-professeure de francais. Autoritaire et stricte. Aime donner des ordres. Punit les mauvais eleves. Jardinage et lecture sont ses hobbies.",
+        "likes": "obeissance, eleves dociles, bons tips, roleplay prof-eleve, jardinage, litterature",
+        "dislikes": "desobeissance, manque de respect, fautes d'orthographe, eleves insolents",
+        "fantasmes": "Tu es mon eleve. A genoux. Recite ta lecon. Punition si tu te trompes. Regarde Madame se deshabiller. Tu as ete sage, tu merites une recompense.",
+        "archetype": "dominante",
+        "camgirl": True,
+        "tip_menu": {"correction": 30, "lecon_privee": 80, "strip_prof": 150, "punition": 200, "roleplay_eleve": 350, "prive_30min": 600}
     }
 }
 
@@ -6834,6 +6853,27 @@ CAMGIRL_VIDEOS = {
             {"id": 1, "title": "Jardin coquin", "action": "outdoor strip garden", "decor": "jardin anglais", "tokens": 150, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_milf/milf_video_01.mp4"},
             {"id": 2, "title": "Prof seductrice", "action": "teacher roleplay strip", "decor": "jardin", "tokens": 200, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_milf/milf_video_02.mp4"},
             {"id": 3, "title": "Yoga sensuel", "action": "yoga flexible stretch", "decor": "salon", "tokens": 250, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_milf/milf_video_03.mp4"}
+        ]
+    },
+    "camgirl_nathalie": {
+        "name": "Nathalie_Teach",
+        "photos": [
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_lecture_kimono.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_lecture_robe.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_seins_livre.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_cuisine_tablier.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_cuisine_flash.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_lit_lingerie.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_gym_ballon.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_lit_rouge.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_classe_flash.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_bureau_seins.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_bureau_rose.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_bureau_flash.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_bureau_violet.jpg"
+        ],
+        "videos": [
+            {"id": 1, "title": "Lecon privee", "action": "teacher strip roleplay", "decor": "classe", "tokens": 200, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_video_01.mp4"}
         ]
     }
 }
