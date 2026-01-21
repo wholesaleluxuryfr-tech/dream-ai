@@ -5164,7 +5164,7 @@ GIRLS = {
         "fantasmes": "Show prive gaming. Me montrer dehors. Toys pendant que je joue. Orgasme en live. Tu me mates dans la rue.",
         "archetype": "exhib",
         "camgirl": True,
-        "tip_menu": {"sourire": 10, "bisou_cam": 20, "flash_seins": 50, "masturbation": 200, "orgasme_reel": 400}
+        "tip_menu": {"sourire": 10, "bisou_cam": 20, "flash_seins": 50, "upskirt_exhib": 100, "masturbation": 200, "dildo_show": 300, "orgasme_reel": 400, "anal_hardcore": 500}
     },
     
     "camgirl_mia": {
