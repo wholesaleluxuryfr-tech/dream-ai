@@ -7629,9 +7629,17 @@ def get_camgirl_photo(girl_id):
     
     # Check pre-stored photos in CAMGIRL_VIDEOS first
     if girl_id in CAMGIRL_VIDEOS and CAMGIRL_VIDEOS[girl_id].get("photos"):
-        photos = CAMGIRL_VIDEOS[girl_id]["photos"]
-        if photos and len(photos) > 0:
-            return jsonify({"image_url": photos[0], "all_photos": photos})
+        raw_photos = CAMGIRL_VIDEOS[girl_id]["photos"]
+        if raw_photos and len(raw_photos) > 0:
+            # Handle both formats: list of URLs or list of objects with 'url' key
+            photos = []
+            for p in raw_photos:
+                if isinstance(p, str):
+                    photos.append(p)
+                elif isinstance(p, dict) and p.get("url"):
+                    photos.append(p["url"])
+            if photos:
+                return jsonify({"image_url": photos[0], "all_photos": photos})
     
     existing = ProfilePhoto.query.filter_by(girl_id=girl_id, photo_type=3).first()
     if existing and existing.photo_url:
