@@ -7613,6 +7613,12 @@ def get_camgirl_photo(girl_id):
     if not girl or not girl.get("camgirl"):
         return jsonify({"error": "Camgirl not found"}), 404
     
+    # Check pre-stored photos in CAMGIRL_VIDEOS first
+    if girl_id in CAMGIRL_VIDEOS and CAMGIRL_VIDEOS[girl_id].get("photos"):
+        photos = CAMGIRL_VIDEOS[girl_id]["photos"]
+        if photos and len(photos) > 0:
+            return jsonify({"image_url": photos[0], "all_photos": photos})
+    
     existing = ProfilePhoto.query.filter_by(girl_id=girl_id, photo_type=3).first()
     if existing and existing.photo_url:
         return jsonify({"image_url": existing.photo_url})
@@ -7749,6 +7755,78 @@ def send_tip():
         "photo_prompt": photo_prompt,
         "girl_appearance": girl.get("appearance", "")
     })
+
+
+@app.route('/api/camgirl_chat', methods=['POST'])
+def camgirl_chat():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.json
+    girl_id = data.get('girl_id')
+    message = data.get('message', '').strip()
+    
+    if not message:
+        return jsonify({"error": "No message"}), 400
+    
+    girl = GIRLS.get(girl_id)
+    if not girl or not girl.get("camgirl"):
+        return jsonify({"error": "Camgirl not found"}), 404
+    
+    name = girl.get("name", "Camgirl")
+    personality = girl.get("personality", "")
+    archetype = girl.get("archetype", "nympho")
+    
+    system_prompt = f"""Tu es {name}, une camgirl francaise en live stream.
+Ton style: {archetype}
+Ta personnalite: {personality}
+
+REGLES:
+- Reponds TOUJOURS en francais avec du slang sexy
+- Sois tres explicite et coquine, tu es une camgirl
+- Reponds en 1-3 phrases courtes comme dans un chat live
+- Utilise des mots comme "bebe", "cheri", "coquin"
+- Si on te demande des trucs, dis qu'il faut envoyer des tokens
+- Fais des blagues coquines et drague le viewer
+- Tu peux etre tres explicite sexuellement
+- Tutoie toujours"""
+    
+    try:
+        headers = {
+            "Authorization": f"Bearer {os.environ.get('OPENROUTER_API_KEY', '')}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://dreamgirl.replit.app",
+            "X-Title": "Dream AI Girl"
+        }
+        
+        payload = {
+            "model": "mistralai/mistral-medium-3",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": message}
+            ],
+            "max_tokens": 150,
+            "temperature": 0.9
+        }
+        
+        response = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers=headers,
+            json=payload,
+            timeout=30
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            reply = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+            if reply:
+                return jsonify({"response": reply.strip()})
+        
+        return jsonify({"response": "Mmm envoie des tokens bebe..."})
+    except Exception as e:
+        print(f"Camgirl chat error: {e}")
+        return jsonify({"response": "Hmm mon chat bug... envoie des tokens!"})
 
 
 @app.route('/api/live_cam/start', methods=['POST'])
