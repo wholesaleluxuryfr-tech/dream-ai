@@ -3372,7 +3372,7 @@ function renderStoriesCircles() {
     const container = document.getElementById('storiesScroll');
     if (!container) return;
     
-    const matchedGirls = Object.keys(matches).slice(0, 15);
+    const matchedGirls = (Array.isArray(matches) ? matches : Object.keys(matches)).slice(0, 15);
     const viewedStories = JSON.parse(localStorage.getItem('viewedStories') || '{}');
     
     let html = '';
