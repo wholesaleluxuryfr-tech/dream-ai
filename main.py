@@ -6820,6 +6820,21 @@ CAMGIRL_VIDEOS = {
         "name": "Emma_Sensuelle",
         "videos": [],
         "photos": []
+    },
+    "camgirl_milf": {
+        "name": "SexyMILF_Sophie",
+        "photos": [
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_milf/milf_jardin_seins_jupe.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_milf/milf_jardin_seins_fleur.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_milf/milf_lingerie_bleue.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_milf/milf_jardin_fesses.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_milf/milf_yoga_sportive.jpg"
+        ],
+        "videos": [
+            {"id": 1, "title": "Jardin coquin", "action": "outdoor strip garden", "decor": "jardin anglais", "tokens": 150, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_milf/milf_video_01.mp4"},
+            {"id": 2, "title": "Prof seductrice", "action": "teacher roleplay strip", "decor": "jardin", "tokens": 200, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_milf/milf_video_02.mp4"},
+            {"id": 3, "title": "Yoga sensuel", "action": "yoga flexible stretch", "decor": "salon", "tokens": 250, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_milf/milf_video_03.mp4"}
+        ]
     }
 }
 
