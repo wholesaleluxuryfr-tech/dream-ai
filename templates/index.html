@@ -387,6 +387,36 @@
         .cam-msg.tip { background: rgba(233,30,99,0.2); border: 1px solid rgba(233,30,99,0.3); }
         .cam-msg .user { color: #e91e63; font-weight: 600; }
         
+        /* CANDY AI STYLE - SIDEBAR MEDIAS */
+        .cam-sidebar { display: flex; gap: 6px; padding: 10px 12px; overflow-x: auto; background: #0a0a0c; border-bottom: 1px solid #1a1a2e; }
+        .cam-sidebar::-webkit-scrollbar { display: none; }
+        .cam-sidebar-item { flex-shrink: 0; width: 70px; height: 90px; border-radius: 10px; overflow: hidden; cursor: pointer; position: relative; border: 2px solid transparent; transition: all 0.2s; background: #1a1a2e; }
+        .cam-sidebar-item:hover { border-color: #e91e63; transform: scale(1.05); }
+        .cam-sidebar-item.active { border-color: #e91e63; box-shadow: 0 0 12px rgba(233,30,99,0.5); }
+        .cam-sidebar-item img { width: 100%; height: 100%; object-fit: cover; }
+        .cam-sidebar-item.locked { filter: blur(3px) brightness(0.5); }
+        .cam-sidebar-item .lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.7); }
+        .cam-sidebar-item .lock-icon { font-size: 1.2rem; color: #e91e63; }
+        .cam-sidebar-item .lock-tokens { font-size: 0.6rem; color: #ffeb3b; font-weight: 700; margin-top: 2px; }
+        .cam-sidebar-item .media-badge { position: absolute; top: 4px; right: 4px; background: #e91e63; color: white; font-size: 0.5rem; padding: 2px 5px; border-radius: 4px; font-weight: 700; }
+        .cam-sidebar-item .video-icon { position: absolute; bottom: 4px; left: 4px; background: rgba(0,0,0,0.7); color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 4px; }
+        
+        /* USER TOKENS */
+        .cam-tokens-display { display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #1a1a2e, #0d0d12); padding: 6px 12px; border-radius: 20px; margin-left: auto; }
+        .cam-tokens-display .coin-icon { color: #ffeb3b; font-size: 1rem; }
+        .cam-tokens-display .tokens-count { color: white; font-weight: 700; font-size: 0.9rem; }
+        .cam-tokens-display .buy-btn { background: linear-gradient(135deg, #e91e63, #9c27b0); color: white; border: none; padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; cursor: pointer; margin-left: 6px; }
+        
+        /* UNLOCK POPUP */
+        .unlock-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #12121a; border-radius: 20px; padding: 24px; width: 90%; max-width: 320px; z-index: 3000; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.8); border: 1px solid #2a2a3e; }
+        .unlock-popup-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2999; }
+        .unlock-popup h3 { font-size: 1.1rem; margin-bottom: 8px; color: white; }
+        .unlock-popup p { color: #888; font-size: 0.85rem; margin-bottom: 16px; }
+        .unlock-popup .preview-img { width: 100%; height: 150px; object-fit: cover; border-radius: 12px; margin-bottom: 16px; filter: blur(8px); }
+        .unlock-popup .cost { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1.2rem; font-weight: 700; color: #ffeb3b; margin-bottom: 16px; }
+        .unlock-popup .btn-unlock { background: linear-gradient(135deg, #e91e63, #9c27b0); color: white; border: none; padding: 12px 32px; border-radius: 25px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 8px; }
+        .unlock-popup .btn-cancel { background: transparent; color: #888; border: 1px solid #333; padding: 10px 32px; border-radius: 25px; font-size: 0.9rem; cursor: pointer; width: 100%; }
+        
         /* CHARACTER CREATION */
         .btn-create-char { background: linear-gradient(135deg, #9c27b0, #673ab7); color: white; width: 100%; padding: 1rem; border: none; border-radius: 15px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
         .btn-create-char:active { transform: scale(0.98); }
@@ -743,7 +773,13 @@
             <span class="camgirl-close" onclick="closeCamgirlModal()">&times;</span>
             <div class="live-indicator">LIVE</div>
             <span class="camgirl-viewers" id="camgirlViewers">0 viewers</span>
+            <div class="cam-tokens-display">
+                <span class="coin-icon">&#9733;</span>
+                <span class="tokens-count" id="userTokensCount">500</span>
+                <button class="buy-btn" onclick="showBuyTokensPopup()">+ Acheter</button>
+            </div>
         </div>
+        <div class="cam-sidebar" id="camSidebar"></div>
         <div class="camgirl-video-container" style="position:relative;">
             <div class="camgirl-video" id="camgirlVideo"></div>
             <button class="cam-nav-btn cam-nav-left" onclick="prevCamMedia()" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:white;font-size:1.5rem;cursor:pointer;z-index:10;">&#8249;</button>
@@ -3629,6 +3665,97 @@ function renderCamgirls() {
     });
 }
 
+// User tokens system - Candy AI style
+let userTokens = parseInt(localStorage.getItem('userTokens') || '500');
+let unlockedMedia = JSON.parse(localStorage.getItem('unlockedMedia') || '{}');
+
+function updateTokensDisplay() {
+    const el = document.getElementById('userTokensCount');
+    if (el) el.textContent = userTokens;
+    localStorage.setItem('userTokens', userTokens);
+}
+
+function isMediaUnlocked(girlId, mediaIndex) {
+    const key = `${girlId}_${mediaIndex}`;
+    return unlockedMedia[key] === true;
+}
+
+function unlockMedia(girlId, mediaIndex) {
+    const key = `${girlId}_${mediaIndex}`;
+    unlockedMedia[key] = true;
+    localStorage.setItem('unlockedMedia', JSON.stringify(unlockedMedia));
+}
+
+function getMediaCost(index, type) {
+    if (index < 2 && type === 'photo') return 0; // 2 photos gratuites
+    if (index === 0 && type === 'video') return 0; // 1ere video gratuite (classique)
+    if (type === 'video') return [0, 100, 150, 200, 300, 400, 500][index] || 200;
+    return [0, 0, 50, 75, 100, 150, 200, 250, 300][index] || 100;
+}
+
+function showBuyTokensPopup() {
+    const html = `
+        <div class="unlock-popup-backdrop" onclick="closeUnlockPopup()"></div>
+        <div class="unlock-popup">
+            <h3>Acheter des Tokens</h3>
+            <p>Obtiens plus de tokens pour debloquer du contenu exclusif</p>
+            <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0;">
+                <button onclick="addTokens(100)" style="background:linear-gradient(135deg,#e91e63,#9c27b0);color:white;border:none;padding:12px;border-radius:12px;font-weight:600;cursor:pointer;">100 Tokens - 4.99 EUR</button>
+                <button onclick="addTokens(500)" style="background:linear-gradient(135deg,#e91e63,#9c27b0);color:white;border:none;padding:12px;border-radius:12px;font-weight:600;cursor:pointer;">500 Tokens - 19.99 EUR</button>
+                <button onclick="addTokens(1000)" style="background:linear-gradient(135deg,#e91e63,#9c27b0);color:white;border:none;padding:12px;border-radius:12px;font-weight:600;cursor:pointer;">1000 Tokens - 34.99 EUR</button>
+            </div>
+            <button class="btn-cancel" onclick="closeUnlockPopup()">Annuler</button>
+        </div>`;
+    const container = document.createElement('div');
+    container.id = 'unlockPopupContainer';
+    container.innerHTML = html;
+    document.body.appendChild(container);
+}
+
+function addTokens(amount) {
+    userTokens += amount;
+    updateTokensDisplay();
+    closeUnlockPopup();
+    showToast(`+${amount} tokens ajoutes!`);
+}
+
+function closeUnlockPopup() {
+    const el = document.getElementById('unlockPopupContainer');
+    if (el) el.remove();
+}
+
+function showUnlockPopup(mediaIndex, cost, previewUrl, type) {
+    const html = `
+        <div class="unlock-popup-backdrop" onclick="closeUnlockPopup()"></div>
+        <div class="unlock-popup">
+            <h3>Debloquer ce contenu?</h3>
+            <p>${type === 'video' ? 'Video exclusive' : 'Photo privee'}</p>
+            <img src="${previewUrl}" class="preview-img" style="filter:blur(12px);">
+            <div class="cost"><span class="coin-icon">&#9733;</span> ${cost} tokens</div>
+            <button class="btn-unlock" onclick="confirmUnlock(${mediaIndex}, ${cost})">Debloquer</button>
+            <button class="btn-cancel" onclick="closeUnlockPopup()">Annuler</button>
+        </div>`;
+    const container = document.createElement('div');
+    container.id = 'unlockPopupContainer';
+    container.innerHTML = html;
+    document.body.appendChild(container);
+}
+
+function confirmUnlock(mediaIndex, cost) {
+    if (userTokens < cost) {
+        closeUnlockPopup();
+        showBuyTokensPopup();
+        return;
+    }
+    userTokens -= cost;
+    updateTokensDisplay();
+    unlockMedia(currentCamgirl, mediaIndex);
+    closeUnlockPopup();
+    renderCamSidebar();
+    showCamMediaAtIndex(mediaIndex);
+    showToast('Contenu debloque!');
+}
+
 async function openCamgirl(girlId) {
     currentCamgirl = girlId;
     currentCamMedia = [];
@@ -3640,6 +3767,7 @@ async function openCamgirl(girlId) {
     document.getElementById('camgirlModal').style.display = 'flex';
     document.getElementById('camgirlName').textContent = cam.name;
     document.getElementById('camgirlTagline').textContent = cam.tagline || '';
+    updateTokensDisplay();
     
     const viewers = Math.floor(Math.random() * 400) + 50;
     document.getElementById('camgirlViewers').textContent = viewers + ' viewers';
@@ -3648,38 +3776,43 @@ async function openCamgirl(girlId) {
     const videoDiv = document.getElementById('camgirlVideo');
     videoDiv.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;color:rgba(233,30,99,0.3);background:#0a0a0c;">${initial}</div>`;
     
-    // Load photos from API
+    // Build media array: 2 photos + 1 video classique gratuits, reste verrouille
     try {
         const res = await fetch('/api/camgirl_photo/' + girlId);
         const data = await res.json();
         
-        // Build media array (photos first, then videos)
-        if (data.all_photos && data.all_photos.length > 0) {
-            data.all_photos.forEach(p => currentCamMedia.push({ type: 'photo', url: p }));
-        } else if (cam.photos && cam.photos.length > 0) {
-            cam.photos.forEach(p => currentCamMedia.push({ type: 'photo', url: p }));
-        }
+        // Photos first
+        const photos = data.all_photos?.length > 0 ? data.all_photos : (cam.photos || []);
+        photos.forEach((p, i) => {
+            const cost = i < 2 ? 0 : getMediaCost(i, 'photo');
+            currentCamMedia.push({ type: 'photo', url: p, cost, index: currentCamMedia.length });
+        });
         
-        // Add videos to media array
+        // Then videos
         if (cam.videos && cam.videos.length > 0) {
-            cam.videos.forEach(v => currentCamMedia.push({ type: 'video', url: v.video_url, title: v.title }));
+            cam.videos.forEach((v, i) => {
+                const cost = i === 0 ? 0 : getMediaCost(i, 'video');
+                currentCamMedia.push({ type: 'video', url: v.video_url, title: v.title, cost, index: currentCamMedia.length });
+            });
         }
         
-        // Show first media
-        if (currentCamMedia.length > 0) {
-            showCamMediaAtIndex(0);
-        } else if (data.image_url) {
-            currentCamMedia.push({ type: 'photo', url: data.image_url });
-            showCamMediaAtIndex(0);
-        }
+        renderCamSidebar();
+        if (currentCamMedia.length > 0) showCamMediaAtIndex(0);
+        
     } catch(e) { 
         console.log("Cam photo error:", e);
-        if (cam.photos && cam.photos.length > 0) {
-            cam.photos.forEach(p => currentCamMedia.push({ type: 'photo', url: p }));
-        }
+        const photos = cam.photos || [];
+        photos.forEach((p, i) => {
+            const cost = i < 2 ? 0 : getMediaCost(i, 'photo');
+            currentCamMedia.push({ type: 'photo', url: p, cost, index: currentCamMedia.length });
+        });
         if (cam.videos && cam.videos.length > 0) {
-            cam.videos.forEach(v => currentCamMedia.push({ type: 'video', url: v.video_url, title: v.title }));
+            cam.videos.forEach((v, i) => {
+                const cost = i === 0 ? 0 : getMediaCost(i, 'video');
+                currentCamMedia.push({ type: 'video', url: v.video_url, title: v.title, cost, index: currentCamMedia.length });
+            });
         }
+        renderCamSidebar();
         if (currentCamMedia.length > 0) showCamMediaAtIndex(0);
     }
     
@@ -3689,6 +3822,50 @@ async function openCamgirl(girlId) {
         <div class="cam-msg" style="color:#888;font-size:0.8rem;margin-bottom:4px;"><span style="color:#e91e63;">System:</span> Bienvenue dans le show de ${cam.name}!</div>
         <div class="cam-msg" style="color:#fff;font-size:0.85rem;"><span style="color:#e91e63;font-weight:600;">${cam.name}:</span> Coucou toi! Tu veux jouer avec moi?</div>
     `;
+}
+
+function renderCamSidebar() {
+    const sidebar = document.getElementById('camSidebar');
+    if (!sidebar) return;
+    
+    let html = '';
+    currentCamMedia.forEach((media, i) => {
+        const isFree = media.cost === 0;
+        const isUnlocked = isFree || isMediaUnlocked(currentCamgirl, i);
+        const isActive = i === currentCamMediaIndex;
+        const isVideo = media.type === 'video';
+        
+        html += `<div class="cam-sidebar-item ${isActive ? 'active' : ''} ${!isUnlocked ? 'locked' : ''}" onclick="handleSidebarClick(${i})">`;
+        
+        if (isUnlocked) {
+            html += `<img src="${media.url}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%231a1a2e%22 width=%22100%22 height=%22100%22/></svg>'">`;
+        } else {
+            html += `<img src="${media.url}" style="filter:blur(8px);">`;
+            html += `<div class="lock-overlay"><span class="lock-icon">&#128274;</span><span class="lock-tokens">${media.cost} tk</span></div>`;
+        }
+        
+        if (isVideo) html += `<span class="video-icon">&#9658;</span>`;
+        if (isFree && i < 3) html += `<span class="media-badge">GRATUIT</span>`;
+        
+        html += '</div>';
+    });
+    
+    sidebar.innerHTML = html;
+}
+
+function handleSidebarClick(index) {
+    const media = currentCamMedia[index];
+    if (!media) return;
+    
+    const isFree = media.cost === 0;
+    const isUnlocked = isFree || isMediaUnlocked(currentCamgirl, index);
+    
+    if (isUnlocked) {
+        showCamMediaAtIndex(index);
+        renderCamSidebar();
+    } else {
+        showUnlockPopup(index, media.cost, media.url, media.type);
+    }
 }
 
 // Navigation functions for camgirl media
