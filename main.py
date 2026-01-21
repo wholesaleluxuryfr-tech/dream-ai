@@ -6788,17 +6788,20 @@ CAMGIRL_VIDEOS = {
     "camgirl_latina": {
         "name": "Valeria_Hot",
         "photos": [
-            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_pole_dance_01.jpeg",
-            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_strip_02.jpeg",
-            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_tongue_03.jpeg",
-            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_bed_04.jpeg",
-            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_pose_05.jpeg",
-            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_nude_06.jpeg",
-            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_sexy_07.jpeg"
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_profile_01.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_orange_dress_02.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_topless_03.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_bra_04.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_flash_05.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_portrait_nude_06.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_booty_07.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_tshirt_flash_08.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_bath_09.jpeg"
         ],
         "videos": [
             {"id": 1, "title": "Strip pole dance", "action": "pole dance strip", "decor": "club", "tokens": 100, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_video_01.mp4"},
-            {"id": 2, "title": "Lap dance sexy", "action": "lap dance seductive", "decor": "chambre", "tokens": 200, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_video_02.mp4"}
+            {"id": 2, "title": "Lap dance sexy", "action": "lap dance seductive", "decor": "chambre", "tokens": 200, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_video_02.mp4"},
+            {"id": 3, "title": "Twerk booty", "action": "twerk show", "decor": "studio", "tokens": 150, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_latina/latina_video_03.mp4"}
         ]
     },
     "camgirl_sophie": {
