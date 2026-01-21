@@ -6786,12 +6786,30 @@ CAMGIRL_VIDEOS = {
     },
     "camgirl_mia": {
         "name": "AsianDoll_Mia",
+        "photos": [
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_metro_lingerie.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_bus_seins.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_toilettes_blanc.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_bikini_blanc.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_lingerie_masturbation.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_toilettes_schoolgirl.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_fesses_fenetre.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_toilettes_seins.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_japonais_masturbation.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_canape_seins.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_toilettes_debout.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_toilettes_lingerie.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_toilettes_accroupie.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_ruelle_bondage.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_rue_shibari.jpg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_glace_seins.jpg"
+        ],
         "videos": [
-            {"id": 1, "title": "Cosplay schoolgirl", "action": "shy strip cosplay", "decor": "chambre otaku", "tokens": 100, "duration": "2min"},
-            {"id": 2, "title": "Maid service", "action": "teasing maid outfit", "decor": "cafe maid", "tokens": 150, "duration": "3min"},
-            {"id": 3, "title": "Ahegao faces", "action": "ahegao orgasm expressions", "decor": "studio rose", "tokens": 200, "duration": "3min"},
-            {"id": 4, "title": "Dildo ride", "action": "dildo riding orgasm", "decor": "futon japonais", "tokens": 300, "duration": "5min"},
-            {"id": 5, "title": "Squirt kawaii", "action": "squirting orgasm", "decor": "onsen bath", "tokens": 400, "duration": "5min"}
+            {"id": 1, "title": "Exhib metro", "action": "flash public metro", "decor": "metro japonais", "tokens": 100, "duration": "2min", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_mia/mia_video_01.mp4"},
+            {"id": 2, "title": "Toilettes publiques", "action": "masturbation toilettes", "decor": "toilettes publiques", "tokens": 150, "duration": "3min"},
+            {"id": 3, "title": "Shibari rue", "action": "bondage exhib rue", "decor": "rue japonaise", "tokens": 200, "duration": "3min"},
+            {"id": 4, "title": "Squirt public", "action": "squirting orgasm public", "decor": "lieu public", "tokens": 300, "duration": "5min"},
+            {"id": 5, "title": "Anal parc", "action": "anal plug outdoor", "decor": "parc japonais", "tokens": 400, "duration": "5min"}
         ]
     },
     "camgirl_ebony": {
