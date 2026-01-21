@@ -744,16 +744,19 @@
             <div class="live-indicator">LIVE</div>
             <span class="camgirl-viewers" id="camgirlViewers">0 viewers</span>
         </div>
-        <div class="camgirl-video" id="camgirlVideo"></div>
-        <div class="camgirl-photos-scroll" id="camgirlPhotosScroll" style="display:flex;gap:8px;overflow-x:auto;padding:8px 12px;background:#0a0a0c;"></div>
-        <div class="camgirl-info">
-            <h3 id="camgirlName"></h3>
-            <p id="camgirlTagline"></p>
+        <div class="camgirl-video-container" style="position:relative;">
+            <div class="camgirl-video" id="camgirlVideo"></div>
+            <button class="cam-nav-btn cam-nav-left" onclick="prevCamMedia()" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:white;font-size:1.5rem;cursor:pointer;z-index:10;">&#8249;</button>
+            <button class="cam-nav-btn cam-nav-right" onclick="nextCamMedia()" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:white;font-size:1.5rem;cursor:pointer;z-index:10;">&#8250;</button>
+            <div id="camMediaCounter" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:white;padding:4px 12px;border-radius:12px;font-size:0.75rem;"></div>
         </div>
-        <div class="camgirl-videos-list" id="camgirlVideosList"></div>
+        <div class="camgirl-info" style="padding:8px 12px;">
+            <h3 id="camgirlName" style="font-size:1rem;margin:0;"></h3>
+            <p id="camgirlTagline" style="font-size:0.8rem;margin:2px 0 0;color:#888;"></p>
+        </div>
         <div class="tip-menu" id="tipMenu"></div>
-        <div class="camgirl-chat" id="camgirlChat" style="flex:1;overflow-y:auto;padding:8px;background:#0a0a0c;min-height:120px;max-height:200px;"></div>
-        <div class="camgirl-chat-input" style="display:flex;gap:8px;padding:10px;background:#12121a;border-top:1px solid #1a1a1f;">
+        <div class="camgirl-chat" id="camgirlChat" style="flex:1;overflow-y:auto;padding:8px 12px;background:#0a0a0c;min-height:150px;max-height:250px;"></div>
+        <div class="camgirl-chat-input" style="display:flex;gap:8px;padding:10px 12px;background:#12121a;border-top:1px solid #1a1a1f;">
             <input type="text" id="camgirlChatInput" placeholder="Ecris un message..." style="flex:1;padding:10px 14px;border:none;border-radius:20px;background:#1a1a2e;color:white;font-size:0.9rem;">
             <button onclick="sendCamgirlMessage()" style="padding:10px 16px;border:none;border-radius:20px;background:linear-gradient(135deg,#e91e63,#9c27b0);color:white;font-weight:600;cursor:pointer;">Envoyer</button>
         </div>
@@ -1572,6 +1575,28 @@ function getAvatarHtml(girlId, size = 40) {
         `background: linear-gradient(135deg, #1a1a2e 0%, #0d0d12 100%);`;
     return `<div style="width: ${size}px; height: ${size}px; border-radius: 50%; ${style} display: flex; align-items: center; justify-content: center; font-weight: 600; color: rgba(233, 30, 99, 0.5); font-size: ${size * 0.4}px;">${photo ? '' : initial}</div>`;
 }
+
+// Preload photos for matches in background
+async function preloadMatchPhotos() {
+    for (const girlId of matches) {
+        if (!profilePhotos[girlId] || !profilePhotos[girlId][0]) {
+            try {
+                const res = await fetch('/api/stored_photos/' + girlId);
+                const data = await res.json();
+                if (data.photos && data.photos.length > 0) {
+                    if (!profilePhotos[girlId]) profilePhotos[girlId] = [null, null, null, null, null];
+                    data.photos.forEach(p => {
+                        const idx = p.photo_type || 0;
+                        if (idx < 5) profilePhotos[girlId][idx] = p.url;
+                    });
+                    localStorage.setItem('profilePhotos', JSON.stringify(profilePhotos));
+                    renderStoriesCircles();
+                    renderMessagesList();
+                }
+            } catch(e) {}
+        }
+    }
+}
 async function generateProfilePhoto(girlId) {
     if (profilePhotos[girlId] && Array.isArray(profilePhotos[girlId]) && profilePhotos[girlId][0]) {
         return true;
@@ -2149,6 +2174,9 @@ async function loadUserData() {
                 localStorage.setItem('chat_' + girlId, JSON.stringify(chatData.messages));
             }
         }
+        
+        // Preload photos for matches in background
+        preloadMatchPhotos();
         
         localStorage.setItem('failedPhotos', JSON.stringify({}));
         isDataReady = true;
@@ -2771,13 +2799,25 @@ function showPage(page) {
     
     const bottomNav = document.getElementById('bottomNav');
     if (bottomNav) {
-        if (['profile', 'chat'].includes(page)) {
+        // Only hide nav on chat page, keep visible everywhere else
+        if (page === 'chat') {
             bottomNav.style.display = 'none';
         } else {
             bottomNav.style.display = 'flex';
         }
     }
 }
+
+// Safety: ensure nav is always visible on main pages
+function ensureNavVisible() {
+    const bottomNav = document.getElementById('bottomNav');
+    const chatPage = document.getElementById('chat');
+    const isChatVisible = chatPage && chatPage.classList.contains('active');
+    if (bottomNav && !isChatVisible) {
+        bottomNav.style.display = 'flex';
+    }
+}
+setInterval(ensureNavVisible, 2000);
 
 function goBackFromProfile() {
     navigateTo(lastNavTab);
@@ -3409,13 +3449,21 @@ async function openStoryViewer(girlId) {
     
     let stories = storyData[girlId];
     if (!stories || stories.length === 0) {
-        const photo = getProfilePhoto(girlId);
-        if (photo) {
-            stories = [{ image_url: photo, time: 'il y a 2h' }];
+        // Generate stories from all available photos
+        const allPhotos = profilePhotos[girlId] || [];
+        const mainPhoto = getProfilePhoto(girlId);
+        if (allPhotos.length > 0) {
+            stories = allPhotos.slice(0, 5).map((p, i) => ({ 
+                image_url: p, 
+                time: ['il y a 1h', 'il y a 2h', 'il y a 4h', 'il y a 8h', 'Hier'][i] || 'il y a 2h' 
+            }));
+        } else if (mainPhoto) {
+            stories = [{ image_url: mainPhoto, time: 'il y a 2h' }];
         } else {
             showToast(girl.name + " n'a pas de story");
             return;
         }
+        storyData[girlId] = stories;
     }
     
     const viewer = document.getElementById('storyViewer');
@@ -3527,6 +3575,8 @@ function sendStoryReply() {
 // ============ CAMGIRLS SECTION ============
 let camgirlsData = [];
 let currentCamgirl = null;
+let currentCamMedia = [];  // All photos + videos for current camgirl
+let currentCamMediaIndex = 0;
 
 async function loadCamgirls() {
     try {
@@ -3581,6 +3631,9 @@ function renderCamgirls() {
 
 async function openCamgirl(girlId) {
     currentCamgirl = girlId;
+    currentCamMedia = [];
+    currentCamMediaIndex = 0;
+    
     const cam = camgirlsData.find(c => c.girl_id === girlId);
     if (!cam) return;
     
@@ -3599,25 +3652,37 @@ async function openCamgirl(girlId) {
     try {
         const res = await fetch('/api/camgirl_photo/' + girlId);
         const data = await res.json();
-        if (data.image_url) {
-            videoDiv.innerHTML = `<img src="${data.image_url}" style="width:100%;height:100%;object-fit:cover;" alt="${cam.name}">`;
-        }
-        // Display all photos in scroll
+        
+        // Build media array (photos first, then videos)
         if (data.all_photos && data.all_photos.length > 0) {
-            renderCamgirlPhotos(data.all_photos, cam.name);
+            data.all_photos.forEach(p => currentCamMedia.push({ type: 'photo', url: p }));
         } else if (cam.photos && cam.photos.length > 0) {
-            renderCamgirlPhotos(cam.photos, cam.name);
+            cam.photos.forEach(p => currentCamMedia.push({ type: 'photo', url: p }));
+        }
+        
+        // Add videos to media array
+        if (cam.videos && cam.videos.length > 0) {
+            cam.videos.forEach(v => currentCamMedia.push({ type: 'video', url: v.video_url, title: v.title }));
+        }
+        
+        // Show first media
+        if (currentCamMedia.length > 0) {
+            showCamMediaAtIndex(0);
+        } else if (data.image_url) {
+            currentCamMedia.push({ type: 'photo', url: data.image_url });
+            showCamMediaAtIndex(0);
         }
     } catch(e) { 
         console.log("Cam photo error:", e);
-        // Fallback to cam.photos if API fails
         if (cam.photos && cam.photos.length > 0) {
-            videoDiv.innerHTML = `<img src="${cam.photos[0]}" style="width:100%;height:100%;object-fit:cover;" alt="${cam.name}">`;
-            renderCamgirlPhotos(cam.photos, cam.name);
+            cam.photos.forEach(p => currentCamMedia.push({ type: 'photo', url: p }));
         }
+        if (cam.videos && cam.videos.length > 0) {
+            cam.videos.forEach(v => currentCamMedia.push({ type: 'video', url: v.video_url, title: v.title }));
+        }
+        if (currentCamMedia.length > 0) showCamMediaAtIndex(0);
     }
     
-    renderCamgirlVideos(cam.videos || []);
     renderTipMenu(cam.tip_menu || {});
     
     document.getElementById('camgirlChat').innerHTML = `
@@ -3626,18 +3691,43 @@ async function openCamgirl(girlId) {
     `;
 }
 
-function renderCamgirlPhotos(photos, name) {
-    const container = document.getElementById('camgirlPhotosScroll');
-    if (!photos || photos.length === 0) {
-        container.style.display = 'none';
-        return;
+// Navigation functions for camgirl media
+function showCamMediaAtIndex(index) {
+    if (index < 0 || index >= currentCamMedia.length) return;
+    currentCamMediaIndex = index;
+    
+    const media = currentCamMedia[index];
+    const videoDiv = document.getElementById('camgirlVideo');
+    const cam = camgirlsData.find(c => c.girl_id === currentCamgirl);
+    const camName = cam?.name || '';
+    
+    if (media.type === 'video' && media.url) {
+        videoDiv.innerHTML = `<video src="${media.url}" style="width:100%;height:100%;object-fit:cover;" controls autoplay loop muted playsinline></video>`;
+    } else {
+        videoDiv.innerHTML = `<img src="${media.url}" style="width:100%;height:100%;object-fit:cover;" alt="${camName}">`;
     }
-    container.style.display = 'flex';
-    let html = '';
-    photos.forEach((photo, idx) => {
-        html += `<img src="${photo}" alt="${name}" onclick="showCamgirlPhoto('${photo}')" style="height:60px;width:60px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:border 0.2s;" onmouseover="this.style.borderColor='#e91e63'" onmouseout="this.style.borderColor='transparent'">`;
-    });
-    container.innerHTML = html;
+    
+    // Update counter
+    const counter = document.getElementById('camMediaCounter');
+    if (counter) {
+        const photoCount = currentCamMedia.filter(m => m.type === 'photo').length;
+        const videoCount = currentCamMedia.filter(m => m.type === 'video').length;
+        counter.textContent = `${index + 1} / ${currentCamMedia.length} (${photoCount} photos, ${videoCount} videos)`;
+    }
+}
+
+function prevCamMedia() {
+    if (currentCamMedia.length === 0) return;
+    let newIndex = currentCamMediaIndex - 1;
+    if (newIndex < 0) newIndex = currentCamMedia.length - 1;
+    showCamMediaAtIndex(newIndex);
+}
+
+function nextCamMedia() {
+    if (currentCamMedia.length === 0) return;
+    let newIndex = currentCamMediaIndex + 1;
+    if (newIndex >= currentCamMedia.length) newIndex = 0;
+    showCamMediaAtIndex(newIndex);
 }
 
 function showCamgirlPhoto(url) {
