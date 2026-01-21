@@ -5308,6 +5308,15 @@ GIRLS = {
 def home():
     return render_template('index.html', girls_data=GIRLS)
 
+@app.route('/attached_assets/<path:filename>')
+def serve_attached_assets(filename):
+    """Serve files from attached_assets folder"""
+    import os
+    filepath = os.path.join('attached_assets', filename)
+    if os.path.exists(filepath):
+        return send_file(filepath)
+    return jsonify({"error": "File not found"}), 404
+
 @app.route('/download-main')
 def download_main():
     with open('main.py', 'r', encoding='utf-8') as f:
@@ -7940,33 +7949,17 @@ REGLES:
 - Tutoie toujours"""
     
     try:
-        headers = {
-            "Authorization": f"Bearer {os.environ.get('OPENROUTER_API_KEY', '')}",
-            "Content-Type": "application/json",
-            "HTTP-Referer": "https://dreamgirl.replit.app",
-            "X-Title": "Dream AI Girl"
-        }
-        
-        payload = {
-            "model": "mistralai/mistral-medium-3",
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": message}
-            ],
-            "max_tokens": 150,
-            "temperature": 0.9
-        }
-        
-        response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers=headers,
-            json=payload,
-            timeout=30
-        )
-        
-        if response.status_code == 200:
-            result = response.json()
-            reply = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+        if openrouter_client:
+            response = openrouter_client.chat.completions.create(
+                model="mistralai/mistral-medium-3",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": message}
+                ],
+                max_tokens=150,
+                temperature=0.9
+            )
+            reply = response.choices[0].message.content if response.choices else ""
             if reply:
                 return jsonify({"response": reply.strip()})
         
