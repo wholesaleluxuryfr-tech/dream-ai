@@ -6873,7 +6873,11 @@ CAMGIRL_VIDEOS = {
             "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_bureau_violet.jpg"
         ],
         "videos": [
-            {"id": 1, "title": "Lecon privee", "action": "teacher strip roleplay", "decor": "classe", "tokens": 200, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_video_01.mp4"}
+            {"id": 1, "title": "Lecon privee", "action": "teacher strip roleplay", "decor": "classe", "tokens": 200, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_video_01.mp4"},
+            {"id": 2, "title": "Punition eleve", "action": "spanking roleplay teacher punishment", "decor": "bureau prof", "tokens": 250, "duration": "4min"},
+            {"id": 3, "title": "Masturbation livre", "action": "reading book masturbation orgasm", "decor": "bibliotheque", "tokens": 300, "duration": "5min"},
+            {"id": 4, "title": "Gode en classe", "action": "dildo riding teacher desk", "decor": "salle de classe", "tokens": 350, "duration": "5min"},
+            {"id": 5, "title": "Orgasme autoritaire", "action": "dominant orgasm commanding", "decor": "chambre elegant", "tokens": 400, "duration": "5min"}
         ]
     }
 }
