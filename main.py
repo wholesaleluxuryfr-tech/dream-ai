@@ -5153,18 +5153,18 @@ GIRLS = {
         "age": 22,
         "age_slider": 22,
         "location": "Paris, France",
-        "tagline": "En live tous les soirs 22h",
-        "bio": "Coucou! Je suis Lola, camgirl depuis 2 ans. Je fais des shows prives tous les soirs. Viens me voir, je suis tres coquine...",
-        "appearance": "22 year old French camgirl, cute girl next door face with playful smile, bright blue eyes with heavy mascara, full pouty glossy pink lips, long wavy blonde highlighted hair, fair skin with light tan, fit body 165cm from dancing, medium perky C cup natural breasts, always in front of webcam, ring light reflecting in eyes, messy bedroom background with LED lights, wearing crop top or lingerie",
+        "tagline": "Gamer Girl Exhib - En live tous les soirs",
+        "bio": "Salut! Je suis Lola, gamer girl et camgirl. Je stream en jouant et je fais des shows prives. Gros seins naturels, j'adore me montrer partout...",
+        "appearance": "22 year old French gamer girl camgirl, beautiful face with seductive expression, brown-hazel eyes, full lips, long straight blonde hair, fair skin with light tan, curvy voluptuous body 168cm, very large natural DD cup breasts, round firm ass, gaming setup with RGB lights and dual monitors, gaming chair, wears white tank top or crop top, exhibitionist who loves outdoor public nudity",
         "match_chance": 0.8,
-        "body_type": "athletic",
-        "personality": "CAMGIRL: Flirty et business. Propose des shows prives contre des tips. Sait comment exciter les hommes. Experience de cam.",
-        "likes": "tips genereux, viewers fideles, compliments, tokens, shows prives",
+        "body_type": "curvy",
+        "personality": "CAMGIRL GAMER EXHIB: Joueuse et coquine. Adore se montrer en public. Gros seins naturels. Stream en jouant. Toys pendant les games.",
+        "likes": "gaming, exhib en public, tips genereux, viewers fideles, shows prives, toys",
         "dislikes": "freeloaders, demandes sans tips, mecs relous",
-        "fantasmes": "Show prive pour toi seul. Strip tease complet. Toys en live. Orgasme reel devant la cam. Tu me regardes jouir.",
+        "fantasmes": "Show prive gaming. Me montrer dehors. Toys pendant que je joue. Orgasme en live. Tu me mates dans la rue.",
         "archetype": "exhib",
         "camgirl": True,
-        "tip_menu": {"flash_seins": 50, "flash_fesses": 30, "strip_complet": 200, "toy_show": 500, "prive_5min": 300}
+        "tip_menu": {"sourire": 10, "bisou_cam": 20, "flash_seins": 50, "masturbation": 200, "orgasme_reel": 400}
     },
     
     "camgirl_mia": {
@@ -6740,12 +6740,26 @@ def get_stored_photos(girl_id):
 CAMGIRL_VIDEOS = {
     "camgirl_lola": {
         "name": "Lola_Hot69",
+        "photos": [
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_gaming_pose.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_bedroom_boobs.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_studio_lingerie.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_wet_tshirt.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_exhib_street.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_upskirt_outdoor.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_gaming_masturbation.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_couch_ass.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_buttplug.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_pool_dildo.jpeg",
+            "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_studio_wet.jpeg"
+        ],
         "videos": [
-            {"id": 1, "title": "Strip jazz sensuel", "action": "slow strip", "decor": "chambre parisienne", "tokens": 100, "duration": "2min"},
-            {"id": 2, "title": "Bain moussant", "action": "bath caresses", "decor": "salle de bain", "tokens": 150, "duration": "3min"},
-            {"id": 3, "title": "JOI francais", "action": "dirty talk POV", "decor": "lit satin", "tokens": 200, "duration": "4min"},
-            {"id": 4, "title": "Vibro orgasme", "action": "vibrator masturbation orgasm", "decor": "chambre romantique", "tokens": 300, "duration": "5min"},
-            {"id": 5, "title": "Doigts penetration", "action": "fingering intense masturbation", "decor": "canape velours", "tokens": 350, "duration": "5min"}
+            {"id": 1, "title": "Teaser sexy", "action": "teasing", "decor": "chambre", "tokens": 50, "duration": "15sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_video_01.mp4"},
+            {"id": 2, "title": "Strip gaming", "action": "strip tease", "decor": "gaming setup", "tokens": 100, "duration": "20sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_video_02.mp4"},
+            {"id": 3, "title": "Masturbation douce", "action": "masturbation", "decor": "canape", "tokens": 200, "duration": "25sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_video_03.mp4"},
+            {"id": 4, "title": "Dildo ride", "action": "dildo penetration", "decor": "piscine", "tokens": 300, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_video_04.mp4"},
+            {"id": 5, "title": "Orgasme intense", "action": "orgasm", "decor": "studio", "tokens": 400, "duration": "30sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_video_05.mp4"},
+            {"id": 6, "title": "Hardcore anal", "action": "anal toy", "decor": "chambre", "tokens": 500, "duration": "35sec", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_lola/lola_video_06.mp4"}
         ]
     },
     "camgirl_mia": {
