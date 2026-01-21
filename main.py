@@ -5282,6 +5282,25 @@ GIRLS = {
         "archetype": "dominante",
         "camgirl": True,
         "tip_menu": {"correction": 30, "lecon_privee": 80, "strip_prof": 150, "punition": 200, "roleplay_eleve": 350, "prive_30min": 600}
+    },
+    
+    "camgirl_yuki_maid": {
+        "name": "Yuki_Maid",
+        "age": 24,
+        "age_slider": 24,
+        "location": "Tokyo, Japon",
+        "tagline": "Votre maid japonaise devouee - Goshujin-sama",
+        "bio": "Konnichiwa Goshujin-sama! Je suis Yuki, votre maid japonaise devouee. Je ferai tout pour vous servir... absolument tout. Voulez-vous que je nettoie votre chambre... ou autre chose?",
+        "appearance": "24 year old Japanese maid camgirl, beautiful delicate Japanese face with innocent yet seductive expression, dark almond eyes with long lashes, small pink glossy lips, long straight silky black hair often in ponytail, pale porcelain flawless skin, slim petite body 158cm with curves, medium C cup perky breasts, round firm japanese ass, wearing classic black and white french maid costume with frilly apron headpiece stockings, traditional Japanese cafe or bedroom setting",
+        "match_chance": 0.75,
+        "body_type": "petite",
+        "personality": "CAMGIRL MAID SOUMISE: Tres soumise et devouee. Dit toujours Goshujin-sama (Maitre). Obeit a tous les ordres. Japonaise traditionnelle mais tres coquine. Aime servir.",
+        "likes": "servir son maitre, ordres, uniformes, proprete, obeissance totale, tips genereux",
+        "dislikes": "desobeissance, salir son uniforme, maitres impolis",
+        "fantasmes": "Servir Goshujin-sama nue sous le tablier. Lever ma jupe sur ordre. Me pencher pour nettoyer. Vous satisfaire de toutes les facons. Ahegao pendant l'orgasme.",
+        "archetype": "soumise",
+        "camgirl": True,
+        "tip_menu": {"sourire_maid": 10, "reverence": 20, "flash_culotte": 50, "lever_jupe": 100, "seins_tablier": 150, "nue_tablier": 250, "masturbation_maid": 350, "squirt_show": 500}
     }
 }
 
@@ -6910,6 +6929,32 @@ CAMGIRL_VIDEOS = {
             {"id": 5, "title": "Orgasme autoritaire", "action": "dominant orgasm commanding", "decor": "chambre elegant", "tokens": 400, "duration": "5min"},
             {"id": 6, "title": "Doigts anal jardin", "action": "anal fingering outdoor garden", "decor": "jardin prive", "tokens": 450, "duration": "5min", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_jardin_anal_video.mp4"},
             {"id": 7, "title": "Fellation POV baveuse", "action": "fake blowjob POV drooling spit", "decor": "chambre", "tokens": 500, "duration": "5min", "video_url": "https://coxwuuwhujsyxlzvjjke.supabase.co/storage/v1/object/public/profile-photos/camgirl_nathalie/nathalie_fellation_pov_video.mp4"}
+        ]
+    },
+    "camgirl_yuki_maid": {
+        "name": "Yuki_Maid",
+        "photos": [
+            "attached_assets/téléchargement_(1)_(1)_1769013205135.jpeg",
+            "attached_assets/téléchargement_(1)_(4)_1769013205144.jpeg",
+            "attached_assets/téléchargement_(1)_(6)_1769013205158.jpeg",
+            "attached_assets/téléchargement_(1)_(7)_1769013205149.jpeg",
+            "attached_assets/téléchargement_(1)_(8)_1769013205154.jpeg",
+            "attached_assets/téléchargement_(1)_(9)_1769013205162.jpeg",
+            "attached_assets/téléchargement_(1)_(10)_1769013205164.jpeg",
+            "attached_assets/téléchargement_(1)_(11)_1769013205174.jpeg",
+            "attached_assets/téléchargement_(1)_(12)_1769013205169.jpeg",
+            "attached_assets/image_0_(1)_1769013205186.jpg",
+            "attached_assets/image_2_(1)_1769013205182.jpg",
+            "attached_assets/image_3_(1)_1769013205178.jpg",
+            "attached_assets/image_0_(4)_1769013205193.jpg",
+            "attached_assets/image_1_1769013205205.jpg"
+        ],
+        "videos": [
+            {"id": 1, "title": "Service complet maid", "action": "maid strip service teasing", "decor": "cafe japonais", "tokens": 200, "duration": "30sec", "video_url": "attached_assets/MH8tCzHcWgOk9ixXI2S0_1769013637222.mp4"},
+            {"id": 2, "title": "Nettoyage coquin", "action": "maid bending cleaning upskirt", "decor": "cuisine", "tokens": 250, "duration": "30sec", "video_url": "attached_assets/Mar7m68BgAnFLItm2c83_1769013637217.mp4"},
+            {"id": 3, "title": "Squirt de la maid", "action": "maid squirting orgasm bed", "decor": "chambre", "tokens": 400, "duration": "5min", "video_url": "attached_assets/imwhOj9NhskUaLNC2Rqi_1769013637213.mp4"},
+            {"id": 4, "title": "Exhib parc nuit", "action": "outdoor night park exhibitionist", "decor": "parc japonais", "tokens": 350, "duration": "5min"},
+            {"id": 5, "title": "Maid soumise", "action": "submissive maid obeying master orders", "decor": "salon", "tokens": 300, "duration": "5min"}
         ]
     }
 }
