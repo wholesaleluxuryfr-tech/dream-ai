@@ -6877,7 +6877,9 @@ CAMGIRL_VIDEOS = {
             {"id": 2, "title": "Punition eleve", "action": "spanking roleplay teacher punishment", "decor": "bureau prof", "tokens": 250, "duration": "4min"},
             {"id": 3, "title": "Masturbation livre", "action": "reading book masturbation orgasm", "decor": "bibliotheque", "tokens": 300, "duration": "5min"},
             {"id": 4, "title": "Gode en classe", "action": "dildo riding teacher desk", "decor": "salle de classe", "tokens": 350, "duration": "5min"},
-            {"id": 5, "title": "Orgasme autoritaire", "action": "dominant orgasm commanding", "decor": "chambre elegant", "tokens": 400, "duration": "5min"}
+            {"id": 5, "title": "Orgasme autoritaire", "action": "dominant orgasm commanding", "decor": "chambre elegant", "tokens": 400, "duration": "5min"},
+            {"id": 6, "title": "Doigts anal jardin", "action": "anal fingering outdoor garden", "decor": "jardin prive", "tokens": 450, "duration": "5min"},
+            {"id": 7, "title": "Fellation POV baveuse", "action": "fake blowjob POV drooling spit", "decor": "chambre", "tokens": 500, "duration": "5min"}
         ]
     }
 }
